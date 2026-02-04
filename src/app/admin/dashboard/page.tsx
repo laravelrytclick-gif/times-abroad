@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Globe, GraduationCap, FileText, MoreHorizontal, ChevronRight, Activity, FileCheck, Loader2 } from 'lucide-react'
+import { Globe, GraduationCap, FileText, MoreHorizontal, ChevronRight, Activity, FileCheck, Loader2, Building2, Stethoscope } from 'lucide-react'
 import { useAdminDashboardStats } from '@/hooks/useAdminDashboard'
 import { useAdminCountries, useAdminColleges } from '@/hooks/useAdminColleges'
 import { useAdminBlogs } from '@/hooks/useAdminBlogs'
@@ -26,6 +26,17 @@ export default function DashboardPage() {
   const displayCountries = countries.length > 0 ? countries : dummyCountries
   const displayColleges = colleges.length > 0 ? colleges : dummyColleges
   const displayBlogs = blogs.length > 0 ? blogs : dummyBlogs
+  
+  // Calculate college type counts from real data
+  const studyAbroadCount = displayColleges.filter(college => (college as any).college_type === 'study_abroad').length
+  const mbbsAbroadCount = displayColleges.filter(college => (college as any).college_type === 'mbbs_abroad').length
+  
+  // Debug logging
+  console.log('🔍 [Dashboard] Total colleges:', displayColleges.length)
+  console.log('🔍 [Dashboard] Study abroad count:', studyAbroadCount)
+  console.log('🔍 [Dashboard] MBBS abroad count:', mbbsAbroadCount)
+  console.log('🔍 [Dashboard] Colleges with types:', displayColleges.filter(c => (c as any).college_type).map(c => ({ name: c.name, type: (c as any).college_type })))
+  
   const displayStats = dbStats.countries > 0 || dbStats.colleges > 0 || dbStats.blogs > 0 || dbStats.exams > 0 
     ? dbStats 
     : {
@@ -37,18 +48,26 @@ export default function DashboardPage() {
 
   const stats = [
     {
+      title: 'Study Abroad',
+      value: studyAbroadCount,
+      description: 'Study programs',
+      icon: Building2,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100'
+    },
+    {
+      title: 'MBBS Abroad',
+      value: mbbsAbroadCount,
+      description: 'Medical programs',
+      icon: Stethoscope,
+      color: 'text-red-600',
+      bgColor: 'bg-red-100'
+    },
+    {
       title: 'Total Countries',
       value: displayStats.countries,
       description: 'Active destinations',
       icon: Globe,
-      color: 'text-gray-600',
-      bgColor: 'bg-gray-100'
-    },
-    {
-      title: 'Total Colleges',
-      value: displayStats.colleges,
-      description: 'Educational institutions',
-      icon: GraduationCap,
       color: 'text-gray-600',
       bgColor: 'bg-gray-100'
     },
@@ -59,14 +78,6 @@ export default function DashboardPage() {
       icon: FileCheck,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100'
-    },
-    {
-      title: 'Blog Posts',
-      value: displayStats.blogs,
-      description: 'Published content',
-      icon: FileText,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100'
     }
   ]
 

@@ -43,16 +43,41 @@ export default function Navbar() {
     console.log('🔍 [Navbar] Filtering colleges for type:', selectedCollegeType);
     console.log('🔍 [Navbar] Total colleges available:', colleges.length);
     console.log('🔍 [Navbar] Colleges with college_type:', colleges.filter(c => c.college_type).length);
-
+    
     if (selectedCollegeType === 'mbbs-abroad') {
-      const mbbsColleges = colleges.filter(c => c.college_type === 'mbbs_abroad');
+      // First try to filter by college_type, then fallback to name/slug matching
+      let mbbsColleges = colleges.filter(c => c.college_type === 'mbbs_abroad');
+      
+      // If no colleges with college_type, fallback to name/slug matching
+      if (mbbsColleges.length === 0) {
+        console.log('🔍 [Navbar] No colleges with college_type, using fallback matching');
+        mbbsColleges = colleges.filter(c => 
+          c.slug.toLowerCase().includes('mbbs') || 
+          c.name.toLowerCase().includes('medical') ||
+          c.name.toLowerCase().includes('mbbs')
+        );
+      }
+      
       console.log('🔍 [Navbar] MBBS colleges found:', mbbsColleges.length);
-      return mbbsColleges;
+      return mbbsColleges; // Return ALL MBBS colleges, no limit
     }
-
-    const studyAbroadColleges = colleges.filter(c => c.college_type === 'study_abroad');
+    
+    // For study-abroad, get all non-MBBS colleges
+    let studyAbroadColleges = colleges.filter(c => c.college_type === 'study_abroad');
+    
+    // If no colleges with college_type, use all colleges except MBBS ones
+    if (studyAbroadColleges.length === 0) {
+      console.log('🔍 [Navbar] No colleges with college_type, using fallback logic');
+      const mbbsNames = colleges.filter(c => 
+        c.slug.toLowerCase().includes('mbbs') || 
+        c.name.toLowerCase().includes('medical') ||
+        c.name.toLowerCase().includes('mbbs')
+      );
+      studyAbroadColleges = colleges.filter(c => !mbbsNames.includes(c));
+    }
+    
     console.log('🔍 [Navbar] Study abroad colleges found:', studyAbroadColleges.length);
-    return studyAbroadColleges.slice(0, 15);
+    return studyAbroadColleges; // Return ALL study abroad colleges, no limit
   }, [colleges, selectedCollegeType]);
 
   const navItems = [

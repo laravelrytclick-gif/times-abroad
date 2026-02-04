@@ -1,122 +1,113 @@
 "use client"
 import React from 'react';
-import { GraduationCap, ShieldCheck, Landmark, ArrowRight } from 'lucide-react';
+import { GraduationCap, ShieldCheck, Landmark, Globe2, Zap, CheckCircle2 } from 'lucide-react';
 
-interface AdvantageCardProps {
+interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  iconBgColor: string;
-  circleColor: string;
+  className?: string;
+  iconBg?: string;
 }
 
-const AdvantageCard = ({ icon, title, description, iconBgColor, circleColor }: AdvantageCardProps) => (
-  <div className="relative overflow-hidden bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md flex flex-col gap-3 sm:gap-4">
-    {/* Decorative Background Circle */}
-    <div className={`absolute -right-6 sm:-right-8 -top-6 sm:-top-8 h-24 w-24 sm:h-32 sm:w-32 rounded-full ${circleColor} opacity-40`} />
-
-    <div className={`relative z-10 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl ${iconBgColor}`}>
-      {icon}
-    </div>
-
-    <div className="relative z-10 mt-1 sm:mt-2">
-      <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2 sm:mb-3">{title}</h3>
-      <p className="text-slate-500 leading-relaxed text-sm">
-        {description}
-      </p>
+const FeatureCard = ({ icon, title, description, className = "", iconBg = "bg-white" }: FeatureCardProps) => (
+  <div className={`group relative p-8 rounded-[2rem] transition-all duration-500 hover:shadow-2xl hover:shadow-blue-100/50 ${className}`}>
+    <div className="flex flex-col h-full space-y-5">
+      <div className={`p-3.5 w-fit rounded-2xl shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 ${iconBg}`}>
+        {icon}
+      </div>
+      <div>
+        <h3 className="text-xl font-bold tracking-tight mb-2.5">{title}</h3>
+        <p className="opacity-80 leading-relaxed text-sm lg:text-base font-medium">
+          {description}
+        </p>
+      </div>
     </div>
   </div>
 );
 
 export default function AlphaWorldAdvantage() {
-  const advantages = [
-    {
-      title: "Expert Counselors",
-      description: "Dedicated mentors with decades of experience in international education. We pair you with specialists in your desired field.",
-      icon: <GraduationCap className="w-6 h-6 text-blue-600" />,
-      iconBgColor: "bg-blue-50",
-      circleColor: "bg-blue-50"
-    },
-    {
-      title: "99% Visa Success",
-      description: "Proven track record of navigating complex visa procedures seamlessly. Our team stays updated on the latest immigration policies.",
-      icon: <ShieldCheck className="w-6 h-6 text-blue-600" />,
-      iconBgColor: "bg-blue-50",
-      circleColor: "bg-blue-50"
-    },
-    {
-      title: "Top 100 Uni Partners",
-      description: "Direct partnerships with the most prestigious institutions globally. Get access to exclusive scholarships and waivers.",
-      icon: <Landmark className="w-6 h-6 text-blue-600" />,
-      iconBgColor: "bg-blue-50",
-      circleColor: "bg-blue-50"
-    }
-  ];
-
   return (
-    <section id="about" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-50">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-blue-400 rounded-full blur-[80px] sm:blur-[120px]" />
-        <div className="absolute bottom-20 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-blue-300 rounded-full blur-[100px] sm:blur-[150px]" />
-      </div>
+    <section id="about" className="relative w-full max-w-7xl mx-auto px-6 py-20 lg:py-32 overflow-hidden bg-white">
+      {/* Decorative Gradient Glows */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-100/50 rounded-full blur-[100px]" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-100/40 rounded-full blur-[100px]" />
+      
+      <div className="relative z-10 flex flex-col lg:flex-row gap-12 lg:gap-20 items-start">
+        
+        {/* Left Content Side */}
+        <div className="w-full lg:w-1/2 lg:sticky lg:top-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold uppercase tracking-widest mb-8">
+            <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+            2026 Global Standards
+          </div>
 
-      <div className="relative text-center mb-8 sm:mb-12 lg:mb-16">
-        <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold mb-6 sm:mb-8">
-          <span>🎯</span>
-          Why Choose Us
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 leading-[1.05] mb-8">
+            Your Future, <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700">Expertly Mapped.</span>
+          </h2>
+
+          <p className="text-slate-600 text-lg md:text-xl mb-10 leading-relaxed max-w-xl">
+            Navigating international education requires more than just a visa. We provide a 360° ecosystem—from AI-driven matching to post-landing career support.
+          </p>
+
+          {/* Stats Bar */}
+          <div className="flex flex-wrap gap-8 py-8 border-y border-slate-100 mb-10">
+            <div>
+              <div className="text-3xl font-black text-blue-600">99.2%</div>
+              <div className="text-xs font-bold text-slate-400 uppercase mt-1">Visa Success</div>
+            </div>
+            <div className="w-px h-12 bg-slate-100 hidden sm:block" />
+            <div>
+              <div className="text-3xl font-black text-blue-600">15k+</div>
+              <div className="text-xs font-bold text-slate-400 uppercase mt-1">Global Alumni</div>
+            </div>
+            <div className="w-px h-12 bg-slate-100 hidden sm:block" />
+            <div>
+              <div className="text-3xl font-black text-blue-600">500+</div>
+              <div className="text-xs font-bold text-slate-400 uppercase mt-1">Uni Partners</div>
+            </div>
+          </div>
+
+          <button className="group flex items-center gap-3 bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-slate-900 transition-all duration-300 shadow-xl shadow-blue-200 hover:shadow-slate-200">
+            Book Free Consultation
+            <Zap className="w-5 h-5 fill-current transition-transform group-hover:scale-125" />
+          </button>
         </div>
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-4 sm:mb-6 tracking-tight">
-          The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-700">AlphaWorld Advantage</span>
-        </h2>
+        {/* Right Bento Grid Side */}
+        <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-5">
+          <FeatureCard 
+            className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white md:col-span-2"
+            icon={<GraduationCap className="w-7 h-7 text-blue-600" />}
+            title="Strategic Ivy-League Mentorship"
+            description="Consult with mentors who are alumni of the world's top 1% universities. We offer firsthand insights into campus life and recruitment."
+          />
+          
+          <FeatureCard 
+            className="bg-white border-2 border-slate-50 shadow-sm text-slate-900"
+            iconBg="bg-blue-50"
+            icon={<ShieldCheck className="w-6 h-6 text-blue-600" />}
+            title="Smart Visa Hub"
+            description="Our 2026 automated compliance check ensures your GIC and Financial docs meet the latest 2026 standards."
+          />
 
-        <p className="text-slate-600 text-lg sm:text-xl leading-relaxed max-w-4xl mx-auto mb-4 sm:mb-6 px-4">
-          Join over <strong className="text-blue-600">15,000+ ambitious students</strong> who've transformed their futures with our proven methodology.
-          We don't just guide—we guarantee your success with data-driven strategies and personalized mentorship.
-        </p>
+          <FeatureCard 
+            className="bg-white border-2 border-slate-50 shadow-sm text-slate-900"
+            iconBg="bg-blue-50"
+            icon={<Landmark className="w-6 h-6 text-blue-600" />}
+            title="Scholarship Desk"
+            description="Access exclusive 2026-27 waivers. We've secured over ₹45Cr in student aid this year alone."
+          />
 
-        {/* Statistics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto mb-6 sm:mb-8">
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100">
-            <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 sm:mb-2">15,000+</div>
-            <div className="text-xs sm:text-sm text-slate-500 uppercase tracking-wide">Students Guided</div>
-          </div>
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100">
-            <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 sm:mb-2">98.5%</div>
-            <div className="text-xs sm:text-sm text-slate-500 uppercase tracking-wide">Success Rate</div>
-          </div>
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100">
-            <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 sm:mb-2">500+</div>
-            <div className="text-xs sm:text-sm text-slate-500 uppercase tracking-wide">University Partners</div>
-          </div>
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100">
-            <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 sm:mb-2">24/7</div>
-            <div className="text-xs sm:text-sm text-slate-500 uppercase tracking-wide">Support Available</div>
-          </div>
+          <FeatureCard 
+            className="bg-slate-900 text-white md:col-span-2"
+            iconBg="bg-blue-600"
+            icon={<Globe2 className="w-6 h-6 text-white" />}
+            title="Global Career Network"
+            description="Our service doesn't end at the airport. Connect with our 15,000+ strong alumni network in tech, finance, and medicine hubs worldwide."
+          />
         </div>
-
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-        <a
-          href="#"
-          className="group flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
-        >
-          Learn more about us
-          <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-        </a>
-        <a
-          href="#"
-          className="group flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
-        >
-          <span>📊</span> View Success Metrics
-        </a>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {advantages.map((adv, index) => (
-          <AdvantageCard key={index} {...adv} />
-        ))}
       </div>
     </section>
   );
