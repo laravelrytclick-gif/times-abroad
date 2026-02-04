@@ -1,17 +1,11 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { getCountrySlug } from "@/lib/normalize"
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { getCountryName } from "@/lib/normalize"
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, MapPin, DollarSign, Clock, GraduationCap, Building, Filter, X, ArrowRight, Loader2, AlertCircle, RefreshCw } from 'lucide-react'
+import { Search, MapPin, DollarSign, Clock, GraduationCap, Building, X, Loader2, AlertCircle, RefreshCw } from 'lucide-react'
 import { useInfiniteColleges } from '@/hooks/useColleges'
+import { getCountryName } from "@/lib/normalize"
 
 interface College {
   _id: string
@@ -34,9 +28,8 @@ export default function CollegesPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCountry, setSelectedCountry] = useState<string>('all')
   const [selectedExam, setSelectedExam] = useState<string>('all')
+  const [selectedCollegeType, setSelectedCollegeType] = useState<string>('all')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-  
-  const observer = useRef<IntersectionObserver | null>(null)
   
   // Use TanStack Query for infinite scroll
   const {
@@ -48,43 +41,22 @@ export default function CollegesPage() {
     isError,
     error,
     refetch
-  } = useInfiniteColleges(debouncedSearchTerm, selectedCountry, selectedExam)
+  } = useInfiniteColleges(debouncedSearchTerm, selectedCountry, selectedExam, selectedCollegeType)
   
   // Flatten all pages for rendering
-  const colleges = useMemo(() => 
-    data?.pages.flatMap(page => page.colleges) || [], [data]
-  )
-  
+  const colleges = data?.pages.flatMap(page => page.colleges) || []
   const totalCount = data?.pages[0]?.total || 0
 
-  // Debounce search term (wait 500ms after user stops typing)
+  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm)
     }, 500)
-
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Setup intersection observer for infinite scroll
-  const lastCollegeRef = useCallback((node: HTMLDivElement | null) => {
-    if (isFetchingNextPage) return
-    if (observer.current) observer.current.disconnect()
-    
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasNextPage) {
-        fetchNextPage()
-      }
-    }, {
-      rootMargin: '100px',
-      threshold: 0.1
-    })
-    
-    if (node) observer.current.observe(node)
-  }, [isFetchingNextPage, hasNextPage, fetchNextPage])
-
   // Extract unique countries and exams from colleges for filters
-  const { countries, exams } = useMemo(() => {
+  const { countries, exams } = React.useMemo(() => {
     const countrySet = new Set(
       colleges
         .map(college => {
@@ -94,7 +66,7 @@ export default function CollegesPage() {
           if (typeof c === "object") return c.name ?? null
           return null
         })
-        .filter(Boolean)
+        .filter(Boolean) as string[]
     )
     
     const examSet = new Set(colleges.flatMap(college => college.exams))
@@ -109,8 +81,8 @@ export default function CollegesPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Excellence...</p>
+          <div className="w-12 h-12 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500 text-sm">Loading colleges...</p>
         </div>
       </div>
     )
@@ -120,216 +92,232 @@ export default function CollegesPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-red-600" />
+          <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-6 h-6 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Failed to Load Colleges</h2>
-          <p className="text-slate-500 mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to Load Colleges</h2>
+          <p className="text-gray-500 mb-6 text-sm">
             {error instanceof Error ? error.message : 'An unexpected error occurred'}
           </p>
-          <Button 
+          <button 
             onClick={() => refetch()}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+            className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="w-4 h-4 mr-2 inline" />
             Try Again
-          </Button>
+          </button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pointer-events-auto">
-      {/* Premium Header */}
-      <div className="bg-white border-b border-slate-100 relative overflow-hidden pointer-events-auto">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 blur-3xl" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 pointer-events-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      {/* Simple Header */}
+      <div className="bg-white border-b border-blue-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none mb-4 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">
-                Global Opportunities
-              </Badge>
-              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
-                FIND YOUR <span className="text-blue-600">FUTURE</span>
+              <h1 className="text-3xl font-light text-gray-900 mb-2">
+                Find Your <span className="font-semibold text-blue-700">College</span>
               </h1>
-              <p className="text-slate-500 mt-2 font-medium max-w-md">
-                Explore top-rated universities and colleges across 50+ countries with our expert guidance.
+              <p className="text-gray-700 text-sm font-medium">
+                Explore {totalCount} universities and colleges worldwide
               </p>
             </div>
-            <div className="bg-white shadow-sm border border-slate-100 rounded-2xl p-4 flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white">
-                <GraduationCap size={24} />
+            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-green-500 p-3 rounded-xl text-white">
+              <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                <GraduationCap size={20} className="text-white" />
               </div>
               <div>
-                <p className="text-2xl font-black text-slate-900">{totalCount}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Colleges Found</p>
+                <p className="text-xl font-light text-white">{totalCount}</p>
+                <p className="text-xs text-white/80">Colleges</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 pointer-events-auto">
-        <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 pointer-events-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center pointer-events-auto">
-            <div className="relative group pointer-events-auto">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-blue-600 transition-colors" />
-              <Input
-                placeholder="Search by name..."
+      {/* Simple Filters */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-blue-100">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
+              <input
+                placeholder="Search colleges..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 bg-slate-50 border-none h-12 rounded-xl focus-visible:ring-2 focus-visible:ring-blue-500 font-medium pointer-events-auto"
+                className="w-full pl-10 pr-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
               />
             </div>
 
-            <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-              <SelectTrigger className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-medium pointer-events-auto">
-                <SelectValue placeholder="Country" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Countries</SelectItem>
-                {countries.map((c) => (
-                  <SelectItem key={c} value={c.toLowerCase()}>{c}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedExam} onValueChange={setSelectedExam}>
-              <SelectTrigger className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-medium pointer-events-auto">
-                <SelectValue placeholder="Entrance Exam" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Exams</SelectItem>
-                {exams.map((exam) => (
-                  <SelectItem key={exam} value={exam}>{exam}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant="ghost"
-              onClick={() => { setSearchTerm(''); setSelectedCountry('all'); setSelectedExam('all'); }}
-              className="h-12 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-xl font-bold flex gap-2 pointer-events-auto"
+            <select
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
             >
-              <X size={16} /> Reset
-            </Button>
+              <option value="all">All Countries</option>
+              {countries.map((c) => (
+                <option key={c} value={c.toLowerCase()}>{c}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedExam}
+              onChange={(e) => setSelectedExam(e.target.value)}
+              className="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
+            >
+              <option value="all">All Exams</option>
+              {exams.map((exam) => (
+                <option key={exam} value={exam}>{exam}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedCollegeType}
+              onChange={(e) => setSelectedCollegeType(e.target.value)}
+              className="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
+            >
+              <option value="all">All Types</option>
+              <option value="study_abroad">Study Abroad</option>
+              <option value="mbbs_abroad">MBBS Abroad</option>
+            </select>
+
+            <button
+              onClick={() => { setSearchTerm(''); setSelectedCountry('all'); setSelectedExam('all'); setSelectedCollegeType('all'); }}
+              className="w-full px-3 py-2 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg text-sm text-red-600 hover:text-red-700 hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+            >
+              <X size={14} />
+              Clear Filters
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Colleges Grid */}
-        <div className="py-12 pointer-events-auto">
-          {colleges.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search size={32} className="text-slate-300" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900">No colleges match your search</h3>
-              <p className="text-slate-500">Try changing your filters or searching for something else.</p>
+      {/* Colleges List */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        {colleges.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search size={24} className="text-blue-600" />
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {colleges.map((college, index) => (
-                <div
-                  key={college._id}
-                  ref={index === colleges.length - 1 ? lastCollegeRef : null}
-                >
-                  <Card className="group border-none py-0 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white flex flex-col h-full">
-                    {/* Image Header */}
-                    <div className="relative h-56 w-full overflow-hidden">
-                      <img
-                        src={college.banner_url || `https://picsum.photos/seed/${college.slug}/600/400`}
-                        alt={college.name}
-                        width={600}
-                        height={400}
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No colleges found</h3>
+            <p className="text-gray-700 text-sm font-medium">Try adjusting your search or filters</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {colleges.map((college, index) => (
+              <div
+                key={college._id}
+                className="bg-white border border-blue-100 rounded-xl p-6 hover:shadow-md hover:border-blue-200 transition-all duration-300"
+              >
+                <div className="flex flex-col md:flex-row gap-6">
+                  {/* College Image */}
+                  <div className="w-full md:w-48 h-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-xl overflow-hidden flex-shrink-0">
+                    <img
+                      src={college.banner_url || `https://picsum.photos/seed/${college.slug}/300/200`}
+                      alt={college.name}
+                      width={300}
+                      height={200}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/90 backdrop-blur-md text-blue-700 hover:bg-white border-none px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-sm">
+                  {/* College Info */}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">{college.name}</h3>
+                        <div className="flex items-center text-blue-700 text-sm font-medium mb-2">
+                          <MapPin size={14} className="mr-1" />
                           {getCountryName(college.country_ref)}
-                        </Badge>
-                      </div>
-
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <div className="flex items-center gap-2 text-white">
-                          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                            <Building size={16} />
-                          </div>
-                          <h3 className="font-bold text-lg line-clamp-1 leading-tight group-hover:text-blue-400 transition-colors">
-                            {college.name}
-                          </h3>
                         </div>
                       </div>
+                      <span className="inline-block px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-medium rounded-full">
+                        Active
+                      </span>
                     </div>
 
-                    <CardContent className="p-6 flex flex-col flex-grow">
-                      <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-6 font-medium italic">
-                        "{college.about_content}"
-                      </p>
+                    <p className="text-gray-700 text-sm line-clamp-2 mb-4 font-medium">
+                      {college.about_content || 'No description available'}
+                    </p>
 
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Yearly Fees</span>
-                          <div className="flex items-center text-blue-600 font-black text-lg">
-                            <DollarSign size={16} />
-                            <span>{college.fees?.toLocaleString() || 'N/A'}</span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Duration</span>
-                          <div className="flex items-center text-slate-700 font-black text-lg">
-                            <Clock size={16} className="mr-1 text-slate-400" />
-                            <span>{college.duration} years</span>
-                          </div>
-                        </div>
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-700 mb-4">
+                      <div className="flex items-center gap-1 text-blue-700 font-medium">
+                        <DollarSign size={14} />
+                        <span>{college.fees?.toLocaleString() || 'N/A'}/year</span>
                       </div>
+                      <div className="flex items-center gap-1 text-green-700 font-medium">
+                        <Clock size={14} />
+                        <span>{college.duration} years</span>
+                      </div>
+                      {college.establishment_year && (
+                        <div className="flex items-center gap-1 text-purple-700 font-medium">
+                          <Building size={14} />
+                          <span>Est. {college.establishment_year}</span>
+                        </div>
+                      )}
+                    </div>
 
-                      <div className="flex flex-wrap gap-2 mb-8">
+                    {college.exams.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
                         {college.exams.slice(0, 3).map((exam) => (
-                          <span key={exam} className="text-[10px] font-bold bg-slate-50 text-slate-600 px-3 py-1 rounded-lg border border-slate-100">
+                          <span key={exam} className="inline-block px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 text-sm font-medium rounded-lg border border-blue-200">
                             {exam}
                           </span>
                         ))}
+                        {college.exams.length > 3 && (
+                          <span className="inline-block px-3 py-1 bg-gradient-to-r from-gray-50 to-slate-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-200">
+                            +{college.exams.length - 3} more
+                          </span>
+                        )}
                       </div>
+                    )}
 
-                      <div className="mt-auto">
-                        <Link href={`/colleges/${college.slug}`}>
-                          <Button className="w-full h-14 bg-slate-900 hover:bg-blue-600 text-white font-black rounded-2xl transition-all duration-300 group/btn flex items-center justify-center gap-2">
-                            View Program Details
-                            <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    <div className="flex items-center justify-between">
+                      <Link href={`/colleges/${college.slug}`}>
+                        <button className="text-blue-700 hover:text-blue-800 font-semibold text-sm transition-colors flex items-center gap-1">
+                          View Details
+                          <span className="text-blue-600">→</span>
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* Loading indicator for infinite scroll */}
-          {isFetchingNextPage && (
-            <div className="flex justify-center py-8">
-              <div className="flex items-center gap-3 text-slate-500">
-                <Loader2 className="w-6 h-6 animate-spin" />
-                <span className="font-medium">Loading more colleges...</span>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
+        )}
 
-          {/* End of results indicator */}
-          {!hasNextPage && colleges.length > 0 && (
-            <div className="text-center py-8">
-              <p className="text-slate-500 font-medium">
-                Showing all {colleges.length} colleges
-              </p>
-            </div>
-          )}
-        </div>
+        {/* Load More */}
+        {hasNextPage && (
+          <div className="text-center py-8">
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-3 rounded-xl text-sm font-medium transition-all duration-300 disabled:opacity-50 flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl"
+            >
+              {isFetchingNextPage ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Load More Colleges'
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* End of results */}
+        {!hasNextPage && colleges.length > 0 && (
+          <div className="text-center py-8 border-t border-blue-100 mt-8">
+            <p className="text-gray-700 text-sm font-medium">
+              Showing all {colleges.length} colleges
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

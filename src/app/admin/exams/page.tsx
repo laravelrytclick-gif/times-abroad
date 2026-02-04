@@ -152,6 +152,60 @@ export default function SimpleExamsPage() {
     console.log(JSON.stringify(formData, null, 2))
     
     try {
+      // Comprehensive validation - ALL fields are required
+      const validationErrors: string[] = []
+      
+      // Basic Info Validation
+      if (!formData.name?.trim()) validationErrors.push('Exam name is required')
+      if (!formData.slug?.trim()) validationErrors.push('Exam slug is required')
+      if (!formData.short_name?.trim()) validationErrors.push('Short name is required')
+      if (!formData.image_url?.trim()) validationErrors.push('Image URL is required')
+      if (!formData.exam_type?.trim()) validationErrors.push('Exam type is required')
+      if (!formData.conducting_body?.trim()) validationErrors.push('Conducting body is required')
+      if (!formData.exam_mode?.trim()) validationErrors.push('Exam mode is required')
+      if (!formData.frequency?.trim()) validationErrors.push('Frequency is required')
+      if (!formData.description?.trim()) validationErrors.push('Description is required')
+      if (formData.is_active === undefined || formData.is_active === null) validationErrors.push('Status is required')
+      
+      // Hero Section Validation
+      if (!formData.hero_section?.title?.trim()) validationErrors.push('Hero section title is required')
+      if (!formData.hero_section?.subtitle?.trim()) validationErrors.push('Hero section subtitle is required')
+      if (!formData.hero_section?.image?.trim()) validationErrors.push('Hero section image is required')
+      
+      // Overview Validation
+      if (!formData.overview?.title?.trim()) validationErrors.push('Overview title is required')
+      if (!formData.overview?.content?.trim()) validationErrors.push('Overview content is required')
+      if (!formData.overview?.key_highlights?.length) validationErrors.push('At least one key highlight is required')
+      
+      // Registration Validation
+      if (!formData.registration?.title?.trim()) validationErrors.push('Registration title is required')
+      if (!formData.registration?.description?.trim()) validationErrors.push('Registration description is required')
+      if (!formData.registration?.bullet_points?.length) validationErrors.push('At least one registration bullet point is required')
+      
+      // Exam Pattern Validation
+      if (!formData.exam_pattern?.title?.trim()) validationErrors.push('Exam pattern title is required')
+      if (!formData.exam_pattern?.description?.trim()) validationErrors.push('Exam pattern description is required')
+      if (!formData.exam_pattern?.total_duration_mins) validationErrors.push('Total duration is required')
+      if (!formData.exam_pattern?.score_range?.trim()) validationErrors.push('Score range is required')
+      if (!formData.exam_pattern?.table_data?.length) validationErrors.push('At least one exam pattern section is required')
+      
+      // Exam Dates Validation
+      if (!formData.exam_dates?.title?.trim()) validationErrors.push('Exam dates title is required')
+      if (!formData.exam_dates?.important_dates?.length) validationErrors.push('At least one important date is required')
+      
+      // Result Statistics Validation
+      if (!formData.result_statistics?.title?.trim()) validationErrors.push('Result statistics title is required')
+      if (!formData.result_statistics?.description?.trim()) validationErrors.push('Result statistics description is required')
+      if (!formData.result_statistics?.passing_criteria?.trim()) validationErrors.push('Passing criteria is required')
+      if (!formData.result_statistics?.total_marks) validationErrors.push('Total marks is required')
+      if (!formData.result_statistics?.passing_marks) validationErrors.push('Passing marks is required')
+      
+      if (validationErrors.length > 0) {
+        const errorMessage = `⚠️ Validation Error!\n\nPlease complete the following required fields before saving:\n\n${validationErrors.map((error, index) => `• ${error}`).join('\n')}\n\nPlease fill in all the missing information and try again.`
+        alert(errorMessage)
+        return
+      }
+      
       const payload = {
         ...formData,
         ...(editingExam && { _id: editingExam._id })

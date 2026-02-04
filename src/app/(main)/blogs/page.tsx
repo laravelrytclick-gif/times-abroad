@@ -3,12 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, Calendar, Tag, FileText, Clock, Image as ImageIcon, User, Eye, MessageCircle, ArrowRight, X, Filter, AlertCircle, RefreshCw } from 'lucide-react'
+import { Search, Calendar, Tag, FileText, Clock, User, Eye, MessageCircle, ArrowRight, X, AlertCircle, RefreshCw } from 'lucide-react'
 import { useBlogs } from '@/hooks/useBlogs'
 
 interface Blog {
@@ -72,8 +67,8 @@ export default function BlogsPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Articles...</p>
+          <div className="w-12 h-12 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500 text-sm">Loading articles...</p>
         </div>
       </div>
     )
@@ -83,198 +78,201 @@ export default function BlogsPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-red-600" />
+          <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-6 h-6 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Failed to Load Articles</h2>
-          <p className="text-slate-500 mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to Load Articles</h2>
+          <p className="text-gray-500 mb-6 text-sm">
             {error instanceof Error ? error.message : 'An unexpected error occurred'}
           </p>
-          <Button 
+          <button 
             onClick={() => refetch()}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+            className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="w-4 h-4 mr-2 inline" />
             Try Again
-          </Button>
+          </button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Premium Header - Same Style as Other Pages */}
-      <div className="bg-white border-b border-slate-100 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 blur-3xl" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      {/* Simple Header */}
+      <div className="bg-white border-b border-blue-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none mb-4 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">
-                Educational Insights
-              </Badge>
-              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
-                LATEST <span className="text-blue-600">ARTICLES</span>
+              <h1 className="text-3xl font-light text-gray-900 mb-2">
+                Latest <span className="font-semibold text-blue-700">Articles</span>
               </h1>
-              <p className="text-slate-500 mt-2 font-medium max-w-md">
-                Expert insights, study tips, and success stories from our education consultants.
+              <p className="text-gray-700 text-sm font-medium">
+                Explore {filteredBlogs.length} educational insights and success stories
               </p>
             </div>
-            <div className="bg-white shadow-sm border border-slate-100 rounded-2xl p-4 flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                <FileText size={24} />
+            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-green-500 p-3 rounded-xl text-white">
+              <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                <FileText size={20} className="text-white" />
               </div>
               <div>
-                <p className="text-2xl font-black text-slate-900">{filteredBlogs.length}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Articles Published</p>
+                <p className="text-xl font-light text-white">{filteredBlogs.length}</p>
+                <p className="text-xs text-white/80">Articles</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters Section - Floating Style */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-        <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-6 md:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-blue-600" />
-              <Input
+      {/* Simple Filters */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-blue-100">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
+              <input
                 placeholder="Search articles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 bg-slate-50 border-none h-12 rounded-xl font-medium focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="w-full pl-10 pr-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
               />
             </div>
-            
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="h-12 bg-slate-50 border-none rounded-xl font-medium">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
 
-            <Button 
-              variant="ghost" 
-              onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }}
-              className="h-12 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-xl font-bold flex gap-2"
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
             >
-              <X size={16} /> Reset
-            </Button>
+              <option value="all">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
 
-            <div className="flex items-center gap-2 text-slate-400 text-sm">
-              <Filter size={16} />
+            <button
+              onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }}
+              className="w-full px-3 py-2 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg text-sm text-red-600 hover:text-red-700 hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+            >
+              <X size={14} />
+              Clear Filters
+            </button>
+
+            <div className="flex items-center justify-center gap-2 text-gray-600 text-sm font-medium">
               <span>{filteredBlogs.length} results</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Blogs Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Articles List */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
         {filteredBlogs.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ImageIcon size={32} className="text-slate-300" />
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText size={24} className="text-blue-600" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">No articles found</h3>
-            <p className="text-slate-500 font-medium">Try different keywords or categories.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No articles found</h3>
+            <p className="text-gray-700 text-sm font-medium">Try adjusting your search or filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="space-y-4">
             {filteredBlogs.map((blog) => (
-              <Card key={blog._id} className="group border py-0 border-gray-400 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 rounded-[2.5rem] overflow-hidden bg-white flex flex-col h-full">
-                {/* Image Header */}
-                <div className="relative h-48 w-full overflow-hidden">
-                  <img
-                    src={blog.image || `https://picsum.photos/seed/${blog.slug}/600/400`}
-                    alt={blog.title}
-                    width={600}
-                    height={400}
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-                  
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-white/90 backdrop-blur-md text-blue-700 hover:bg-white border-none px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-sm">
-                      {blog.category}
-                    </Badge>
+              <div
+                key={blog._id}
+                className="bg-white border border-blue-100 rounded-xl p-6 hover:shadow-md hover:border-blue-200 transition-all duration-300"
+              >
+                <div className="flex flex-col md:flex-row gap-6">
+                  {/* Article Image */}
+                  <div className="w-full md:w-48 h-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-xl overflow-hidden flex-shrink-0">
+                    <img
+                      src={blog.image || `https://picsum.photos/seed/${blog.slug}/300/200`}
+                      alt={blog.title}
+                      width={300}
+                      height={200}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="font-bold text-xl text-white line-clamp-2 leading-tight group-hover:text-blue-400 transition-colors">
-                      {blog.title}
-                    </h3>
-                  </div>
-                </div>
-                
-                <CardContent className="p-6 flex flex-col flex-grow">
-                  {/* Meta Info */}
-                  <div className="flex items-center justify-between text-sm text-slate-500 mb-4">
-                    <div className="flex items-center gap-2">
-                      <User size={14} />
-                      <span className="text-xs font-medium">{blog.author || 'Alpha World Team'}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar size={14} />
-                      <span className="text-xs font-medium">
-                        {blog.published_at ? new Date(blog.published_at).toLocaleDateString() : new Date(blog.createdAt).toLocaleDateString()}
+                  {/* Article Info */}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">{blog.title}</h3>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="inline-block px-2 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 text-xs font-medium rounded-lg border border-blue-200">
+                            {blog.category}
+                          </span>
+                          <div className="flex items-center text-blue-700 text-xs font-medium">
+                            <Calendar size={12} className="mr-1" />
+                            {blog.published_at ? new Date(blog.published_at).toLocaleDateString() : new Date(blog.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="inline-block px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-medium rounded-full">
+                        Published
                       </span>
                     </div>
-                  </div>
 
-                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">
-                    {blog.content}
-                  </p>
-                  
-                  {/* Tags */}
-                  {blog.tags && blog.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {blog.tags.slice(0, 3).map((tag, index) => (
-                        <span key={`${tag}-${index}`} className="text-[10px] font-black bg-slate-50 text-slate-600 px-3 py-1 rounded-lg border border-slate-100">
-                          #{tag}
-                        </span>
-                      ))}
+                    <p className="text-gray-700 text-sm line-clamp-2 mb-4 font-medium">
+                      {blog.content || 'Read this insightful article to learn more about educational opportunities and success strategies.'}
+                    </p>
+
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-700 mb-4">
+                      <div className="flex items-center gap-1 text-blue-700 font-medium">
+                        <User size={14} />
+                        <span>{blog.author || 'Education Team'}</span>
+                      </div>
+                      {blog.read_time && (
+                        <div className="flex items-center gap-1 text-green-700 font-medium">
+                          <Clock size={14} />
+                          <span>{blog.read_time} min read</span>
+                        </div>
+                      )}
+                      {blog.views && (
+                        <div className="flex items-center gap-1 text-purple-700 font-medium">
+                          <Eye size={14} />
+                          <span>{blog.views} views</span>
+                        </div>
+                      )}
                     </div>
-                  )}
 
-                 
-                  {/* Related Exams */}
-                  {blog.related_exams && blog.related_exams.length > 0 && (
-                    <div className="mb-6">
-                      <p className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Related Exams</p>
-                      <div className="flex flex-wrap gap-2">
-                        {blog.related_exams.slice(0, 2).map((exam, index) => (
-                          <span key={`${exam}-${index}`} className="text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-1 rounded-md">
-                            {exam}
+                    {/* Tags */}
+                    {blog.tags && blog.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {blog.tags.slice(0, 3).map((tag, index) => (
+                          <span key={`${tag}-${index}`} className="inline-block px-2 py-1 bg-gradient-to-r from-gray-50 to-slate-50 text-gray-700 text-xs font-medium rounded-lg border border-gray-200">
+                            #{tag}
                           </span>
                         ))}
-                        {blog.related_exams.length > 2 && (
-                          <span className="text-[10px] font-bold bg-slate-50 text-slate-500 px-2 py-1 rounded-md">
-                            +{blog.related_exams.length - 2}
+                        {blog.tags.length > 3 && (
+                          <span className="inline-block px-2 py-1 bg-gradient-to-r from-gray-50 to-slate-50 text-gray-600 text-xs font-medium rounded-lg border border-gray-200">
+                            +{blog.tags.length - 3} more
                           </span>
                         )}
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  <div className="mt-auto">
-                    <Link href={`/blogs/${blog.slug}`}>
-                      <Button className="w-full h-14 bg-slate-900 hover:bg-blue-600 text-white font-black rounded-2xl transition-all duration-300 group/btn flex items-center justify-center gap-2">
-                        Read Full Article
-                        <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                      </Button>
-                    </Link>
+                    <div className="flex items-center justify-between">
+                      <Link href={`/blogs/${blog.slug}`}>
+                        <button className="text-blue-700 hover:text-blue-800 font-semibold text-sm transition-colors flex items-center gap-1">
+                          Read Article
+                          <span className="text-blue-600">→</span>
+                        </button>
+                      </Link>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
+          </div>
+        )}
+
+        {/* End of results */}
+        {filteredBlogs.length > 0 && (
+          <div className="text-center py-8 border-t border-blue-100 mt-8">
+            <p className="text-gray-700 text-sm font-medium">
+              Showing all {filteredBlogs.length} articles
+            </p>
           </div>
         )}
       </div>

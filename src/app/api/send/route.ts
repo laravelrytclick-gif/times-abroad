@@ -5,26 +5,43 @@ import { NextResponse } from 'next/server';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
+  console.log('=== API /api/send called ===');
+  
   try {
     const body = await req.json();
+    console.log('Received request body:', body);
+    
     const { name, email, number, city } = body;
+    console.log('Extracted fields:', { name, email, number, city });
 
     // Validate required fields
     if (!name || !email || !number || !city) {
+      console.log('Validation failed - missing fields:', { 
+        hasName: !!name, 
+        hasEmail: !!email, 
+        hasNumber: !!number, 
+        hasCity: !!city 
+      });
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
       );
     }
+    
+    console.log('Validation passed - all fields present');
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.log('Email validation failed for:', email);
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
       );
     }
+    
+    console.log('Email validation passed');
+    console.log('Attempting to send email via Resend...');
 
     const data = await resend.emails.send({
       from: 'Alpha World Education <onboarding@resend.dev>', // Works with localhost for testing
@@ -68,10 +85,17 @@ export async function POST(req: Request) {
         </div>
       `,
     });
-
+    
+    console.log('Email sent successfully:', data);
+    console.log('=== API /api/send completed successfully ===');
     return NextResponse.json({ message: 'Email sent successfully', data });
   } catch (error) {
-    console.error('Resend error:', error);
+    console.error('=== API /api/send ERROR ===');
+    console.error('Error details:', error);
+    console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('=== END ERROR ===');
+    
     return NextResponse.json(
       { error: 'Failed to send email' },
       { status: 500 }

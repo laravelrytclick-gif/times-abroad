@@ -241,6 +241,24 @@ export default function BlogsPage() {
 
   const handleSaveBlog = async () => {
     try {
+      // Comprehensive validation - ALL fields are required
+      const validationErrors: string[] = []
+      
+      if (!formData.title?.trim()) validationErrors.push('Blog title is required')
+      if (!formData.slug?.trim()) validationErrors.push('Blog slug is required')
+      if (!formData.category?.trim()) validationErrors.push('Blog category is required')
+      if (!formData.tags?.length) validationErrors.push('At least one tag is required')
+      if (!formData.content?.trim()) validationErrors.push('Blog content is required')
+      if (!formData.image?.trim()) validationErrors.push('Blog image URL is required')
+      if (!formData.related_exams?.length) validationErrors.push('At least one related exam is required')
+      if (formData.is_active === undefined || formData.is_active === null) validationErrors.push('Blog status is required')
+      
+      if (validationErrors.length > 0) {
+        const errorMessage = `⚠️ Validation Error!\n\nPlease complete the following required fields before saving:\n\n${validationErrors.map((error, index) => `• ${error}`).join('\n')}\n\nPlease fill in all the missing information and try again.`
+        alert(errorMessage)
+        return
+      }
+      
       const payload = {
         ...formData,
         ...(editingBlog && { _id: editingBlog._id })

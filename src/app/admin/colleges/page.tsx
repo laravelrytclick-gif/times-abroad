@@ -524,50 +524,58 @@ export default function CollegesPage() {
       console.log('🚀 Starting college save process...')
       console.log('📝 Form data:', formData)
       
-      // Comprehensive validation
+      // Comprehensive validation - ALL fields are required
       const validationErrors: string[] = []
       
-      // Basic Info Validation
+      // Basic Info Validation - ALL REQUIRED
       if (!formData.name?.trim()) validationErrors.push('College name is required')
       if (!formData.slug?.trim()) validationErrors.push('College slug is required')
       if (!formData.college_type) validationErrors.push('College type is required')
       if (!formData.country_ref || formData.country_ref === 'select-country') validationErrors.push('Please select a valid country')
+      if (!formData.establishment_year?.trim()) validationErrors.push('Establishment year is required')
+      if (!formData.banner_url?.trim()) validationErrors.push('Banner URL is required')
+      if (!formData.exams?.length) validationErrors.push('At least one required exam is needed')
       
-      // Overview Validation
+      // Overview Validation - ALL REQUIRED
+      if (!formData.overview_title?.trim()) validationErrors.push('Overview title is required')
       if (!formData.overview_description?.trim()) validationErrors.push('Overview description is required')
       
-      // Key Highlights Validation
+      // Key Highlights Validation - ALL REQUIRED
+      if (!formData.key_highlights_title?.trim()) validationErrors.push('Key highlights title is required')
       if (!formData.key_highlights_description?.trim()) validationErrors.push('Key highlights description is required')
       if (!formData.key_highlights_features?.length) validationErrors.push('At least one key highlight feature is required')
       
-      // Why Choose Us Validation
+      // Why Choose Us Validation - ALL REQUIRED
+      if (!formData.why_choose_us_title?.trim()) validationErrors.push('Why choose us title is required')
       if (!formData.why_choose_us_description?.trim()) validationErrors.push('Why choose us description is required')
       if (!formData.why_choose_us_features?.length) validationErrors.push('At least one why choose us feature is required')
       
-      // Ranking Validation
+      // Ranking Validation - ALL REQUIRED
+      if (!formData.ranking_title?.trim()) validationErrors.push('Ranking title is required')
       if (!formData.ranking_description?.trim()) validationErrors.push('Ranking description is required')
-      if (!formData.country_ranking?.trim() && !formData.world_ranking?.trim()) {
-        validationErrors.push('At least country ranking or world ranking is required')
-      }
+      if (!formData.country_ranking?.trim()) validationErrors.push('Country ranking is required')
+      if (!formData.world_ranking?.trim()) validationErrors.push('World ranking is required')
+      if (!formData.accreditation?.length) validationErrors.push('At least one accreditation is required')
       
-      // Admission Process Validation
+      // Admission Process Validation - ALL REQUIRED
+      if (!formData.admission_process_title?.trim()) validationErrors.push('Admission process title is required')
       if (!formData.admission_process_description?.trim()) validationErrors.push('Admission process description is required')
       if (!formData.admission_process_steps?.length) validationErrors.push('At least one admission step is required')
       
-      // Documents Required Validation
+      // Documents Required Validation - ALL REQUIRED
+      if (!formData.documents_required_title?.trim()) validationErrors.push('Documents required title is required')
       if (!formData.documents_required_description?.trim()) validationErrors.push('Documents required description is required')
       if (!formData.documents_required_documents?.length) validationErrors.push('At least one required document is needed')
       
-      // Fees Structure Validation
+      // Fees Structure Validation - ALL REQUIRED
+      if (!formData.fees_structure_title?.trim()) validationErrors.push('Fees structure title is required')
       if (!formData.fees_structure_description?.trim()) validationErrors.push('Fees structure description is required')
       if (!formData.fees_structure_courses?.length) validationErrors.push('At least one course with fees is required')
       
-      // Campus Highlights Validation
+      // Campus Highlights Validation - ALL REQUIRED
+      if (!formData.campus_highlights_title?.trim()) validationErrors.push('Campus highlights title is required')
       if (!formData.campus_highlights_description?.trim()) validationErrors.push('Campus highlights description is required')
       if (!formData.campus_highlights_highlights?.length) validationErrors.push('At least one campus highlight is required')
-      
-      // Exams Validation
-      if (!formData.exams?.length) validationErrors.push('At least one required exam is needed')
       
       // Banner URL Validation (optional but if provided, should be valid)
       if (formData.banner_url?.trim()) {
@@ -579,7 +587,8 @@ export default function CollegesPage() {
       }
       
       if (validationErrors.length > 0) {
-        alert(`Validation Error!\n\nPlease complete the following required fields:\n\n${validationErrors.map((error, index) => `${index + 1}. ${error}`).join('\n')}`)
+        const errorMessage = `⚠️ Validation Error!\n\nPlease complete the following required fields before saving:\n\n${validationErrors.map((error, index) => `• ${error}`).join('\n')}\n\nPlease fill in all the missing information and try again.`
+        alert(errorMessage)
         return
       }
 
@@ -762,14 +771,20 @@ export default function CollegesPage() {
               _id: (c as any)._id || (c as any).id || `country-${index}` 
             }))}
             onChange={(field: string, value: any) => {
-              setFormData(prev => ({ 
-                ...prev, 
-                [field]: value,
-                // Auto-generate slug when name changes and slug is empty or being edited for the first time
-                ...(field === 'name' && (!prev.slug || prev.slug === generateSlug(prev.name)) ? {
-                  slug: generateSlug(value as string)
-                } : {})
-              }))
+              console.log('🔍 [ADMIN] Form field changed:', field, '=', value);
+              console.log('🔍 [ADMIN] Current formData before change:', formData);
+              setFormData(prev => {
+                const newData = { 
+                  ...prev, 
+                  [field]: value,
+                  // Auto-generate slug when name changes and slug is empty or being edited for the first time
+                  ...(field === 'name' && (!prev.slug || prev.slug === generateSlug(prev.name)) ? {
+                    slug: generateSlug(value as string)
+                  } : {})
+                };
+                console.log('🔍 [ADMIN] New formData after change:', newData);
+                return newData;
+              });
             }}
             loading={saveCollegeMutation.isPending}
           />

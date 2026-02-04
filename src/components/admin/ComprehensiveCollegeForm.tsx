@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Plus, X, GraduationCap, Globe, Award, FileText, Users, Building, DollarSign, Calendar, CheckCircle } from 'lucide-react'
+import { Plus, X, GraduationCap, Globe, Award, FileText, Users, Building, DollarSign, Calendar, CheckCircle, Asterisk } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface Country {
@@ -88,6 +88,14 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
   const [newCampusHighlight, setNewCampusHighlight] = useState('')
   const [newCourse, setNewCourse] = useState({ course_name: '', duration: '', annual_tuition_fee: '' })
 
+  // Required field indicator component
+  const RequiredField = ({ label }: { label: string }) => (
+    <div className="flex items-center gap-1">
+      <span>{label}</span>
+      <Asterisk className="h-3 w-3 text-red-500" />
+    </div>
+  )
+
   const removeCourse = (index: number, array: any[], fieldName: string) => {
     onChange(fieldName, array.filter((_, i) => i !== index))
   }
@@ -148,7 +156,9 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="name" className="mb-3 block">College Name *</Label>
+                  <Label htmlFor="name" className="mb-3 block">
+                    <RequiredField label="College Name" />
+                  </Label>
                   <Input
                     id="name"
                     value={data.name || ''}
@@ -159,7 +169,9 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
                   />
                 </div>
                 <div>
-                  <Label htmlFor="slug" className="mb-3 block">Slug *</Label>
+                  <Label htmlFor="slug" className="mb-3 block">
+                    <RequiredField label="Slug" />
+                  </Label>
                   <Input
                     id="slug"
                     value={data.slug || ''}
@@ -172,8 +184,14 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
               </div>
 
               <div>
-                <Label htmlFor="college_type" className="mb-3 block">College Type *</Label>
-                <Select value={data.college_type || 'study_abroad'} onValueChange={(value) => onChange('college_type', value)}>
+                <Label htmlFor="college_type" className="mb-3 block">
+                  <RequiredField label="College Type" />
+                </Label>
+                <Select value={data.college_type || 'study_abroad'} onValueChange={(value) => {
+                  console.log('🔍 [FORM] College type changed:', value);
+                  console.log('🔍 [FORM] Previous college_type:', data.college_type);
+                  onChange('college_type', value);
+                }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select college type" />
                   </SelectTrigger>
@@ -185,7 +203,9 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
               </div>
 
               <div>
-                <Label htmlFor="country" className="mb-3 block">Country *</Label>
+                <Label htmlFor="country" className="mb-3 block">
+                  <RequiredField label="Country" />
+                </Label>
                 <Select value={data.country_ref || ''} onValueChange={(value) => onChange('country_ref', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a country" />
@@ -201,24 +221,30 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
               </div>
 
               <div>
-                <Label htmlFor="banner_url" className="mb-3 block">Banner URL</Label>
+                <Label htmlFor="banner_url" className="mb-3 block">
+                  <RequiredField label="Banner URL" />
+                </Label>
                 <Input
                   id="banner_url"
                   value={data.banner_url || ''}
                   onChange={(e) => onChange('banner_url', e.target.value)}
                   placeholder="https://example.com/banner.jpg"
                   disabled={loading}
+                  required
                 />
               </div>
 
               <div>
-                <Label htmlFor="establishment_year" className="mb-3 block">Establishment Year</Label>
+                <Label htmlFor="establishment_year" className="mb-3 block">
+                  <RequiredField label="Establishment Year" />
+                </Label>
                 <Input
                   id="establishment_year"
                   value={data.establishment_year || ''}
                   onChange={(e) => onChange('establishment_year', e.target.value)}
                   placeholder="e.g., 1850"
                   disabled={loading}
+                  required
                 />
               </div>
 
@@ -267,17 +293,22 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <Label htmlFor="overview_title" className="mb-3 block">Overview Title</Label>
+                <Label htmlFor="overview_title" className="mb-3 block">
+                  <RequiredField label="Overview Title" />
+                </Label>
                 <Input
                   id="overview_title"
                   value={data.overview_title || 'Overview'}
                   onChange={(e) => onChange('overview_title', e.target.value)}
                   placeholder="Overview"
                   disabled={loading}
+                  required
                 />
               </div>
               <div>
-                <Label htmlFor="overview_description" className="mb-3 block">Overview Description *</Label>
+                <Label htmlFor="overview_description" className="mb-3 block">
+                  <RequiredField label="Overview Description" />
+                </Label>
                 <Textarea
                   id="overview_description"
                   value={data.overview_description || ''}

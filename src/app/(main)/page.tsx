@@ -21,16 +21,16 @@ const page = () => {
     <div className="w-full bg-white text-black overflow-x-hidden">
       <Hero />
       <FeaturedSection />
-      <StudyPrograms />
-      <EducationStats />
       <PopularCountries />
+      <StudyPrograms />
+      {/* <InfiniteMovingCardsDemo /> */}
+      <EducationStats />
       <LatestBlogs />
       <Services />
       <AlphaWorldAdvantage />
       <ProcessJourney />
       <StudentTestimonials />
       <FAQ />
-      <InfiniteMovingCardsDemo />
       <CtaSection />
     </div>
   );

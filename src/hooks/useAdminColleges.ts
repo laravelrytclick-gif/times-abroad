@@ -6,7 +6,6 @@ export interface AdminCollege {
   _id: string
   name: string
   slug: string
-  college_type: 'study_abroad' | 'mbbs_abroad'
   country_ref: any
   exams: string[]
   fees?: number
@@ -112,18 +111,12 @@ const saveCollege = async (data: Partial<AdminCollege> & { _id?: string }): Prom
   const url = isEditing ? `/api/admin/colleges/${data._id}` : '/api/admin/colleges'
   const method = isEditing ? 'PUT' : 'POST'
   
-  // Ensure college_type is always included with a default value
-  const collegeData = {
-    ...data,
-    college_type: data.college_type || 'study_abroad'
-  }
-  
   const response = await fetch(url, {
     method,
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(collegeData)
+    body: JSON.stringify(data)
   })
   
   if (!response.ok) {

@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { 
   MapPin, Trophy, DollarSign, Calendar, ArrowUpRight, 
   FileText, Award, Clock, CheckCircle, Building2, User, MessageCircle, Eye,
-  Globe, GraduationCap, Zap, Compass
+  Globe, GraduationCap, Zap, Compass,
+  ArrowRight,
+  Star
 } from 'lucide-react';
 
 // --- Interfaces ---
@@ -60,51 +62,89 @@ interface CountryCardProps {
 
 const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about }: UniversityCardProps) => (
   <Link href={`/colleges/${slug}`} className="group block h-full">
-    <div className="relative h-full bg-white rounded-xl border-2 border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(22,163,74,0.12)] hover:border-green-400 transition-all duration-500 overflow-hidden flex flex-col hover:-translate-y-1">
-      <div className="relative h-40 w-full overflow-hidden">
-        <img src={image || "/next.svg"} alt={name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+    <div className="relative h-full bg-white rounded-xl border-2 border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(59,130,246,0.12)] hover:border-blue-400 transition-all duration-500 flex flex-col overflow-hidden hover:-translate-y-1">
+      
+      {/* Decorative Background Pattern */}
+      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/30 rounded-bl-full -mr-12 -mt-12 group-hover:bg-blue-100/50 transition-colors duration-500" />
+
+      {/* Header Section */}
+      <div className="relative h-48 overflow-hidden">
+        <img 
+          src={image || "/next.svg"} 
+          alt={name} 
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+        
+        {/* Floating Icon */}
+        <div className="absolute top-4 right-4 bg-white rounded-xl p-3 shadow-lg group-hover:scale-110 transition-transform">
+          <GraduationCap size={20} className="text-blue-600" />
+        </div>
+
+        {/* Ranking Badge */}
         {ranking && (
-          <div className="absolute top-3 right-3 backdrop-blur-md bg-white/70 border border-white/50 text-slate-800 px-2 py-1 rounded-xl flex items-center gap-1.5 shadow-sm">
-            <Trophy size={12} className="text-orange-500" />
-            <span className="text-[10px] font-bold">Rank #{ranking}</span>
+          <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg flex items-center gap-2 shadow-lg">
+            <Trophy size={14} className="text-amber-500" />
+            <span className="text-xs font-bold text-slate-700">{ranking}</span>
           </div>
         )}
+
+        {/* College Name Overlay */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <h3 className="text-xl font-black text-white mb-1 leading-tight line-clamp-1">
+            {name}
+          </h3>
+          <div className="flex items-center gap-2">
+            <span className="inline-block px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg">
+              University
+            </span>
+            <span className="text-white/80 text-sm">
+              {location}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="mb-3">
-          <h3 className="text-lg font-black text-slate-900 mb-1 leading-tight group-hover:text-green-600 transition-colors uppercase">{name}</h3>
-          <div className="flex items-center gap-1.5 text-slate-500 text-xs font-bold">
-            <MapPin size={12} className="text-green-500" />
-            <span>{location}, {country}</span>
+      <div className="p-6 flex-grow">
+        <p className="text-slate-600 text-sm leading-relaxed line-clamp-2 mb-4">
+          {about || 'Quality education with excellent facilities and experienced faculty.'}
+        </p>
+
+        {/* Key Features Grid */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="bg-blue-50 p-3 rounded-lg text-center">
+            <DollarSign size={16} className="text-blue-600 mx-auto mb-1" />
+            <p className="text-xs font-bold text-slate-700">${fees?.toLocaleString()}/yr</p>
+            <p className="text-[9px] text-slate-500">Tuition</p>
+          </div>
+          <div className="bg-green-50 p-3 rounded-lg text-center">
+            <Clock size={16} className="text-green-600 mx-auto mb-1" />
+            <p className="text-xs font-bold text-slate-700">{duration} Years</p>
+            <p className="text-[9px] text-slate-500">Duration</p>
           </div>
         </div>
 
-        {about && <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-3 border-l-2 border-green-100 pl-2 italic">{about}</p>}
-
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-slate-50 p-2 rounded-lg border border-slate-100/50">
-            <p className="text-[9px] text-slate-400 uppercase font-black mb-1">Annual Fee</p>
-            <div className="flex items-center gap-1 text-slate-900 font-bold text-xs">
-              <DollarSign size={12} className="text-green-600" />
-              <span>${fees?.toLocaleString()}</span>
-            </div>
+        {/* Quick Info */}
+        <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
+          <div className="flex items-center gap-1">
+            <MapPin size={12} className="text-blue-500" />
+            <span>{location}</span>
           </div>
-          <div className="bg-slate-50 p-2 rounded-lg border border-slate-100/50">
-            <p className="text-[9px] text-slate-400 uppercase font-black mb-1">Duration</p>
-            <div className="flex items-center gap-1 text-slate-900 font-bold text-xs">
-              <Calendar size={12} className="text-green-600" />
-              <span>{duration}</span>
-            </div>
+          <div className="flex items-center gap-1">
+            <Calendar size={12} className="text-green-500" />
+            <span>{establishment_year || 'N/A'}</span>
           </div>
         </div>
+      </div>
 
-        <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
-          <div className="flex items-center gap-1 text-slate-400 text-[9px] font-black tracking-widest uppercase">
-            <Building2 size={10} /> EST. {establishment_year}
-          </div>
-          <div className="flex items-center gap-1 text-green-600 text-[10px] font-black group/btn">
-            VIEW DETAILS <ArrowUpRight size={12} className="transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+      {/* Footer CTA */}
+      <div className="px-6 pb-6 pt-4 border-t border-slate-50">
+        <div className="flex items-center justify-between">
+          <span className="text-[9px] font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-wider">
+            View Details
+          </span>
+          <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center group-hover:bg-blue-600 transition-colors shadow-md">
+            <ArrowUpRight size={14} />
           </div>
         </div>
       </div>

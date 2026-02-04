@@ -18,9 +18,9 @@ export default function ComprehensiveServices() {
         <div className="absolute bottom-20 left-10 w-64 h-64 sm:w-96 sm:h-96 bg-blue-200 rounded-full blur-[80px] sm:blur-[100px] opacity-25" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="mx-auto flex items-center justify-center flex-col max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="mb-8 sm:mb-12 lg:mb-16 text-center">
+        <div className="mb-8 sm:mb-12 lg:mb-16 text-left max-w-4xl">
           <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold mb-6 sm:mb-8">
             <span>🎯</span>
             Complete Solution
@@ -30,13 +30,13 @@ export default function ComprehensiveServices() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-700">Comprehensive</span> Services
           </h2>
 
-          <p className="mt-4 sm:mt-6 max-w-3xl text-lg sm:text-xl text-slate-600 mx-auto leading-relaxed mb-6 sm:mb-8 px-4">
+          <p className="mt-4 sm:mt-6 max-w-3xl text-lg sm:text-xl text-slate-600 leading-relaxed mb-6 sm:mb-8">
             From application to arrival, we handle <strong className="text-blue-600">every aspect</strong> of your international education journey.
             Our end-to-end services ensure nothing falls through the cracks.
           </p>
 
           {/* Service highlights */}
-          <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
             <div className="flex items-center gap-2 text-slate-600">
               <span className="text-blue-500">✓</span>
               <span className="font-semibold text-sm sm:text-base">University Selection</span>
@@ -55,7 +55,7 @@ export default function ComprehensiveServices() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
             <Link
               href="/service"
               className="inline-flex items-center gap-2 sm:gap-3 bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"

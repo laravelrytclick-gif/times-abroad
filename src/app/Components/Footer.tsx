@@ -18,7 +18,7 @@ import { useFormModal } from '@/context/FormModalContext';
 const Footer = () => {
   const { emails, phones, socials, address } = useContactInfo();
   const { openModal } = useFormModal();
-  
+
   return (
     <footer className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 pt-24 pb-12 px-6 border-t border-blue-700 relative overflow-hidden">
       {/* Background Elements */}
@@ -29,7 +29,7 @@ const Footer = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Newsletter CTA Section */}
-       
+
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-12 sm:mb-16">
 
@@ -47,10 +47,10 @@ const Footer = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
-                  AlphaWorld
+                  Education Times
                 </span>
                 <span className="text-sm sm:text-base text-gray-300">
-                  Education
+                  Abroad
                 </span>
               </div>
             </div>
@@ -58,7 +58,7 @@ const Footer = () => {
               {SITE_IDENTITY.description}
             </p>
             <div className="flex gap-3 sm:gap-4 text-gray-400">
-              <a 
+              <a
                 href={socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -66,13 +66,13 @@ const Footer = () => {
               >
                 <Globe className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a 
+              <a
                 href={createMailtoLink(emails.info)}
                 className="hover:text-blue-400 hover:scale-110 transition-all duration-200"
               >
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a 
+              <a
                 href={createTelLink(phones.primary)}
                 className="hover:text-blue-400 hover:scale-110 transition-all duration-200"
               >
@@ -135,7 +135,7 @@ const Footer = () => {
             <p className="text-gray-300 text-[15px] mb-6">
               Subscribe to our newsletter for scholarship updates and exclusive insights.
             </p>
-            
+
             {/* Book Consultancy Button */}
             <button
               onClick={openModal}
@@ -154,21 +154,21 @@ const Footer = () => {
               <p className="text-gray-300 text-xs sm:text-sm mb-2 font-medium">© {SITE_IDENTITY.business.established} {SITE_IDENTITY.name}. All rights reserved.</p>
               <p className="text-gray-400 text-xs">{SITE_IDENTITY.tagline}</p>
             </div>
-<div className="mt-8 text-center max-w-4xl mx-auto">
-  <p className="text-gray-400 text-xs leading-relaxed">
-    Disclaimer: Alpha World Education provides guidance and counseling services
-    based on experience and available information. We do not guarantee admission,
-    visa approval, or outcomes, as final decisions are made by respective
-    institutions and authorities.
-  </p>
-</div>
+            <div className="mt-8 text-center max-w-4xl mx-auto">
+              <p className="text-gray-400 text-xs leading-relaxed">
+                Disclaimer: Alpha World Education provides guidance and counseling services
+                based on experience and available information. We do not guarantee admission,
+                visa approval, or outcomes, as final decisions are made by respective
+                institutions and authorities.
+              </p>
+            </div>
 
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm">
               <Link href="/privacy" className="text-gray-400 hover:text-blue-400 hover:scale-105 transition-all duration-200">Privacy Policy</Link>
               <Link href="/term" className="text-gray-400 hover:text-blue-400 hover:scale-105 transition-all duration-200">Terms of Service</Link>
               <Link href="#" className="text-gray-400 hover:text-blue-400 hover:scale-105 transition-all duration-200">Cookie Policy</Link>
               <Link href="/contact" className="text-gray-400 hover:text-blue-400 hover:scale-105 transition-all duration-200">Contact Us</Link>
-            
+
             </div>
 
             {/* Social Proof */}

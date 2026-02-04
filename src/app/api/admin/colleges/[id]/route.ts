@@ -51,6 +51,7 @@ export async function PUT(
     const { 
       name, 
       slug, 
+      college_type,
       country_ref, 
       exams,
       // New comprehensive sections
@@ -71,6 +72,24 @@ export async function PUT(
       about_content, 
       is_active 
     } = body;
+    
+    console.log('🔍 [PUT API] Extracted fields:', {
+      name,
+      slug,
+      college_type,
+      college_type_type: typeof college_type,
+      college_type_valid: ['study_abroad', 'mbbs_abroad'].includes(college_type),
+      country_ref,
+      overview,
+      key_highlights,
+      why_choose_us,
+      ranking,
+      admission_process,
+      documents_required,
+      fees_structure,
+      campus_highlights,
+      is_active
+    });
 
     const college = await College.findById(id);
     if (!college) {
@@ -118,6 +137,10 @@ export async function PUT(
     // Basic fields
     if (name !== undefined) updateData.name = name;
     if (slug !== undefined) updateData.slug = slug;
+    if (college_type !== undefined) {
+      console.log('🔍 [PUT API] Updating college_type to:', college_type);
+      updateData.college_type = college_type;
+    }
     if (countryObjectId !== undefined) updateData.country_ref = countryObjectId;
     if (exams !== undefined) updateData.exams = exams;
     
@@ -139,11 +162,14 @@ export async function PUT(
     if (about_content !== undefined) updateData.about_content = about_content;
     if (is_active !== undefined) updateData.is_active = is_active;
 
+    console.log('🔍 [PUT API] Update data being sent:', updateData);
     const updatedCollege = await College.findByIdAndUpdate(
       id,
       updateData,
       { new: true, runValidators: true }
     );
+    console.log('✅ [PUT API] College updated successfully:', updatedCollege);
+    console.log('🔍 [PUT API] Updated college_type:', updatedCollege.college_type);
 
     return NextResponse.json({
       success: true,

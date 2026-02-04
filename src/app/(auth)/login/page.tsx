@@ -89,7 +89,7 @@ export default function LoginPage() {
                     type="text"
                     required
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 transition-all bg-slate-50/50"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all bg-slate-50/50"
                     placeholder="Enter your username"
                   />
                 </div>
@@ -109,7 +109,7 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     required
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-12 py-3 border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 transition-all bg-slate-50/50"
+                    className="block w-full pl-10 pr-12 py-3 border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all bg-slate-50/50"
                     placeholder="Enter your password"
                   />
                   <button
@@ -131,7 +131,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center items-center gap-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 px-4 py-4 text-sm font-black text-white hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500/20 disabled:from-slate-400 disabled:to-slate-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="group relative w-full flex justify-center items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-4 text-sm font-black text-white hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:from-slate-400 disabled:to-slate-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {loading ? (
                 <>

@@ -80,9 +80,9 @@ export const SITE_IDENTITY: SiteIdentity = {
       additional: ["+91-9810718430", "+91-9310134887"]
     },
     email: {
-      support: "Info@alphaworldeducation.com",
-      admissions: "Contact@alphaworldeducation.com",
-      general: "Info@alphaworldeducation.com",
+      support: "support@educationtimesabroad.com",
+admissions: "admissions@educationtimesabroad.com",
+general: "info@educationtimesabroad.com",
     },
     address: {
       office: "Third Floor, US Complex Jasola Opp Apollo Hospital , New Delhi, Delhi, India - 110076",

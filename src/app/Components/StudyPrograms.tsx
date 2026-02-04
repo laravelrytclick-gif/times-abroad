@@ -1,35 +1,35 @@
 "use client"
 import React from 'react';
-import { BookOpen, Target, BrainCircuit, Lightbulb, Award, Globe, ArrowRight } from 'lucide-react';
+import { BookOpen, Target, BrainCircuit, Lightbulb, Award, Globe, ArrowRight, GraduationCap, ShieldCheck, Users, Stethoscope } from 'lucide-react';
 
 export default function StudyPrograms() {
   const programs = [
     {
-      icon: Globe,
-      title: "Foundation Programs",
-      description: "Preparatory courses for international students to meet university requirements",
-      features: ["Pathway Programs", "University Prep", "English Foundation", "Academic Skills"],
+      icon: GraduationCap,
+      title: "MBBS Abroad",
+      description: "Complete medical education in NMC approved universities with zero donation",
+      features: ["NMC Approved", "Zero Donation", "Indian Food", "Hostel Facility"],
       color: "blue"
     },
     {
-      icon: Target,
-      title: "Degree Programs Abroad", 
-      description: "Complete bachelor's and master's degrees in foreign universities",
-      features: ["Full Degrees", "Transfer Programs", "Joint Degrees", "Exchange Programs"],
-      color: "blue"
+      icon: ShieldCheck,
+      title: "Pre-Medical Foundation", 
+      description: "Foundation programs to prepare for MBBS admissions abroad",
+      features: ["Biology Focus", "Chemistry Prep", "Physics Basics", "English Support"],
+      color: "green"
     },
     {
-      icon: BrainCircuit,
-      title: "Professional Certifications",
-      description: "International certifications and professional courses abroad",
-      features: ["Professional Diplomas", "Industry Certifications", "Technical Training", "Executive Programs"],
+      icon: Users,
+      title: "Medical Counseling",
+      description: "Expert guidance for choosing the right medical university",
+      features: ["Career Guidance", "University Selection", "Visa Support", "Admission Help"],
       color: "purple"
     },
     {
-      icon: BookOpen,
-      title: "Research Programs",
-      description: "Research opportunities and PhD programs at international institutions",
-      features: ["PhD Programs", "Research Assistantships", "Post-Doc Research", "Academic Research"],
+      icon: Stethoscope,
+      title: "Post-MBBS Support",
+      description: "Complete support after MBBS for licensing and career",
+      features: ["FMGE Prep", "Internship Help", "Career Guidance", "Job Placement"],
       color: "orange"
     }
   ];
@@ -43,10 +43,10 @@ export default function StudyPrograms() {
         border: "border-blue-200"
       },
       green: {
-        bg: "bg-blue-50", 
-        iconBg: "bg-blue-500",
-        text: "text-blue-600",
-        border: "border-blue-200"
+        bg: "bg-green-50", 
+        iconBg: "bg-green-500",
+        text: "text-green-600",
+        border: "border-green-200"
       },
       purple: {
         bg: "bg-purple-50",
@@ -61,7 +61,7 @@ export default function StudyPrograms() {
         border: "border-orange-200"
       }
     };
-    return colorMap[color as keyof typeof colorMap] || colorMap.green;
+    return colorMap[color as keyof typeof colorMap] || colorMap.blue;
   };
 
   return (
@@ -70,14 +70,14 @@ export default function StudyPrograms() {
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold mb-4 sm:mb-6">
-            <span>�</span>
-            Study Abroad Programs
+            <span>🏥</span>
+            MBBS Programs Abroad
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-4 sm:mb-6">
-            STUDY <span className="text-blue-600">ABROAD</span>
+            STUDY <span className="text-blue-600">MBBS</span> ABROAD
           </h2>
           <p className="text-slate-500 font-semibold text-base sm:text-lg max-w-3xl mx-auto px-4">
-            Comprehensive study abroad programs designed for international students seeking global education opportunities.
+            Complete MBBS education programs designed for Indian students seeking quality medical education abroad with NMC approved universities.
           </p>
         </div>
 
@@ -118,7 +118,7 @@ export default function StudyPrograms() {
         {/* CTA Section */}
         <div className="text-center">
           <div className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:shadow-lg transition-all transform hover:scale-105">
-            <span className="text-sm sm:text-base">Explore Study Abroad Programs</span>
+            <span className="text-sm sm:text-base">Explore MBBS Programs</span>
             <ArrowRight size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
