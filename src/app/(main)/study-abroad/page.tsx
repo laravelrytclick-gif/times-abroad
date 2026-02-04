@@ -42,12 +42,44 @@ export default function StudyAbroadPage() {
   const fetchStudyAbroadColleges = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/colleges?college_type=study_abroad&limit=20')
-      const result = await response.json()
-
-      if (result.success) {
-        setColleges(result.data.colleges)
+      console.log('🔍 [Study Abroad Page] Fetching colleges...')
+      
+      // First try to fetch with college_type filter
+      let response = await fetch('/api/colleges?college_type=study_abroad&limit=100')
+      let result = await response.json()
+      
+      console.log('🔍 [Study Abroad Page] API response with college_type filter:', result)
+      
+      let studyAbroadColleges = []
+      
+      if (result.success && result.data.colleges.length > 0) {
+        studyAbroadColleges = result.data.colleges
+        console.log('🔍 [Study Abroad Page] Found colleges with college_type:', studyAbroadColleges.length)
+      } else {
+        // Fallback: fetch all colleges and filter manually
+        console.log('🔍 [Study Abroad Page] No colleges with college_type, fetching all colleges...')
+        response = await fetch('/api/colleges?limit=100')
+        result = await response.json()
+        
+        if (result.success) {
+          const allColleges = result.data.colleges
+          console.log('🔍 [Study Abroad Page] Total colleges fetched:', allColleges.length)
+          
+          // Filter out MBBS colleges (keep everything else as study abroad)
+          const mbbsColleges = allColleges.filter((college: any) => 
+            college.slug?.toLowerCase().includes('mbbs') || 
+            college.name?.toLowerCase().includes('medical') ||
+            college.name?.toLowerCase().includes('mbbs') ||
+            college.college_type === 'mbbs_abroad'
+          )
+          
+          studyAbroadColleges = allColleges.filter((college: any) => !mbbsColleges.includes(college))
+          console.log('🔍 [Study Abroad Page] MBBS colleges excluded:', mbbsColleges.length)
+          console.log('🔍 [Study Abroad Page] Study abroad colleges after filtering:', studyAbroadColleges.length)
+        }
       }
+      
+      setColleges(studyAbroadColleges)
     } catch (error) {
       console.error('Error fetching study abroad colleges:', error)
     } finally {

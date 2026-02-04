@@ -30,15 +30,23 @@ interface DropdownData {
 }
 
 const fetchColleges = async (): Promise<College[]> => {
-  const response = await fetch('/api/colleges?limit=50') // Fetch more colleges to get both types
+  console.log('🔍 [Dropdown] Fetching colleges from API...')
+  const response = await fetch('/api/colleges?limit=100') // Fetch even more colleges
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
   const result = await response.json()
+  console.log('🔍 [Dropdown] API response:', result)
   if (!result.success) {
     throw new Error(result.message || 'Failed to fetch colleges')
   }
-  return result.data.colleges || []
+  const colleges = result.data.colleges || []
+  console.log('🔍 [Dropdown] Colleges fetched:', colleges.length)
+  console.log('🔍 [Dropdown] Colleges with college_type:', colleges.filter((c: any) => c.college_type).length)
+  console.log('🔍 [Dropdown] Study abroad colleges:', colleges.filter((c: any) => c.college_type === 'study_abroad').length)
+  console.log('🔍 [Dropdown] MBBS abroad colleges:', colleges.filter((c: any) => c.college_type === 'mbbs_abroad').length)
+  console.log('🔍 [Dropdown] Sample college data:', colleges[0])
+  return colleges
 }
 
 const fetchExams = async (): Promise<Exam[]> => {

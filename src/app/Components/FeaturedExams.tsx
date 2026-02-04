@@ -12,7 +12,7 @@ import {
 interface UniversityCardProps {
   name: string; image: string; location: string; ranking?: string;
   fees?: number; duration?: string; establishment_year?: string;
-  slug: string; country?: string; about?: string;
+  slug: string; country?: string; about?: string; college_type?: string;
 }
 
 interface ExamCardProps {
@@ -23,7 +23,7 @@ interface ExamCardProps {
 
 // --- Component 1: Premium University Card ---
 
-const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about }: UniversityCardProps) => (
+const UniversityCard = ({ name, image, location, college_type ,  ranking, fees, duration, establishment_year, slug, country, about }: UniversityCardProps) => (
   <Link href={`/colleges/${slug}`} className="group block h-full">
     <div className="relative h-full bg-white rounded-3xl border border-slate-200 hover:border-blue-500/50 shadow-sm hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] transition-all duration-500 overflow-hidden flex flex-col hover:-translate-y-2">
       
@@ -89,7 +89,7 @@ const UniversityCard = ({ name, image, location, ranking, fees, duration, establ
         <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-blue-600">
             <GraduationCap size={16} />
-            <span className="text-[10px] font-black uppercase tracking-wider">MBBS Program</span>
+            <span className="text-[10px] font-black uppercase tracking-wider">{college_type}</span>
           </div>
           <div className="flex items-center gap-1 text-slate-900 text-xs font-bold group-hover:translate-x-1 transition-transform">
             DETAILS <ArrowUpRight size={14} className="text-blue-600" />

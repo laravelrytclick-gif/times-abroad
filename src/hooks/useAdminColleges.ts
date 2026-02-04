@@ -6,6 +6,7 @@ export interface AdminCollege {
   _id: string
   name: string
   slug: string
+  college_type?: 'study_abroad' | 'mbbs_abroad'
   country_ref: any
   exams: string[]
   fees?: number
