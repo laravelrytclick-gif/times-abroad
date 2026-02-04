@@ -153,14 +153,11 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
         { id: 'key-highlights', color: 'bg-yellow-50' },
         { id: 'why-choose', color: 'bg-indigo-50' },
         { id: 'ranking', color: 'bg-blue-50' },
-        { id: 'course-highlights', color: 'bg-purple-50' },
         { id: 'admission-process', color: 'bg-slate-50' },
         { id: 'entrance-exams', color: 'bg-orange-50' },
         { id: 'documents-required', color: 'bg-red-50' },
         { id: 'fees-structure', color: 'bg-green-50' },
-        { id: 'fees-compare', color: 'bg-teal-50' },
         { id: 'campus-highlights', color: 'bg-cyan-50' },
-        { id: 'students-life', color: 'bg-pink-50' }
       ];
 
       const scrollPosition = window.scrollY + 100;
@@ -197,7 +194,7 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-green-100 border-t-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-green-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading College...</p>
         </div>
       </div>

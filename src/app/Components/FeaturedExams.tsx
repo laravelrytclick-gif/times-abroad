@@ -182,6 +182,9 @@ export default function FeaturedSection() {
             <button onClick={() => setUCount(prev => prev + 3)} className="bg-slate-900 text-white px-10 py-4 rounded-full font-bold hover:bg-blue-600 transition-all shadow-xl shadow-slate-200">
               Show More Colleges
             </button>
+            <Link href="/colleges"  className="bg-slate-900 ml-3 text-white px-10 py-4 rounded-full font-bold hover:bg-blue-600 transition-all shadow-xl shadow-slate-200">
+              All colleges
+            </Link>
           </div>
         )}
       </section>
@@ -248,7 +251,8 @@ const useFeaturedData = () => {
       establishment_year: college.establishment_year,
       slug: college.slug,
       country: college.country_ref?.name,
-      about: college.about_content
+      about: college.about_content,
+      college_type: college.college_type || 'University'
     }));
   }, [collegesData]);
 

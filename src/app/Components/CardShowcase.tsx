@@ -23,6 +23,7 @@ interface UniversityCardProps {
   country?: string;
   about?: string;
   exams?: string[];
+  college_type?: string;
 }
 
 interface ExamCardProps {
@@ -60,7 +61,7 @@ interface CountryCardProps {
 
 // --- University Card Component ---
 
-const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about }: UniversityCardProps) => (
+const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about, college_type }: UniversityCardProps) => (
   <Link href={`/colleges/${slug}`} className="group block h-full">
     <div className="relative h-full bg-white rounded-xl border-2 border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(59,130,246,0.12)] hover:border-blue-400 transition-all duration-500 flex flex-col overflow-hidden hover:-translate-y-1">
       
@@ -96,7 +97,7 @@ const UniversityCard = ({ name, image, location, ranking, fees, duration, establ
           </h3>
           <div className="flex items-center gap-2">
             <span className="inline-block px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg">
-              University
+              {college_type || 'University'}
             </span>
             <span className="text-white/80 text-sm">
               {location}
@@ -381,7 +382,8 @@ export default function CardShowcase() {
       establishment_year: "1885",
       slug: "stanford",
       country: "USA",
-      about: "Leading research university known for innovation and entrepreneurship."
+      about: "Leading research university known for innovation and entrepreneurship.",
+      college_type: "University"
     },
     {
       name: "MIT",
@@ -393,7 +395,8 @@ export default function CardShowcase() {
       establishment_year: "1861",
       slug: "mit",
       country: "USA",
-      about: "Premier institution for science, technology, and engineering."
+      about: "Premier institution for science, technology, and engineering.",
+      college_type: "Institute"
     }
   ];
 
