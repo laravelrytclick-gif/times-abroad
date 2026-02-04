@@ -184,7 +184,7 @@ export default function ExamsPage() {
                 Explore {filteredExams.length} global entrance examinations
               </p>
             </div>
-            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-green-500 p-3 rounded-xl text-white">
+            <div className="flex items-center gap-3 bg-blue-700 p-3 rounded-xl text-white">
               <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
                 <FileText size={20} className="text-white" />
               </div>

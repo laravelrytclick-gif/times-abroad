@@ -119,11 +119,11 @@
 }
 
 .tab-button-active {
-  background: blue;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
-  box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.25), 0 10px 10px -5px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.25), 0 10px 10px -5px rgba(37, 99, 235, 0.1);
   transform: scale(1.05);
-  border-color: #10b981;
+  border-color: #2563eb;
 }
 
 .tab-button-inactive {
@@ -197,10 +197,10 @@
 
 /* Tab hover effects */
 .tab-active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
   transform: scale(1.05);
-  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.25);
 }
 
 .tab-inactive:hover {
