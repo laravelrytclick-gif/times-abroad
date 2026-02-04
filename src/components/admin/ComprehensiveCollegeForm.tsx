@@ -96,6 +96,8 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
     </div>
   )
 
+
+
   const removeCourse = (index: number, array: any[], fieldName: string) => {
     onChange(fieldName, array.filter((_, i) => i !== index))
   }
@@ -124,10 +126,10 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
 
   const addCourse = (course: { course_name: string; duration: string; annual_tuition_fee: string }, array: any[], fieldName: string, setter: (value: { course_name: string; duration: string; annual_tuition_fee: string }) => void) => {
     if (course.course_name.trim() && course.duration.trim() && course.annual_tuition_fee.trim()) {
-      onChange(fieldName, [...array, { 
-        course_name: course.course_name.trim(), 
-        duration: course.duration.trim(), 
-        annual_tuition_fee: course.annual_tuition_fee.trim() 
+      onChange(fieldName, [...array, {
+        course_name: course.course_name.trim(),
+        duration: course.duration.trim(),
+        annual_tuition_fee: course.annual_tuition_fee.trim()
       }])
       setter({ course_name: '', duration: '', annual_tuition_fee: '' })
     }
@@ -267,11 +269,13 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(data.exams || []).map((exam, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {exam}
-                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(index, data.exams || [], 'exams'); }} />
-                    </Badge>
+                  {(data.exams || []).map((exam) => (
+                    <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={`exam-${exam}`}>
+
+                      <p>{exam}</p>
+
+                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(data.exams?.indexOf(exam) || 0, data.exams || [], 'exams'); }} />
+                    </div>
                   ))}
                 </div>
                 {(!data.exams || data.exams.length === 0) && (
@@ -376,11 +380,11 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(data.key_highlights_features || []).map((feature, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {feature}
-                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(index, data.key_highlights_features || [], 'key_highlights_features'); }} />
-                    </Badge>
+                  {(data.key_highlights_features || []).map((feature) => (
+                    <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={`feature-${feature}`}>
+                      <p>{feature}</p>
+                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(data.key_highlights_features?.indexOf(feature) || 0, data.key_highlights_features || [], 'key_highlights_features'); }} />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -531,11 +535,11 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(data.accreditation || []).map((acc, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {acc}
-                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(index, data.accreditation || [], 'accreditation'); }} />
-                    </Badge>
+                  {(data.accreditation || []).map((acc) => (
+                    <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={`acc-${acc}`}>
+                      <p>{acc}</p>
+                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(data.accreditation?.indexOf(acc) || 0, data.accreditation || [], 'accreditation'); }} />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -591,11 +595,11 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(data.admission_process_steps || []).map((step, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {step}
-                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(index, data.admission_process_steps || [], 'admission_process_steps'); }} />
-                    </Badge>
+                  {(data.admission_process_steps || []).map((step) => (
+                    <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={`step-${step}`}>
+                      <p>{step}</p>
+                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(data.admission_process_steps?.indexOf(step) || 0, data.admission_process_steps || [], 'admission_process_steps'); }} />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -651,11 +655,11 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(data.documents_required_documents || []).map((doc, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {doc}
-                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(index, data.documents_required_documents || [], 'documents_required_documents'); }} />
-                    </Badge>
+                  {(data.documents_required_documents || []).map((doc) => (
+                    <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={`doc-${doc}`}>
+                      <p>{doc}</p>
+                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(data.documents_required_documents?.indexOf(doc) || 0, data.documents_required_documents || [], 'documents_required_documents'); }} />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -792,11 +796,11 @@ export function ComprehensiveCollegeForm({ data, countries, onChange, loading = 
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(data.campus_highlights_highlights || []).map((highlight, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {highlight}
-                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(index, data.campus_highlights_highlights || [], 'campus_highlights_highlights'); }} />
-                    </Badge>
+                  {(data.campus_highlights_highlights || []).map((highlight) => (
+                    <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={`highlight-${highlight}`}>
+                      <p>{highlight}</p>
+                      <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeTag(data.campus_highlights_highlights?.indexOf(highlight) || 0, data.campus_highlights_highlights || [], 'campus_highlights_highlights'); }} />
+                    </div>
                   ))}
                 </div>
               </div>

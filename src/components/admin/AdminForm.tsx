@@ -149,17 +149,17 @@ export function AdminForm({
         return (
           <div className="space-y-2">
             <div className="flex flex-wrap gap-2">
-              {tags.map((tag: string, index: number) => (
-                <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                  {tag}
+              {tags.map((tag: string) => (
+                <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={tag}>
+                  <p>{tag}</p>
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
-                      const newTags = tags.filter((_: string, i: number) => i !== index)
+                      const newTags = tags.filter((t: string) => t !== tag)
                       onChange(field.name, newTags)
                     }}
                   />
-                </Badge>
+                </div>
               ))}
             </div>
             <div className="flex gap-2">

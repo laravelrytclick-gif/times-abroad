@@ -331,7 +331,7 @@ export default function SimpleExamsPage() {
     {
       key: 'exam_type' as keyof Exam,
       title: 'Type',
-      render: (value: string) => <Badge variant="outline">{value}</Badge>
+      render: (value: string) => <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1'><p>{value}</p></div>
     },
     {
       key: 'conducting_body' as keyof Exam,
@@ -341,9 +341,9 @@ export default function SimpleExamsPage() {
       key: 'is_active' as keyof Exam,
       title: 'Status',
       render: (value: boolean) => (
-        <Badge variant={value ? "default" : "secondary"}>
-          {value ? 'Active' : 'Inactive'}
-        </Badge>
+        <div className={`flex ${value ? 'bg-green-600' : 'bg-gray-600'} text-white rounded-2xl px-2 py-1 items-center gap-1`}>
+          <p>{value ? 'Active' : 'Inactive'}</p>
+        </div>
       )
     },
     {

@@ -97,15 +97,15 @@ export default function BlogsPage() {
       title: 'Tags',
       render: (value: string[]) => (
         <div className="flex flex-wrap gap-1">
-          {value.slice(0, 3).map((tag, index) => (
-            <Badge key={index} variant="outline" className="text-xs">
-              {tag}
-            </Badge>
+          {value.slice(0, 3).map((tag) => (
+            <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1' key={tag}>
+              <p className="text-xs">{tag}</p>
+            </div>
           ))}
           {value.length > 3 && (
-            <Badge variant="outline" className="text-xs">
-              +{value.length - 3}
-            </Badge>
+            <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1'>
+              <p className="text-xs">+{value.length - 3}</p>
+            </div>
           )}
         </div>
       )
@@ -114,9 +114,9 @@ export default function BlogsPage() {
       key: 'is_active' as keyof Blog,
       title: 'Status',
       render: (value: boolean) => (
-        <Badge variant={value ? 'default' : 'secondary'}>
-          {value ? 'published' : 'draft'}
-        </Badge>
+        <div className={`flex ${value ? 'bg-gray-600' : 'bg-gray-600'} text-white rounded-2xl px-2 py-1 items-center gap-1`}>
+          <p>{value ? 'published' : 'draft'}</p>
+        </div>
       )
     },
     {
