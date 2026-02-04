@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   MapPin,
@@ -8,7 +8,9 @@ import {
   ArrowRight,
   Trophy,
   Calendar,
-  Building
+  Building,
+  Filter,
+  X
 } from "lucide-react";
 import Link from "next/link";
 
@@ -48,7 +50,36 @@ const useColleges = () => {
 };
 
 export default function FeaturedColleges() {
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const { data: collegeData, isLoading, error, refetch } = useColleges();
+
+  // Filter colleges based on selected type
+  const filteredColleges = useMemo(() => {
+    if (!collegeData) return [];
+    
+    if (selectedFilter === 'all') {
+      return collegeData;
+    }
+    
+    return collegeData.filter(college => {
+      const collegeType = college.type?.toLowerCase() || '';
+      const filterType = selectedFilter.toLowerCase();
+      
+      if (filterType === 'study abroad') {
+        return collegeType.includes('study') || collegeType.includes('abroad') || collegeType.includes('international');
+      } else if (filterType === 'mbbs abroad') {
+        return collegeType.includes('mbbs') || collegeType.includes('medical') || collegeType.includes('medicine');
+      }
+      
+      return collegeType.includes(filterType);
+    });
+  }, [collegeData, selectedFilter]);
+
+  const filterOptions = [
+    { value: 'all', label: 'All Colleges', color: 'blue' },
+    { value: 'study abroad', label: 'Study Abroad', color: 'green' },
+    { value: 'mbbs abroad', label: 'MBBS Abroad', color: 'purple' }
+  ];
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-white via-blue-50/20 to-slate-50 relative overflow-hidden">
@@ -60,6 +91,31 @@ export default function FeaturedColleges() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-4 tracking-tight">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-700">Top</span> Universities
           </h2>
+        </div>
+
+        {/* Filter Buttons */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8 sm:mb-12">
+          {filterOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => setSelectedFilter(option.value)}
+              className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                selectedFilter === option.value
+                  ? `bg-${option.color}-600 text-white shadow-lg transform scale-105`
+                  : `bg-white text-slate-600 border border-slate-200 hover:border-${option.color}-300 hover:bg-${option.color}-50`
+              }`}
+            >
+              {selectedFilter === option.value && <Filter size={14} />}
+              {option.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Results Count */}
+        <div className="text-center mb-6">
+          <p className="text-slate-600 font-medium">
+            Showing {filteredColleges.length} {selectedFilter === 'all' ? 'colleges' : selectedFilter}
+          </p>
         </div>
 
         {/* Colleges Grid */}
@@ -87,12 +143,18 @@ export default function FeaturedColleges() {
                 Try again
               </button>
             </div>
-          ) : !collegeData || collegeData.length === 0 ? (
+          ) : !filteredColleges || filteredColleges.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <p className="text-slate-500">No colleges available at the moment.</p>
+              <p className="text-slate-500 mb-4">No colleges found for {selectedFilter}.</p>
+              <button 
+                onClick={() => setSelectedFilter('all')} 
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Show all colleges
+              </button>
             </div>
           ) : (
-            collegeData.map((college) => (
+            filteredColleges.map((college) => (
             <div
               key={college._id}
               className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-100 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"

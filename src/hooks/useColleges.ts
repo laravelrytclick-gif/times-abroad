@@ -72,14 +72,16 @@ const fetchColleges = async ({
   pageParam = 1, 
   search = '', 
   country = '', 
-  exam = '' 
+  exam = '',
+  collegeType = ''
 }): Promise<CollegesResponse> => {
   const params = new URLSearchParams({
     page: pageParam.toString(),
     limit: '12',
     ...(search && { search }),
     ...(country && country !== 'all' && { country }),
-    ...(exam && exam !== 'all' && { exam })
+    ...(exam && exam !== 'all' && { exam }),
+    ...(collegeType && collegeType !== 'all' && { college_type: collegeType })
   })
 
   const response = await fetch(`/api/colleges?${params}`)
@@ -120,14 +122,15 @@ const fetchCollegeBySlug = async (slug: string): Promise<College> => {
 }
 
 // Hook for infinite scroll colleges list
-export function useInfiniteColleges(search: string, country: string, exam: string) {
+export function useInfiniteColleges(search: string, country: string, exam: string, collegeType: string) {
   return useInfiniteQuery({
-    queryKey: ['colleges', 'infinite', search, country, exam],
+    queryKey: ['colleges', 'infinite', search, country, exam, collegeType],
     queryFn: ({ pageParam = 1 }) => fetchColleges({ 
       pageParam, 
       search, 
       country, 
-      exam 
+      exam,
+      collegeType 
     }),
     getNextPageParam: (lastPage) => {
       return lastPage.hasMore ? lastPage.page + 1 : undefined

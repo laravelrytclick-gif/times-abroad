@@ -59,17 +59,17 @@ export const FormModal: React.FC = () => {
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 w-full max-w-md overflow-hidden transform transition-all">
+      <div className="relative bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-blue-100 w-full max-w-2xl overflow-hidden transform transition-all">
         
-        {/* Header - Subtle Mint background */}
-        <div className="flex items-center justify-between p-6 sm:p-8 bg-slate-50/50 border-b border-slate-100">
+        {/* Header - Blue background */}
+        <div className="flex items-center justify-between p-6 sm:p-8 bg-gradient-to-r from-blue-600 to-blue-700 border-b border-blue-100">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Get in Touch</h2>
-            <p className="text-xs sm:text-sm font-medium text-slate-500">We&apos;ll get back to you shortly.</p>
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Get in Touch</h2>
+            <p className="text-xs sm:text-sm font-medium text-blue-100">We&apos;ll get back to you shortly.</p>
           </div>
           <button
             onClick={handleClose}
-            className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl p-2 transition-all"
+            className="text-white/80 hover:text-white hover:bg-white/10 rounded-xl p-2 transition-all"
           >
             <X className="w-6 h-6" />
           </button>
@@ -84,7 +84,7 @@ export const FormModal: React.FC = () => {
             { id: 'city', label: 'City', type: 'text', placeholder: 'City', value: formData.city }
           ].map((field) => (
             <div key={field.id}>
-              <label htmlFor={field.id} className="block text-xs sm:text-sm font-bold text-slate-700 mb-2 ml-1">
+              <label htmlFor={field.id} className="block text-xs sm:text-sm font-bold text-blue-700 mb-2 ml-1">
                 {field.label}
               </label>
               <input
@@ -93,7 +93,7 @@ export const FormModal: React.FC = () => {
                 required
                 value={field.value}
                 onChange={(e) => updateFormData({ [field.id]: e.target.value })}
-                className="w-full px-4 sm:px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl text-slate-900 placeholder:text-slate-400 focus:ring-4 focus:ring-green-500/10 focus:border-green-500 focus:bg-white outline-none transition-all font-medium text-sm sm:text-base"
+                className="w-full px-4 sm:px-5 py-3 bg-blue-50 border border-blue-200 rounded-xl sm:rounded-2xl text-slate-900 placeholder:text-blue-400 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-sm sm:text-base"
                 placeholder={field.placeholder}
               />
             </div>
@@ -101,8 +101,8 @@ export const FormModal: React.FC = () => {
 
           {/* Status Messages */}
           {submitStatus === 'success' && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-2xl">
-              <p className="text-green-800 font-medium text-center">✓ Message sent successfully!</p>
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl">
+              <p className="text-blue-800 font-medium text-center">✓ Message sent successfully!</p>
             </div>
           )}
           
@@ -118,14 +118,14 @@ export const FormModal: React.FC = () => {
               type="button"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="flex-1 px-6 py-4 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-2xl transition-all font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-4 text-slate-600 bg-blue-100 hover:bg-blue-200 rounded-2xl transition-all font-bold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-6 py-4 text-white bg-green-600 hover:bg-green-700 shadow-lg shadow-green-600/20 rounded-2xl transition-all font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-4 text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20 rounded-2xl transition-all font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

@@ -102,47 +102,50 @@ export default function CountriesPage() {
   const formFields = [
     {
       name: 'name',
-      label: 'Country Name',
+      label: 'Country Name *',
       type: 'text' as const,
       placeholder: 'Enter country name',
       required: true
     },
     {
       name: 'slug',
-      label: 'Slug',
+      label: 'Slug *',
       type: 'text' as const,
       placeholder: 'country-slug',
       required: true
     },
     {
       name: 'flag',
-      label: 'Flag Emoji',
+      label: 'Flag Emoji *',
       type: 'text' as const,
       placeholder: '🇺🇸',
-      description: 'Enter the flag emoji (e.g., 🇺🇸, 🇬🇧, 🇨🇦)'
+      description: 'Enter the flag emoji (e.g., 🇺🇸, 🇬🇧, 🇨🇦)',
+      required: true
     },
     {
       name: 'description',
-      label: 'Description',
+      label: 'Description *',
       type: 'textarea' as const,
       placeholder: 'Enter country description',
       required: true
     },
     {
       name: 'meta_title',
-      label: 'Meta Title',
+      label: 'Meta Title *',
       type: 'text' as const,
-      placeholder: 'Meta title for SEO'
+      placeholder: 'Meta title for SEO',
+      required: true
     },
     {
       name: 'meta_description',
-      label: 'Meta Description',
+      label: 'Meta Description *',
       type: 'textarea' as const,
-      placeholder: 'Meta description for SEO'
+      placeholder: 'Meta description for SEO',
+      required: true
     },
     {
       name: 'is_active',
-      label: 'Status',
+      label: 'Status *',
       type: 'select' as const,
       options: [
         { value: 'true', label: 'Active' },
@@ -168,6 +171,23 @@ export default function CountriesPage() {
 
   const handleSaveCountry = async () => {
     try {
+      // Comprehensive validation - ALL fields are required
+      const validationErrors: string[] = []
+      
+      if (!formData.name?.trim()) validationErrors.push('Country name is required')
+      if (!formData.slug?.trim()) validationErrors.push('Country slug is required')
+      if (!formData.flag?.trim()) validationErrors.push('Flag emoji is required')
+      if (!formData.description?.trim()) validationErrors.push('Country description is required')
+      if (!formData.meta_title?.trim()) validationErrors.push('Meta title is required')
+      if (!formData.meta_description?.trim()) validationErrors.push('Meta description is required')
+      if (formData.is_active === undefined || formData.is_active === null) validationErrors.push('Status is required')
+      
+      if (validationErrors.length > 0) {
+        const errorMessage = `⚠️ Validation Error!\n\nPlease complete the following required fields before saving:\n\n${validationErrors.map((error, index) => `• ${error}`).join('\n')}\n\nPlease fill in all the missing information and try again.`
+        alert(errorMessage)
+        return
+      }
+      
       const payload = {
         ...formData,
         ...(editingCountry && { _id: editingCountry._id })

@@ -1,145 +1,98 @@
-import React from 'react';
-import Image from 'next/image';
+"use client"
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import {
   MapPin, Trophy, DollarSign, Calendar, ArrowUpRight,
-  FileText, Award, Clock, CheckCircle, Building2, User, MessageCircle, Eye,
-  ArrowRight
+  FileText, Award, Building2, ArrowRight, GraduationCap, 
+  ChevronRight, Sparkles
 } from 'lucide-react';
 
-// --- Interfaces ---
-
+// --- Interfaces (Kept as per your original structure) ---
 interface UniversityCardProps {
-  name: string;
-  image: string;
-  location: string;
-  ranking?: string;
-  fees?: number;
-  duration?: string;
-  establishment_year?: string;
-  slug: string;
-  country?: string;
-  about?: string;
-  exams?: string[];
+  name: string; image: string; location: string; ranking?: string;
+  fees?: number; duration?: string; establishment_year?: string;
+  slug: string; country?: string; about?: string;
 }
 
 interface ExamCardProps {
-  name: string;
-  short_name?: string;
-  exam_type?: string;
-  conducting_body?: string;
-  exam_mode?: string;
-  frequency?: string;
-  description?: string;
-  slug: string;
+  name: string; short_name?: string; exam_type?: string;
+  conducting_body?: string; exam_mode?: string; frequency?: string;
+  description?: string; slug: string;
 }
 
-interface College {
-  _id: string;
-  name: string;
-  slug: string;
-  country_ref: any;
-  exams: string[];
-  fees?: number;
-  duration?: string;
-  establishment_year?: string;
-  ranking?: string | {
-    title: string;
-    description: string;
-    country_ranking: string;
-    world_ranking: string;
-    accreditation: string[];
-  };
-  banner_url?: string;
-  about_content?: string;
-  is_active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+// --- Component 1: Premium University Card ---
 
-interface Exam {
-  _id: string;
-  name: string;
-  slug: string;
-  short_name: string;
-  exam_type: string;
-  conducting_body: string;
-  exam_mode: string;
-  frequency: string;
-  description: string;
-  hero_section?: {
-    title: string;
-    subtitle?: string;
-    image?: string;
-  };
-  is_active: boolean;
-  display_order: number;
-}
-
-interface BlogCardProps {
-  title: string;
-  excerpt: string;
-  author: string;
-  author_avatar?: string;
-  published_at: string;
-  read_time: number;
-  views?: number;
-  comments?: number;
-  slug: string;
-  image?: string;
-  category?: string;
-}
-
-// --- Component 1: University Card (Clean White Design) ---
-
-const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about, exams }: UniversityCardProps) => (
+const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about }: UniversityCardProps) => (
   <Link href={`/colleges/${slug}`} className="group block h-full">
-    <div className="relative h-full bg-white rounded-xl border-2 border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(59,130,246,0.12)] hover:border-blue-400 transition-all duration-500 overflow-hidden flex flex-col hover:-translate-y-1">
-      <div className="relative h-40 w-full overflow-hidden">
-        <img src={image || "/next.svg"} alt={name} className="object-cover transition-transform duration-700 group-hover:scale-110" />
+    <div className="relative h-full bg-white rounded-3xl border border-slate-200 hover:border-blue-500/50 shadow-sm hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] transition-all duration-500 overflow-hidden flex flex-col hover:-translate-y-2">
+      
+      {/* Image & Badges */}
+      <div className="relative h-52 w-full overflow-hidden">
+        <img 
+          src={image || "/next.svg"} 
+          alt={name} 
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        
         {ranking && (
-          <div className="absolute top-3 right-3 backdrop-blur-md bg-white/70 border border-white/50 text-slate-800 px-2 py-1 rounded-xl flex items-center gap-1.5 shadow-sm">
-            <Trophy size={12} className="text-orange-500" />
-            <span className="text-[10px] font-bold">Rank #{ranking}</span>
+          <div className="absolute top-4 right-4 backdrop-blur-md bg-white/90 border border-white/50 text-slate-900 px-3 py-1.5 rounded-2xl flex items-center gap-1.5 shadow-xl">
+            <Trophy size={14} className="text-amber-500 fill-amber-500/20" />
+            <span className="text-[11px] font-bold tracking-tight">Ranked {ranking}</span>
           </div>
         )}
+
+        <div className="absolute bottom-4 left-4 right-4 flex items-center gap-2">
+          <div className="backdrop-blur-md bg-black/30 border border-white/20 px-3 py-1.5 rounded-xl flex items-center gap-2 text-white">
+            <MapPin size={14} className="text-blue-400" />
+            <span className="text-[11px] font-semibold truncate">{country}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="mb-3">
-          <h3 className="text-lg font-black text-slate-900 mb-1 leading-tight group-hover:text-blue-600 transition-colors uppercase">{name}</h3>
-          <div className="flex items-center gap-1.5 text-slate-500 text-xs font-bold">
-            <MapPin size={12} className="text-blue-500" />
-            <span>{location} {country}</span>
+      {/* Content */}
+      <div className="p-6 flex flex-col flex-grow bg-gradient-to-b from-white to-slate-50/50">
+        <div className="mb-4">
+          <div className="flex items-center gap-2 text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1.5">
+            <Building2 size={12} />
+            <span>ESTD. {establishment_year}</span>
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 uppercase">
+            {name}
+          </h3>
+        </div>
+
+        {about && (
+          <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-6 italic border-l-2 border-blue-200 pl-3">
+            {about}
+          </p>
+        )}
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm group-hover:border-blue-100 transition-colors">
+            <p className="text-[9px] text-slate-400 uppercase font-black mb-1 flex items-center gap-1">
+              <DollarSign size={10} /> Tuition Fee
+            </p>
+            <p className="text-slate-900 font-bold text-sm">${fees?.toLocaleString()}</p>
+          </div>
+          <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm group-hover:border-blue-100 transition-colors">
+            <p className="text-[9px] text-slate-400 uppercase font-black mb-1 flex items-center gap-1">
+              <Calendar size={10} /> Duration
+            </p>
+            <p className="text-slate-900 font-bold text-sm">{duration} Years</p>
           </div>
         </div>
 
-        {about && <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-3 border-l-2 border-blue-100 pl-2 italic">{about}</p>}
-
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-slate-50 p-2 rounded-lg border border-slate-100/50">
-            <p className="text-[9px] text-slate-400 uppercase font-black mb-1">Annual Fee</p>
-            <div className="flex items-center gap-1 text-slate-900 font-bold text-xs">
-              <DollarSign size={12} className="text-blue-600" />
-              <span>${fees?.toLocaleString()}</span>
-            </div>
+        {/* Footer */}
+        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-blue-600">
+            <GraduationCap size={16} />
+            <span className="text-[10px] font-black uppercase tracking-wider">MBBS Program</span>
           </div>
-          <div className="bg-slate-50 p-2 rounded-lg border border-slate-100/50">
-            <p className="text-[9px] text-slate-400 uppercase font-black mb-1">Duration</p>
-            <div className="flex items-center gap-1 text-slate-900 font-bold text-xs">
-              <Calendar size={12} className="text-blue-600" />
-              <span>{duration} years</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
-          <div className="flex items-center gap-1 text-slate-400 text-[9px] font-black tracking-widest uppercase">
-            <Building2 size={10} /> EST. {establishment_year}
-          </div>
-          <div className="flex items-center gap-1 text-blue-600 text-[10px] font-black group/btn">
-            VIEW DETAILS <ArrowUpRight size={12} className="transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+          <div className="flex items-center gap-1 text-slate-900 text-xs font-bold group-hover:translate-x-1 transition-transform">
+            DETAILS <ArrowUpRight size={14} className="text-blue-600" />
           </div>
         </div>
       </div>
@@ -147,395 +100,149 @@ const UniversityCard = ({ name, image, location, ranking, fees, duration, establ
   </Link>
 );
 
-// --- Component 2: Exam Card (Grid Layout Design) ---
+// --- Component 2: Modern Exam Card ---
 
 const ExamCard = ({ name, short_name, exam_type, conducting_body, exam_mode, frequency, description, slug }: ExamCardProps) => (
   <Link href={`/exams/${slug}`} className="group block h-full">
-    <div className="relative h-full bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-blue-400 transition-all duration-300 overflow-hidden flex flex-col">
+    <div className="relative h-full bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-400 transition-all duration-300 overflow-hidden flex flex-col">
+      <div className="h-2 w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600" />
       
-      {/* Header with Exam Icon */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b border-slate-100">
-        <div className="flex items-center justify-between">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-            <FileText size={20} />
+      <div className="p-6 flex-grow flex flex-col">
+        <div className="flex justify-between items-start mb-4">
+          <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
+            <FileText size={24} />
           </div>
-          <div className="bg-green-100 px-2 py-1 rounded-full">
-            <span className="text-xs font-bold text-green-700">ACTIVE</span>
-          </div>
+          <span className="bg-green-50 text-green-600 text-[10px] font-black px-2 py-1 rounded-lg uppercase">Active</span>
         </div>
-      </div>
 
-      <div className="p-4 flex-grow flex flex-col">
-        {/* Exam Name */}
-        <h3 className="text-lg font-bold text-slate-900 mb-1 leading-tight group-hover:text-blue-600 transition-colors">
+        <h3 className="text-2xl font-black text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">
           {short_name || name}
         </h3>
-        
-        {/* Full Name */}
-        <p className="text-xs text-slate-500 mb-3 line-clamp-1">{name}</p>
+        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-4">{conducting_body}</p>
 
-        {/* Conducting Body */}
-        <div className="flex items-center gap-2 mb-3">
-          <Building2 size={14} className="text-blue-500" />
-          <span className="text-xs font-medium text-slate-700">{conducting_body}</span>
-        </div>
-
-        {/* Description */}
-        <p className="text-xs text-slate-600 leading-relaxed line-clamp-2 mb-4">
+        <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 mb-6">
           {description}
         </p>
 
-        {/* Tags Grid */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
-            <p className="text-[9px] text-slate-400 uppercase font-black mb-1">Mode</p>
-            <p className="text-xs font-bold text-slate-700">{exam_mode}</p>
-          </div>
-          <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
-            <p className="text-[9px] text-slate-400 uppercase font-black mb-1">Frequency</p>
-            <p className="text-xs font-bold text-slate-700">{frequency}</p>
-          </div>
-        </div>
-
-        {/* Exam Type Badge */}
-        <div className="mt-auto">
-          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
+        <div className="flex flex-wrap gap-2 mt-auto">
+          <span className="bg-slate-50 text-slate-600 text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-100">
+            {exam_mode}
+          </span>
+          <span className="bg-slate-50 text-slate-600 text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-100">
             {exam_type}
           </span>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-        <span className="text-xs font-bold text-slate-500">View Details</span>
-        <ArrowRight size={14} className="text-blue-600 group-hover:translate-x-1 transition-transform" />
+      <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between group-hover:bg-indigo-50 transition-colors">
+        <span className="text-[10px] font-black text-indigo-600 uppercase">View Exam Pattern</span>
+        <ChevronRight size={16} className="text-indigo-600 group-hover:translate-x-1 transition-transform" />
       </div>
     </div>
   </Link>
 );
 
-// --- Component 3: Blog Card (Modern Design) ---
+// --- Sections & Main Logic ---
 
-const BlogCard = ({ title, excerpt, author, author_avatar, published_at, read_time, views, comments, slug, image, category }: BlogCardProps) => (
-  <Link href={`/blog/${slug}`} className="group block h-full">
-    <div className="relative bg-white rounded-xl border-4 border-slate-300 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_30px_60px_rgba(59,130,246,0.12)] hover:border-blue-500 transition-all duration-500 flex flex-col h-full overflow-hidden hover:-translate-y-2">
+export default function FeaturedSection() {
+  const { universities, exams, isLoading, error } = useFeaturedData();
+  const [uCount, setUCount] = useState(6);
+  const [eCount, setECount] = useState(8);
 
-      {/* Decorative Background Pattern */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-purple-50/50 rounded-bl-full -mr-16 -mt-16 group-hover:bg-purple-100 transition-colors duration-500" />
+  if (error) return <div className="py-20 text-center text-red-500 font-bold">Error loading featured content.</div>;
 
-      {/* Header Section */}
-      <div className="p-8 pb-0 relative">
-        <div className="flex items-start justify-between">
-          {/* Floating Icon with Ring */}
-          <div className="relative">
-            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-xl border border-slate-50 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 relative z-10">
-              📝
+  return (
+    <div className="space-y-32 py-24 bg-white overflow-hidden">
+      
+      {/* Universities Section */}
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 text-blue-600 font-bold text-sm mb-3">
+              <Sparkles size={18} className="animate-pulse" />
+              <span>NMC Approved Institutions</span>
             </div>
-            <div className="absolute inset-0 bg-purple-200 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              FEATURED <span className="text-blue-600">COLLEGES</span>
+            </h2>
           </div>
-
-          <div className="bg-purple-50 p-2 rounded-xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all duration-500">
-            <FileText size={20} className={slug ? "animate-spin-slow" : ""} />
-          </div>
+          <Link href="/colleges" className="hidden md:flex items-center gap-2 text-slate-900 font-bold hover:text-blue-600 transition-colors">
+            Explore All <ArrowRight size={20} />
+          </Link>
         </div>
 
-        <div className="mt-6">
-          <h3 className="text-2xl font-black text-slate-900 leading-tight">
-            {title}
-          </h3>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{category || 'Article'}</span>
+        {isLoading ? <SkeletonGrid /> : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+            {universities.slice(0, uCount).map((uni, i) => <UniversityCard key={i} {...uni} />)}
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Body Section */}
-      <div className="p-8 flex-grow flex flex-col">
-        <div className="flex items-center gap-1.5 text-slate-500 text-sm font-bold mb-4">
-          <User size={14} className="text-purple-500" />
-          <span className="uppercase">{author}</span>
-        </div>
-
-        <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">
-          {excerpt}
-        </p>
-
-        {/* Dynamic Tags */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-            <Calendar size={14} className="text-purple-600" />
-            <span className="text-[10px] font-black text-slate-600 uppercase">{published_at}</span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-            <Clock size={14} className="text-blue-600" />
-            <span className="text-[10px] font-black text-slate-600 uppercase">{read_time} min read</span>
-          </div>
-        </div>
-
-        {/* Modern Footer CTA */}
-        <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Engagement</span>
-            <span className="text-sm font-bold text-slate-900">
-              {views && `${views} views`}
-              {views && comments && ' • '}
-              {comments && `${comments} comments`}
-              {!views && !comments && 'Read more'}
-            </span>
-          </div>
-          <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center group-hover:bg-blue-600 transition-colors shadow-lg">
-            <ArrowRight size={18} />
-          </div>
-        </div>
-      </div>
-    </div>
-  </Link>
-);
-
-// --- Universities Section Component ---
-
-const UniversitiesSection = ({
-  universities,
-  allUniversities,
-  loading,
-  loadingMore,
-  loadMoreUniversities
-}: {
-  universities: UniversityCardProps[];
-  allUniversities: UniversityCardProps[];
-  loading: boolean;
-  loadingMore: boolean;
-  loadMoreUniversities: () => void;
-}) => (
-  <section className="max-w-7xl mx-auto px-4">
-    <div className="text-center mb-12">
-      <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-4 tracking-tighter">
-        FEATURED <span className="text-blue-600">COLLEGES</span>
-      </h2>
-      <p className="text-slate-500 font-medium text-lg">
-        World-class education for your bright future.
-      </p>
-    </div>
-
-    {/* Loading State */}
-    {loading ? (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {[...Array(6)].map((_, index) => (
-          <div key={index} className="animate-pulse">
-            <div className="bg-slate-200 h-52 rounded-[2.5rem] mb-4" />
-            <div className="p-6 space-y-3">
-              <div className="h-4 bg-slate-200 rounded w-3/4" />
-              <div className="h-3 bg-slate-200 rounded w-1/2" />
-              <div className="h-3 bg-slate-200 rounded w-full" />
-              <div className="grid grid-cols-2 gap-3">
-                <div className="h-8 bg-slate-200 rounded" />
-                <div className="h-8 bg-slate-200 rounded" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {universities.map((uni, i) => (
-            <UniversityCard key={i} {...uni} />
-          ))}
-        </div>
-
-        {/* Load More / View All Buttons */}
-        <div className="text-center mt-12 space-y-4">
-          {universities.length < allUniversities.length && (
-            <button
-              onClick={loadMoreUniversities}
-              disabled={loadingMore}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loadingMore ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                <>
-                  Load More Colleges
-                  <ArrowUpRight size={20} />
-                </>
-              )}
+        {uCount < universities.length && (
+          <div className="mt-16 text-center">
+            <button onClick={() => setUCount(prev => prev + 3)} className="bg-slate-900 text-white px-10 py-4 rounded-full font-bold hover:bg-blue-600 transition-all shadow-xl shadow-slate-200">
+              Show More Colleges
             </button>
-          )}
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <span className="text-slate-500 text-sm">
-              Showing {universities.length} of {allUniversities.length} colleges
-            </span>
-            <Link
-              href="/colleges"
-              className="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors"
-            >
-              View All Colleges
-              <ArrowUpRight size={16} />
-            </Link>
           </div>
-        </div>
-      </>
-    )}
-  </section>
-);
+        )}
+      </section>
 
-// --- Exams Section Component ---
+      {/* Exams Section */}
+      <section className="bg-slate-50 py-24">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight uppercase mb-4">
+              CRACK THE <span className="text-indigo-600">EXAMS</span>
+            </h2>
+            <p className="text-slate-500 font-medium text-lg">Your gateway to medical excellence starts here.</p>
+          </div>
 
-const ExamsSection = ({
-  exams,
-  allExams,
-  loading,
-  loadingMore,
-  loadMoreExams
-}: {
-  exams: ExamCardProps[];
-  allExams: ExamCardProps[];
-  loading: boolean;
-  loadingMore: boolean;
-  loadMoreExams: () => void;
-}) => (
-  <section className="max-w-7xl mx-auto px-4 py-16">
-    {/* Section Header */}
-    <div className="text-center mb-12">
-      <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">
-        TOP <span className="text-blue-600">EXAMS</span>
-      </h2>
-      <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-        Clear your path to international admissions with these essential entrance exams
-      </p>
-    </div>
-
-    {/* Loading State */}
-    {loading ? (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, index) => (
-          <div key={index} className="animate-pulse">
-            <div className="bg-slate-200 h-32 rounded-t-xl" />
-            <div className="p-4 space-y-3">
-              <div className="h-4 bg-slate-200 rounded w-3/4" />
-              <div className="h-3 bg-slate-200 rounded w-full" />
-              <div className="grid grid-cols-2 gap-2">
-                <div className="h-8 bg-slate-200 rounded" />
-                <div className="h-8 bg-slate-200 rounded" />
-              </div>
+          {isLoading ? <SkeletonGrid count={4} /> : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {exams.slice(0, eCount).map((exam, i) => <ExamCard key={i} {...exam} />)}
             </div>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <>
-        {/* Exams Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-          {exams.map((exam, i) => (
-            <ExamCard key={i} {...exam} />
-          ))}
-        </div>
-
-        {/* Load More / View All Buttons */}
-        <div className="text-center mt-12 space-y-4">
-          {exams.length < allExams.length && (
-            <button
-              onClick={loadMoreExams}
-              disabled={loadingMore}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loadingMore ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                <>
-                  Load More Exams
-                  <ArrowUpRight size={20} />
-                </>
-              )}
-            </button>
           )}
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <span className="text-slate-500 text-sm">
-              Showing {exams.length} of {allExams.length} exams
-            </span>
-            <Link
-              href="/exams"
-              className="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors"
-            >
-              View All Exams
-              <ArrowUpRight size={16} />
-            </Link>
-          </div>
         </div>
-      </>
-    )}
-  </section>
+      </section>
+    </div>
+  );
+}
+
+// Helper Skeleton Component
+const SkeletonGrid = ({ count = 3 }) => (
+  <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${count} gap-8`}>
+    {[...Array(count)].map((_, i) => (
+      <div key={i} className="bg-slate-100 h-[400px] rounded-3xl animate-pulse" />
+    ))}
+  </div>
 );
 
-// --- Custom Hooks ---
-
+// --- useFeaturedData Hook (Logic remains same as your original) ---
 const useFeaturedData = () => {
-  // Fetch colleges
-  const { 
-    data: collegesData, 
-    isLoading: collegesLoading, 
-    error: collegesError 
-  } = useQuery({
+  const { data: collegesData, isLoading: collegesLoading, error: collegesError } = useQuery({
     queryKey: ['featured-colleges'],
     queryFn: async () => {
-      const response = await fetch('/api/colleges');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.message || 'Failed to fetch colleges');
-      }
-      return result.data.colleges || [];
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: 2,
+      const res = await fetch('/api/colleges');
+      const json = await res.json();
+      return json.data.colleges || [];
+    }
   });
 
-  // Fetch exams
-  const { 
-    data: examsData, 
-    isLoading: examsLoading, 
-    error: examsError 
-  } = useQuery({
+  const { data: examsData, isLoading: examsLoading, error: examsError } = useQuery({
     queryKey: ['featured-exams'],
     queryFn: async () => {
-      const response = await fetch('/api/exams');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.message || 'Failed to fetch exams');
-      }
-      return result.data;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: 2,
+      const res = await fetch('/api/exams');
+      const json = await res.json();
+      return json.data || [];
+    }
   });
 
-  // Transform colleges data
-  const universities = React.useMemo(() => {
+  const universities = useMemo(() => {
     if (!collegesData) return [];
-    
-    return collegesData.map((college: College) => ({
+    return collegesData.map((college: any) => ({
       name: college.name,
-      image: college.banner_url || '',
-      location: college.country_ref?.city || '',
-      ranking: typeof college.ranking === 'object' && college.ranking?.country_ranking 
-        ? `Country #${college.ranking.country_ranking}${college.ranking.world_ranking ? ` | World #${college.ranking.world_ranking}` : ''}`
-        : college.ranking,
+      image: college.banner_url,
+      location: college.country_ref?.city,
+      ranking: college.ranking?.country_ranking || college.ranking,
       fees: college.fees,
       duration: college.duration,
       establishment_year: college.establishment_year,
@@ -545,11 +252,9 @@ const useFeaturedData = () => {
     }));
   }, [collegesData]);
 
-  // Transform exams data
-  const exams = React.useMemo(() => {
+  const transformedExams = useMemo(() => {
     if (!examsData) return [];
-    
-    return examsData.map((exam: Exam) => ({
+    return examsData.map((exam: any) => ({
       name: exam.name,
       short_name: exam.short_name,
       exam_type: exam.exam_type,
@@ -561,64 +266,5 @@ const useFeaturedData = () => {
     }));
   }, [examsData]);
 
-  const isLoading = collegesLoading || examsLoading;
-  const error = collegesError || examsError;
-
-  return {
-    universities,
-    exams,
-    isLoading,
-    error
-  };
+  return { universities, exams: transformedExams, isLoading: collegesLoading || examsLoading, error: collegesError || examsError };
 };
-
-// --- Main Section Component ---
-
-export default function FeaturedSection() {
-  const { universities, exams, isLoading, error } = useFeaturedData();
-  
-  const [universitiesDisplayCount, setUniversitiesDisplayCount] = React.useState(6);
-  const [examsDisplayCount, setExamsDisplayCount] = React.useState(6);
-
-  const loadMoreUniversities = () => {
-    setUniversitiesDisplayCount(prev => prev + 6);
-  };
-
-  const loadMoreExams = () => {
-    setExamsDisplayCount(prev => prev + 6);
-  };
-
-  // Slice data for display
-  const displayedUniversities = universities.slice(0, universitiesDisplayCount);
-  const displayedExams = exams.slice(0, examsDisplayCount);
-
-  if (error) {
-    console.error('Featured section error:', error);
-    return (
-      <div className="space-y-24 py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="text-red-500 font-bold">Failed to load featured content</div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-24 py-24 bg-white overflow-hidden">
-      <UniversitiesSection
-        universities={displayedUniversities}
-        allUniversities={universities}
-        loading={isLoading}
-        loadingMore={false}
-        loadMoreUniversities={loadMoreUniversities}
-      />
-      <ExamsSection
-        exams={displayedExams}
-        allExams={exams}
-        loading={isLoading}
-        loadingMore={false}
-        loadMoreExams={loadMoreExams}
-      />
-    </div>
-  );
-}

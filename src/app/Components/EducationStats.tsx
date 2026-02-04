@@ -1,32 +1,32 @@
 "use client"
 import React from 'react';
-import { GraduationCap, TrendingUp, Users, Award, BookOpen, Target, Globe, BrainCircuit } from 'lucide-react';
+import { GraduationCap, TrendingUp, Users, Award, BookOpen, Target, Globe, BrainCircuit, ShieldCheck, Star } from 'lucide-react';
 
 export default function EducationStats() {
   const stats = [
     {
       icon: GraduationCap,
-      value: "10,000+",
-      label: "Students Placed",
-      description: "Successfully enrolled in top universities"
+      value: "1000+",
+      label: "MBBS Students Placed",
+      description: "Successfully enrolled in NMC approved universities"
     },
     {
-      icon: TrendingUp,
-      value: "98%",
-      label: "Success Rate", 
-      description: "Visa and admission success rate"
+      icon: ShieldCheck,
+      value: "100%",
+      label: "NMC Approved", 
+      description: "All our partner universities are NMC & WHO approved"
     },
     {
-      icon: Users,
-      value: "50+",
-      label: "Partner Universities",
-      description: "Across multiple countries"
+      icon: Globe,
+      value: "15+",
+      label: "Countries",
+      description: "Popular MBBS destinations worldwide"
     },
     {
-      icon: Award,
-      value: "$5M+",
-      label: "Scholarships",
-      description: "Secured for our students"
+      icon: Star,
+      value: "0",
+      label: "Donation Fees",
+      description: "Transparent education costs with zero hidden charges"
     }
   ];
 
@@ -37,13 +37,13 @@ export default function EducationStats() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-bold mb-6">
             <span>📊</span>
-            Our Impact
+            Our MBBS Impact
           </div>
           <h2 className="text-4xl md:text-6xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-6">
-            NUMBERS THAT <span className="text-blue-600">SPEAK</span>
+            NUMBERS THAT <span className="text-blue-600">MATTER</span>
           </h2>
           <p className="text-slate-500 font-semibold text-lg max-w-3xl mx-auto">
-            Our track record shows our commitment to student success and global education excellence.
+            Our track record shows our commitment to making MBBS abroad accessible and affordable for Indian students.
           </p>
         </div>
 

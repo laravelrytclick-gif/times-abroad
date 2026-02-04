@@ -188,7 +188,7 @@ export default function LatestBlogs() {
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-20 bg-white">
-      <div className="text-center mb-16">
+      <div className="text-left mb-16 max-w-3xl">
         <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-4 tracking-tighter">
           LATEST <span className="text-blue-600">BLOGS</span>
         </h2>
@@ -205,7 +205,7 @@ export default function LatestBlogs() {
 
       {/* Load More Button */}
       {hasMore && (
-        <div className="text-center mt-12">
+        <div className="text-left mt-12">
           <Button 
             onClick={loadMoreBlogs}
             disabled={isLoading}
@@ -228,7 +228,7 @@ export default function LatestBlogs() {
 
       {/* View All Blogs Button - Only show when no more blogs to load */}
       {!hasMore && displayedBlogs.length > 0 && (
-        <div className="text-center mt-12">
+        <div className="text-left mt-12">
           <Link 
             href="/blogs" 
             className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"

@@ -2,12 +2,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, Globe, Calendar, Building, Clock, FileText, ArrowRight, X, LayoutGrid, AlertCircle, RefreshCw } from 'lucide-react'
+import { Search, Globe, Calendar, Building, Clock, FileText, ArrowRight, X, LayoutGrid, AlertCircle, RefreshCw, Award, Building2, ArrowUpRight } from 'lucide-react'
 import FAQ from "@/app/Components/FAQ"
 import { useExams } from '@/hooks/useExams'
 
@@ -74,12 +69,79 @@ export default function ExamsPage() {
     setSelectedMode('all')
   }, [])
 
+  // ExamCard Component
+  const ExamCard = ({ name, short_name, exam_type, conducting_body, exam_mode, frequency, description, slug }: any) => (
+    <Link href={`/exams/${slug}`} className="group block h-full">
+      <div className="relative h-full bg-white rounded-xl border-2 border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(59,130,246,0.12)] hover:border-blue-400 transition-all duration-500 flex flex-col p-6 overflow-hidden hover:-translate-y-1">
+        
+        {/* Decorative Background Pattern */}
+        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/30 rounded-bl-full -mr-12 -mt-12 group-hover:bg-blue-100/50 transition-colors duration-500" />
+
+        {/* Header Section */}
+        <div className="flex items-start justify-between mb-4 relative">
+          {/* Floating Icon */}
+          <div className="relative">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-lg border border-slate-50 group-hover:scale-105 group-hover:rotate-2 transition-transform duration-500 relative z-10">
+              <FileText size={24} />
+            </div>
+            <div className="absolute inset-0 bg-blue-200 blur-xl opacity-15 group-hover:opacity-30 transition-opacity" />
+          </div>
+          
+          <div className="bg-blue-50 p-1.5 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
+            <Award size={16} />
+          </div>
+        </div>
+
+        <div className="flex-grow">
+          <h3 className="text-xl font-black text-slate-900 mb-1 leading-tight group-hover:text-blue-600 transition-colors">
+            {short_name || name}
+          </h3>
+          <div className="flex items-center gap-1.5 text-slate-400 text-xs font-bold uppercase mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+            <span>{exam_type}</span>
+          </div>
+          
+          <div className="flex items-center gap-1.5 text-slate-500 text-xs font-bold mb-3">
+            <Building2 size={12} className="text-blue-500" />
+            <span className="uppercase">{conducting_body}</span>
+          </div>
+
+          <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-4">
+            {description}
+          </p>
+
+          {/* Dynamic Tags */}
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+              <Calendar size={12} className="text-blue-600" />
+              <span className="text-[9px] font-black text-slate-600 uppercase">{exam_mode}</span>
+            </div>
+            <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+              <Clock size={12} className="text-blue-600" />
+              <span className="text-[9px] font-black text-slate-600 uppercase">{frequency}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Modern Footer CTA */}
+        <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
+          <span className="text-[9px] font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-wider">
+            Exam Guide
+          </span>
+          <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center group-hover:bg-blue-600 transition-colors shadow-md">
+            <ArrowUpRight size={14} />
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Exams...</p>
+          <div className="w-12 h-12 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500 text-sm">Loading exams...</p>
         </div>
       </div>
     )
@@ -89,188 +151,137 @@ export default function ExamsPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-red-600" />
+          <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-6 h-6 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Failed to Load Exams</h2>
-          <p className="text-slate-500 mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to Load Exams</h2>
+          <p className="text-gray-500 mb-6 text-sm">
             {error instanceof Error ? error.message : 'An unexpected error occurred'}
           </p>
-          <Button
+          <button 
             onClick={() => refetch()}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+            className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="w-4 h-4 mr-2 inline" />
             Try Again
-          </Button>
+          </button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Premium Header - Same as Colleges */}
-      <div className="bg-white border-b border-slate-100 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 blur-3xl" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      {/* Simple Header */}
+      <div className="bg-white border-b border-blue-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none mb-4 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">
-                Testing Excellence
-              </Badge>
-              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
-                ENTRANCE <span className="text-blue-600">EXAMS</span>
+              <h1 className="text-3xl font-light text-gray-900 mb-2">
+                Entrance <span className="font-semibold text-blue-700">Exams</span>
               </h1>
-              <p className="text-slate-500 mt-2 font-medium max-w-md">
-                Master your preparation with comprehensive details on global entrance examinations.
+              <p className="text-gray-700 text-sm font-medium">
+                Explore {filteredExams.length} global entrance examinations
               </p>
             </div>
-            <div className="bg-white shadow-sm border border-slate-100 rounded-2xl p-4 flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                <FileText size={24} />
+            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-green-500 p-3 rounded-xl text-white">
+              <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                <FileText size={20} className="text-white" />
               </div>
               <div>
-                <p className="text-2xl font-black text-slate-900">{filteredExams.length}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Exams Listed</p>
+                <p className="text-xl font-light text-white">{filteredExams.length}</p>
+                <p className="text-xs text-white/80">Exams</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters Section - Same Floating Style */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-        <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-6 md:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-blue-600" />
-              <Input
+      {/* Simple Filters */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-blue-100">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
+              <input
                 placeholder="Search exams..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 bg-slate-50 border-none h-12 rounded-xl font-medium focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="w-full pl-10 pr-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
               />
             </div>
 
-            <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="h-12 bg-slate-50 border-none rounded-xl font-medium">
-                <SelectValue placeholder="Exam Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                {examTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedMode} onValueChange={setSelectedMode}>
-              <SelectTrigger className="h-12 bg-slate-50 border-none rounded-xl font-medium">
-                <SelectValue placeholder="Exam Mode" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Modes</SelectItem>
-                {examModes.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant="ghost"
-              onClick={resetFilters}
-              className="h-12 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-xl font-bold flex gap-2"
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
             >
-              <X size={16} /> Reset Filters
-            </Button>
+              <option value="all">All Types</option>
+              {examTypes.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedMode}
+              onChange={(e) => setSelectedMode(e.target.value)}
+              className="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
+            >
+              <option value="all">All Modes</option>
+              {examModes.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+
+            <button
+              onClick={resetFilters}
+              className="w-full px-3 py-2 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg text-sm text-red-600 hover:text-red-700 hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+            >
+              <X size={14} />
+              Clear Filters
+            </button>
           </div>
         </div>
-
-        {/* Exams Grid */}
-        <div className="py-12">
-          {filteredExams.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                <LayoutGrid size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900">No exams found</h3>
-              <p className="text-slate-500 font-medium">Try different keywords or reset filters.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredExams.map((exam) => (
-                <Card key={exam._id} className="group border border-gray-400 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 py-0 rounded-[2.5rem] overflow-hidden bg-white flex flex-col h-full">
-                  {/* Hero Image */}
-                  {exam.hero_section?.image && (
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={exam.hero_section.image}
-                        alt={exam.hero_section.title || exam.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                    </div>
-                  )}
-                  <CardHeader className={exam.hero_section?.image ? "p-8 pb-4" : "p-8 pb-4 pt-8"}>
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-inner">
-                        <FileText size={24} />
-                      </div>
-                      <Badge className="bg-slate-900 text-white hover:bg-slate-900 border-none px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">
-                        {exam.short_name}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-2xl font-black text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">
-                      {exam.name}
-                    </CardTitle>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
-                        {exam.exam_type}
-                      </span>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="p-8 pt-0 flex flex-col flex-grow">
-                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-8 font-medium">
-                      {exam.description}
-                    </p>
-
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-slate-600 font-bold">
-                          <Building size={16} className="text-blue-600" />
-                          <span className="truncate max-w-[150px]" title={exam.conducting_body}>{exam.conducting_body}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-600 font-bold">
-                          <Calendar size={16} className="text-blue-600" />
-                          <span>{exam.frequency}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between py-3 border-y border-slate-50">
-                        <Badge
-                          variant="outline"
-                          className={`text-[10px] font-black uppercase border-2 ${exam.exam_mode === 'Online' ? 'border-blue-100 text-blue-600' : 'border-slate-100 text-slate-500'
-                            }`}
-                        >
-                          Mode: {exam.exam_mode}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="mt-auto">
-                      <Link href={`/exams/${exam.slug}`}>
-                        <Button className="w-full h-14 bg-slate-900 hover:bg-blue-600 text-white font-black rounded-2xl transition-all duration-300 group/btn flex items-center justify-center gap-2">
-                          View Full Syllabus
-                          <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
+
+      {/* Exams Grid */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        {filteredExams.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <LayoutGrid size={24} className="text-blue-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No exams found</h3>
+            <p className="text-gray-700 text-sm font-medium">Try adjusting your search or filters</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredExams.map((exam) => (
+              <ExamCard
+                key={exam._id}
+                name={exam.name}
+                short_name={exam.short_name}
+                exam_type={exam.exam_type}
+                conducting_body={exam.conducting_body}
+                exam_mode={exam.exam_mode}
+                frequency={exam.frequency}
+                description={exam.description}
+                slug={exam.slug}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* End of results */}
+        {filteredExams.length > 0 && (
+          <div className="text-center py-8 border-t border-blue-100 mt-8">
+            <p className="text-gray-700 text-sm font-medium">
+              Showing all {filteredExams.length} exams
+            </p>
+          </div>
+        )}
+      </div>
+      
       <FAQ />
     </div>
   )

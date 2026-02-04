@@ -9,7 +9,8 @@ import {
   TrendingUp,
   ArrowUpRight,
   Home,
-  ArrowRight
+  ArrowRight,
+  Star
 } from 'lucide-react';
 import Link from 'next/link';
 import FAQ from "@/app/Components/FAQ";
@@ -27,15 +28,12 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = '', prefix = '' }: {
   const controls = useAnimation();
   const inView = useInView(ref, { once: true });
 
-  // Parse the end value to get the numeric part
   const getNumericValue = (value: string) => {
     const match = value.match(/(\d+(?:\.\d+)?)/);
     return match ? parseFloat(match[1]) : 0;
   };
 
-  const getSuffix = (value: string) => {
-    return value.replace(/[\d.]/g, '');
-  };
+  const getSuffix = (value: string) => value.replace(/[\d.]/g, '');
 
   const numericEnd = getNumericValue(end);
   const displaySuffix = getSuffix(end);
@@ -50,8 +48,6 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = '', prefix = '' }: {
         const now = Date.now();
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
-
-        // Easing function for smooth animation
         const easeOutQuart = 1 - Math.pow(1 - progress, 4);
         setCount(Math.floor(easeOutQuart * numericEnd));
 
@@ -59,7 +55,6 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = '', prefix = '' }: {
           requestAnimationFrame(animate);
         }
       };
-
       requestAnimationFrame(animate);
     }
   }, [inView, isVisible, numericEnd, duration, controls]);
@@ -101,10 +96,7 @@ const AnimatedCard = ({ children, delay = 0 }: { children: React.ReactNode; dela
         delay: delay,
         ease: [0.25, 0.46, 0.45, 0.94]
       }}
-      whileHover={{
-        y: -8,
-        transition: { duration: 0.2 }
-      }}
+      whileHover={{ y: -8, transition: { duration: 0.2 } }}
       className="group"
     >
       {children}
@@ -114,7 +106,13 @@ const AnimatedCard = ({ children, delay = 0 }: { children: React.ReactNode; dela
 
 const ServicesPage = () => {
   return (
-    <div className="bg-white min-h-screen font-sans">
+    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50 min-h-screen font-sans relative overflow-hidden">
+      
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-pink-200/20 to-orange-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
 
       <div className="relative z-10">
         {/* Header Section */}
@@ -123,363 +121,159 @@ const ServicesPage = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-8 shadow-sm"
+              className="inline-flex items-center gap-3 bg-white border border-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-8 shadow-sm"
             >
-              <motion.div
-                animate={{
-                  rotate: [0, 14, -8, 14, -4, 10, 0, 0],
-                  scale: [1, 1.1, 0.9, 1.1, 0.95, 1.05, 1, 1]
-                }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  repeatDelay: 3,
-                  ease: "easeInOut"
-                }}
-                className="text-lg"
-              >
-                🎯
-              </motion.div>
+              <span className="text-lg">🎯</span>
               <span className="tracking-wide">COMPREHENSIVE GUIDANCE</span>
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 mb-6 leading-tight"
             >
               Your Complete Study
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-600"
-              >
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-600">
                 Abroad Solution
-              </motion.span>
+              </span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
               className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed mb-12"
             >
               From university selection to visa approval, accommodation to career guidance -
-              we handle every aspect of your international education journey with expertise and care.
+              we handle every aspect of your international education journey.
             </motion.p>
-
-            {/* Feature highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex flex-wrap justify-center items-center gap-6 text-sm font-medium text-slate-500"
-            >
-              <span className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                99% Success Rate
-              </span>
-              <span className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                500+ Universities
-              </span>
-              <span className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                25+ Countries
-              </span>
-              <span className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                10k+ Students
-              </span>
-            </motion.div>
           </div>
         </section>
 
-        {/* Services Section */}
+        {/* Services Grid Section */}
         <section className="pb-20 lg:pb-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-4">
-                Our Comprehensive Services
-              </h2>
-              <p className="text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                Every service is designed to address specific challenges in your study abroad journey,
-                ensuring you have expert support at every step.
-              </p>
-            </motion.div>
-
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* University Admissions */}
-          <AnimatedCard delay={0.1}>
-            <motion.div
-              className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-300 hover:shadow-2xl transition-all duration-500 overflow-hidden"
-              whileHover={{ y: -8 }}
-            >
-              <div className="relative z-10">
-                <motion.div
-                  className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 shadow-lg"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  <GraduationCap size={28} className="text-white" />
-                </motion.div>
+              
+              {/* University Admissions */}
+              <AnimatedCard delay={0.1}>
+                <div className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 overflow-hidden h-full">
+                  <div className="relative z-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-6 shadow-lg text-white">
+                      <GraduationCap size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">University Admissions</h3>
+                    <p className="text-slate-600 mb-6">Strategic guidance for top universities worldwide. We match your profile with perfect institutions.</p>
+                    <div className="flex items-center text-blue-600 font-bold">
+                      <span>Learn More</span> <ArrowUpRight size={18} className="ml-2" />
+                    </div>
+                  </div>
+                </div>
+              </AnimatedCard>
 
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-green-600 transition-colors">
-                  University Admissions
-                </h3>
+              {/* Visa Assistance */}
+              <AnimatedCard delay={0.2}>
+                <div className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 overflow-hidden h-full">
+                  <div className="relative z-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-6 shadow-lg text-white">
+                      <FileText size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">Visa Assistance</h3>
+                    <p className="text-slate-600 mb-6">Expert visa application support with 99% success rate across all major destinations.</p>
+                    <div className="flex items-center text-blue-600 font-bold">
+                      <span>Get Started</span> <ArrowUpRight size={18} className="ml-2" />
+                    </div>
+                  </div>
+                </div>
+              </AnimatedCard>
 
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  Strategic guidance for top universities worldwide. We match your profile with perfect institutions.
-                </p>
+              {/* Accommodation */}
+              <AnimatedCard delay={0.3}>
+                <div className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 overflow-hidden h-full">
+                  <div className="relative z-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-600 rounded-2xl mb-6 shadow-lg text-white">
+                      <Home size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">Accommodation</h3>
+                    <p className="text-slate-600 mb-6">Pre-arranged housing solutions in verified locations near your university campus.</p>
+                    <div className="flex items-center text-blue-600 font-bold">
+                      <span>Find Housing</span> <ArrowUpRight size={18} className="ml-2" />
+                    </div>
+                  </div>
+                </div>
+              </AnimatedCard>
 
-                <motion.div
-                  className="flex items-center text-blue-600 font-semibold group-hover:text-blue-700"
-                  whileHover={{ x: 4 }}
-                >
-                  <span>Learn More</span>
-                  <ArrowUpRight size={18} className="ml-2" />
-                </motion.div>
-              </div>
+              {/* Scholarships */}
+              <AnimatedCard delay={0.4}>
+                <div className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 overflow-hidden h-full">
+                  <div className="relative z-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-violet-600 rounded-2xl mb-6 shadow-lg text-white">
+                      <DollarSign size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">Scholarships</h3>
+                    <p className="text-slate-600 mb-6">Access to exclusive scholarships and financial aid opportunities worth millions.</p>
+                    <div className="flex items-center text-blue-600 font-bold">
+                      <span>Explore Funds</span> <ArrowUpRight size={18} className="ml-2" />
+                    </div>
+                  </div>
+                </div>
+              </AnimatedCard>
 
-              {/* Subtle background pattern */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-full -translate-y-8 translate-x-8 opacity-50 group-hover:opacity-70 transition-opacity" />
-            </motion.div>
-          </AnimatedCard>
+              {/* Test Prep */}
+              <AnimatedCard delay={0.5}>
+                <div className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 overflow-hidden h-full">
+                  <div className="relative z-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-600 rounded-2xl mb-6 shadow-lg text-white">
+                      <BookOpen size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">Test Prep</h3>
+                    <p className="text-slate-600 mb-6">Comprehensive preparation for IELTS, TOEFL, GRE, and other entrance exams.</p>
+                    <div className="flex items-center text-blue-600 font-bold">
+                      <span>Start Learning</span> <ArrowUpRight size={18} className="ml-2" />
+                    </div>
+                  </div>
+                </div>
+              </AnimatedCard>
 
-          {/* Visa Assistance */}
-          <AnimatedCard delay={0.2}>
-            <motion.div
-              className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-orange-300 hover:shadow-2xl transition-all duration-500 overflow-hidden"
-              whileHover={{ y: -8 }}
-            >
-              <div className="relative z-10">
-                <motion.div
-                  className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-6 shadow-lg"
-                  whileHover={{ scale: 1.1, rotate: -5 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  <FileText size={28} className="text-white" />
-                </motion.div>
+              {/* Career Counseling */}
+              <AnimatedCard delay={0.6}>
+                <div className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-400 hover:shadow-2xl transition-all duration-500 overflow-hidden h-full">
+                  <div className="relative z-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-2xl mb-6 shadow-lg text-white">
+                      <TrendingUp size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">Career Counseling</h3>
+                    <p className="text-slate-600 mb-6">Personalized career guidance and roadmap creation for your future success.</p>
+                    <div className="flex items-center text-blue-600 font-bold">
+                      <span>Get Advice</span> <ArrowUpRight size={18} className="ml-2" />
+                    </div>
+                  </div>
+                </div>
+              </AnimatedCard>
 
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
-                  Visa Assistance
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  Expert visa application support with 99% success rate across all major destinations.
-                </p>
-
-                <motion.div
-                  className="flex items-center text-blue-600 font-semibold group-hover:text-blue-700"
-                  whileHover={{ x: 4 }}
-                >
-                  <span>Get Started</span>
-                  <ArrowUpRight size={18} className="ml-2" />
-                </motion.div>
-              </div>
-
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-full -translate-y-8 translate-x-8 opacity-50 group-hover:opacity-70 transition-opacity" />
-            </motion.div>
-          </AnimatedCard>
-
-          {/* Accommodation */}
-          <AnimatedCard delay={0.3}>
-            <motion.div
-              className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-orange-300 hover:shadow-2xl transition-all duration-500 overflow-hidden"
-              whileHover={{ y: -8 }}
-            >
-              <div className="relative z-10">
-                <motion.div
-                  className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-600 rounded-2xl mb-6 shadow-lg"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  <Home size={28} className="text-white" />
-                </motion.div>
-
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-green-600 transition-colors">
-                  Accommodation
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  Pre-arranged housing solutions in verified locations near your university campus.
-                </p>
-
-                <motion.div
-                  className="flex items-center text-blue-600 font-semibold group-hover:text-blue-700"
-                  whileHover={{ x: 4 }}
-                >
-                  <span>Find Housing</span>
-                  <ArrowUpRight size={18} className="ml-2" />
-                </motion.div>
-              </div>
-
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-full -translate-y-8 translate-x-8 opacity-50 group-hover:opacity-70 transition-opacity" />
-            </motion.div>
-          </AnimatedCard>
-
-          {/* Scholarships */}
-          <AnimatedCard delay={0.4}>
-            <motion.div
-              className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-orange-300 hover:shadow-2xl transition-all duration-500 overflow-hidden"
-              whileHover={{ y: -8 }}
-            >
-              <div className="relative z-10">
-                <motion.div
-                  className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-violet-600 rounded-2xl mb-6 shadow-lg"
-                  whileHover={{ scale: 1.1, rotate: -5 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  <DollarSign size={28} className="text-white" />
-                </motion.div>
-
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
-                  Scholarships
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  Access to exclusive scholarships and financial aid opportunities worth millions.
-                </p>
-
-                <motion.div
-                  className="flex items-center text-blue-600 font-semibold group-hover:text-blue-700"
-                  whileHover={{ x: 4 }}
-                >
-                  <span>Explore Funds</span>
-                  <ArrowUpRight size={18} className="ml-2" />
-                </motion.div>
-              </div>
-
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-full -translate-y-8 translate-x-8 opacity-50 group-hover:opacity-70 transition-opacity" />
-            </motion.div>
-          </AnimatedCard>
-
-          {/* Test Prep */}
-          <AnimatedCard delay={0.5}>
-            <motion.div
-              className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-300 hover:shadow-2xl transition-all duration-500 overflow-hidden"
-              whileHover={{ y: -8 }}
-            >
-              <div className="relative z-10">
-                <motion.div
-                  className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-rose-600 rounded-2xl mb-6 shadow-lg"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  <BookOpen size={28} className="text-white" />
-                </motion.div>
-
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
-                  Test Prep
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  Comprehensive preparation for IELTS, TOEFL, GRE, and other entrance exams.
-                </p>
-
-                <motion.div
-                  className="flex items-center text-blue-600 font-semibold group-hover:text-blue-700"
-                  whileHover={{ x: 4 }}
-                >
-                  <span>Start Learning</span>
-                  <ArrowUpRight size={18} className="ml-2" />
-                </motion.div>
-              </div>
-
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-full -translate-y-8 translate-x-8 opacity-50 group-hover:opacity-70 transition-opacity" />
-            </motion.div>
-          </AnimatedCard>
-
-          {/* Career Counseling */}
-          <AnimatedCard delay={0.6}>
-            <motion.div
-              className="group relative bg-white border border-slate-200 rounded-2xl p-8 hover:border-blue-300 hover:shadow-2xl transition-all duration-500 overflow-hidden"
-              whileHover={{ y: -8 }}
-            >
-              <div className="relative z-10">
-                <motion.div
-                  className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-teal-600 rounded-2xl mb-6 shadow-lg"
-                  whileHover={{ scale: 1.1, rotate: -5 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  <TrendingUp size={28} className="text-white" />
-                </motion.div>
-
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
-                  Career Counseling
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  Personalized career guidance and roadmap creation for your future success.
-                </p>
-
-                <motion.div
-                  className="flex items-center text-blue-600 font-semibold group-hover:text-blue-700"
-                  whileHover={{ x: 4 }}
-                >
-                  <span>Get Advice</span>
-                  <ArrowUpRight size={18} className="ml-2" />
-                </motion.div>
-              </div>
-
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-full -translate-y-8 translate-x-8 opacity-50 group-hover:opacity-70 transition-opacity" />
-            </motion.div>
-          </AnimatedCard>
-          </div>
+            </div>
           </div>
         </section>
 
         {/* Stats Section */}
         <section className="bg-slate-50 py-20 lg:py-28">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-6">
-                Proven Results That Speak
-              </h2>
-              <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                Our track record speaks for itself. Join thousands of successful students who have transformed their futures.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-12">Proven Results That Speak</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
               <AnimatedCounter end="10000" suffix="Students Placed" />
               <AnimatedCounter end="500" suffix="University Partners" />
               <AnimatedCounter end="25" suffix="Countries Served" />
               <AnimatedCounter prefix="$" end="50000" suffix="Scholarships Secured" />
             </div>
-
-            {/* Call to Action */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="text-center"
-            >
-              <Link href="/contact" className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary/90 transition-colors">
-                Begin Your Journey
-                <ArrowRight className="inline-block ml-3 w-5 h-5" />
-              </Link>
-              <p className="text-slate-500 text-sm mt-4">Free consultation • No commitment required</p>
-            </motion.div>
+            
+            <Link href="/contact" className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200 transform hover:scale-105">
+              Begin Your Journey
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
           </div>
         </section>
       </div>
+
       <FAQ />
     </div>
   );

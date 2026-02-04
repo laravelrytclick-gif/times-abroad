@@ -79,6 +79,8 @@ export async function POST(request: NextRequest) {
       name,
       slug,
       college_type,
+      college_type_type: typeof college_type,
+      college_type_valid: ['study_abroad', 'mbbs_abroad'].includes(college_type),
       country_ref,
       overview,
       key_highlights,
@@ -88,12 +90,23 @@ export async function POST(request: NextRequest) {
       documents_required,
       fees_structure,
       campus_highlights,
-      is_active
+      is_active,
+      // Debug specific fields
+      overview_description: overview?.description,
+      key_highlights_features: key_highlights?.features?.length,
+      why_choose_us_features: why_choose_us?.features?.length,
+      ranking_country_ranking: ranking?.country_ranking,
+      admission_process_steps: admission_process?.steps?.length,
+      documents_required_documents: documents_required?.documents?.length,
+      fees_structure_courses: fees_structure?.courses?.length,
+      campus_highlights_highlights: campus_highlights?.highlights?.length
     });
 
     // Validation using utility
     console.log('✅ [API] Starting validation...');
+    console.log('🔍 [API] Validating college_type:', college_type);
     validateRequiredFields(body, ['name', 'slug', 'college_type', 'country_ref']);
+    console.log('✅ [API] College type validation passed');
     
     // Validate that at least overview description is provided
     if (!overview?.description) {
@@ -135,6 +148,15 @@ export async function POST(request: NextRequest) {
     console.log('✅ [API] No existing college found with slug');
 
     console.log('🏗️ [API] Creating new college document...');
+    console.log('🔍 [API] Setting college_type to:', college_type || 'study_abroad');
+    console.log('🔍 [API] Overview section:', overview);
+    console.log('🔍 [API] Key highlights section:', key_highlights);
+    console.log('🔍 [API] Why choose us section:', why_choose_us);
+    console.log('🔍 [API] Ranking section:', ranking);
+    console.log('🔍 [API] Admission process section:', admission_process);
+    console.log('🔍 [API] Documents required section:', documents_required);
+    console.log('🔍 [API] Fees structure section:', fees_structure);
+    console.log('🔍 [API] Campus highlights section:', campus_highlights);
     const college = new College({
       name,
       slug,
@@ -200,8 +222,21 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('💾 [API] Saving college to database...');
+    console.log('🔍 [API] College object before save:', JSON.stringify(college, null, 2));
+    console.log('🔍 [API] College college_type before save:', college.college_type);
+    console.log('🔍 [API] College college_type type:', typeof college.college_type);
     const savedCollege = await college.save();
     console.log('✅ [API] College saved successfully:', savedCollege);
+    console.log('🔍 [API] Saved college college_type:', savedCollege.college_type);
+    console.log('🔍 [API] Saved college college_type type:', typeof savedCollege.college_type);
+    console.log('🔍 [API] Saved college overview:', savedCollege.overview);
+    console.log('🔍 [API] Saved college key_highlights:', savedCollege.key_highlights);
+    console.log('🔍 [API] Saved college why_choose_us:', savedCollege.why_choose_us);
+    console.log('🔍 [API] Saved college ranking:', savedCollege.ranking);
+    console.log('🔍 [API] Saved college admission_process:', savedCollege.admission_process);
+    console.log('🔍 [API] Saved college documents_required:', savedCollege.documents_required);
+    console.log('🔍 [API] Saved college fees_structure:', savedCollege.fees_structure);
+    console.log('🔍 [API] Saved college campus_highlights:', savedCollege.campus_highlights);
 
     return createSuccessResponse(savedCollege, "College created successfully");
     
