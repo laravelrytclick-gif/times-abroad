@@ -64,9 +64,9 @@ export default function CountriesPage() {
       key: 'is_active' as keyof Country,
       title: 'Status',
       render: (value: boolean) => (
-        <Badge variant={value ? 'default' : 'secondary'}>
-          {value ? 'active' : 'inactive'}
-        </Badge>
+        <div className={`flex ${value ? 'bg-green-600' : 'bg-gray-600'} text-white rounded-2xl px-2 py-1 items-center gap-1`}>
+          <p>{value ? 'active' : 'inactive'}</p>
+        </div>
       )
     },
     {
