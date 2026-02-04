@@ -173,7 +173,7 @@ export default function FeaturedSection() {
 
         {isLoading ? <SkeletonGrid /> : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {universities.slice(0, uCount).map((uni, i) => <UniversityCard key={i} {...uni} />)}
+            {universities.slice(0, uCount).map((uni: UniversityCardProps, i: number) => <UniversityCard key={i} {...uni} />)}
           </div>
         )}
 
@@ -198,7 +198,7 @@ export default function FeaturedSection() {
 
           {isLoading ? <SkeletonGrid count={4} /> : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {exams.slice(0, eCount).map((exam, i) => <ExamCard key={i} {...exam} />)}
+              {exams.slice(0, eCount).map((exam: ExamCardProps, i: number) => <ExamCard key={i} {...exam} />)}
             </div>
           )}
         </div>
