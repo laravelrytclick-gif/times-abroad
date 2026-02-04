@@ -1,103 +1,85 @@
-// app/api/send/route.ts
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
-  console.log('=== API /api/send called ===');
-  
   try {
     const body = await req.json();
-    console.log('Received request body:', body);
-    
-    const { name, email, number, city } = body;
-    console.log('Extracted fields:', { name, email, number, city });
+    const { name, email, number, city, interest } = body;
 
-    // Validate required fields
-    if (!name || !email || !number || !city) {
-      console.log('Validation failed - missing fields:', { 
-        hasName: !!name, 
-        hasEmail: !!email, 
-        hasNumber: !!number, 
-        hasCity: !!city 
-      });
+    // 1. Enhanced Validation
+    if (!name || !email || !number || !city || !interest) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: 'Missing required fields' },
         { status: 400 }
       );
     }
-    
-    console.log('Validation passed - all fields present');
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      console.log('Email validation failed for:', email);
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
-    
-    console.log('Email validation passed');
-    console.log('Attempting to send email via Resend...');
+    // 2. Format the "Interest" for the email display
+    const interestLabel = interest === 'mbbs-abroad' ? 'MBBS Abroad' : 'Study Abroad';
 
+    // 3. Send Email via Resend
     const data = await resend.emails.send({
-      from: 'Alpha World Education <onboarding@resend.dev>', // Works with localhost for testing
-      to: ['sagarbishtz589@gmail.com'], // Your email address
-      subject: `New Enquiry from ${name}`,
+      from: 'Education Times Abroad <onboarding@resend.dev>', // Update this once you verify your domain
+      to: ['sagarbishtz589@gmail.com'],
+      subject: `🎓 New ${interestLabel} Enquiry: ${name}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">
-            New Contact Form Submission
-          </h2>
-          
-          <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #1f2937; margin-top: 0;">Contact Information:</h3>
-            
-            <p style="margin: 10px 0;">
-              <strong>Name:</strong> ${name}
-            </p>
-            
-            <p style="margin: 10px 0;">
-              <strong>Email:</strong> <a href="mailto:${email}" style="color: #10b981;">${email}</a>
-            </p>
-            
-            <p style="margin: 10px 0;">
-              <strong>Phone Number:</strong> ${number}
-            </p>
-            
-            <p style="margin: 10px 0;">
-              <strong>City:</strong> ${city}
-            </p>
-          </div>
-          
-          <div style="background-color: #ecfdf5; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0;">
-            <p style="margin: 0; color: #065f46;">
-              <strong>Submission Time:</strong> ${new Date().toLocaleString()}
-            </p>
-          </div>
-          
-          <p style="color: #6b7280; font-size: 14px; text-align: center; margin-top: 30px;">
-            This email was sent from the Alpha World Education contact form.
-          </p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+            <div style="max-width: 600px; margin: 20px auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;">
+              <div style="background: linear-gradient(to right, #2563eb, #4338ca); padding: 30px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">New Admission Enquiry</h1>
+                <p style="color: #bfdbfe; margin: 5px 0 0 0;">Education Times Abroad Portal</p>
+              </div>
+
+              <div style="padding: 30px; background-color: #ffffff;">
+                <div style="margin-bottom: 25px;">
+                  <span style="font-size: 12px; font-weight: bold; color: #2563eb; text-transform: uppercase; letter-spacing: 1px;">Program of Interest</span>
+                  <div style="font-size: 20px; font-weight: bold; color: #1e293b; margin-top: 5px;">${interestLabel}</div>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Full Name</td>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; text-align: right;">${name}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Email Address</td>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; text-align: right;"><a href="mailto:${email}" style="color: #2563eb; text-decoration: none;">${email}</a></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">Phone Number</td>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; text-align: right;">${number}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b;">City / Location</td>
+                    <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; text-align: right;">${city}</td>
+                  </tr>
+                </table>
+
+                <div style="margin-top: 30px; padding: 15px; background-color: #f8fafc; border-radius: 8px; text-align: center;">
+                  <p style="margin: 0; font-size: 13px; color: #94a3b8;">
+                    Received on ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} (IST)
+                  </p>
+                </div>
+              </div>
+
+              <div style="background-color: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b;">
+                This is an automated message from your website contact form.
+              </div>
+            </div>
+          </body>
+        </html>
       `,
     });
-    
-    console.log('Email sent successfully:', data);
-    console.log('=== API /api/send completed successfully ===');
-    return NextResponse.json({ message: 'Email sent successfully', data });
+
+    return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error('=== API /api/send ERROR ===');
-    console.error('Error details:', error);
-    console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
-    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-    console.error('=== END ERROR ===');
-    
+    console.error('RESEND_ERROR:', error);
     return NextResponse.json(
-      { error: 'Failed to send email' },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

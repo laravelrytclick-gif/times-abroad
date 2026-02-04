@@ -231,7 +231,7 @@ const ExamPage = () => {
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='7' cy='7' r='7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
           }} />
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left Content */}
               <div className="text-white">
@@ -344,15 +344,15 @@ const ExamPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto  px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* Main Content */}
-          <div className="col-span-1 space-y-8">
+          <div className="col-span-1 space-y-6">
 
             {/* Overview Section */}
             {exam.overview && (
               <div id="overview" className="scroll-mt-24">
-                <Card className="border-none shadow-lg rounded-2xl overflow-hidden mb-8">
+                <Card className="border-none shadow-lg rounded-2xl overflow-hidden mb-4">
                   <CardContent className="p-0">
                     <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-8 rounded-t-2xl">
                       <div className="flex items-center gap-4">
@@ -391,7 +391,7 @@ const ExamPage = () => {
             {/* Registration Section */}
             {exam.registration && (
               <div id="registration" className="scroll-mt-24">
-                <Card className="border-none shadow-lg rounded-2xl mb-8 overflow-hidden">
+                <Card className="border-none shadow-lg rounded-2xl mb-4 overflow-hidden">
                   <CardContent className="p-0">
                     {/* Registration Header with Enhanced Image */}
                     <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 text-white overflow-hidden">

@@ -7,6 +7,7 @@ interface FormData {
   email: string
   number: string
   city: string
+  interest: string
 }
 
 interface FormModalContextType {
@@ -38,7 +39,8 @@ export const FormModalProvider: React.FC<FormModalProviderProps> = ({ children }
     name: '',
     email: '',
     number: '',
-    city: ''
+    city: '',
+    interest: ''
   })
 
   const openModal = () => setIsOpen(true)
@@ -53,7 +55,8 @@ export const FormModalProvider: React.FC<FormModalProviderProps> = ({ children }
       name: '',
       email: '',
       number: '',
-      city: ''
+      city: '',
+      interest: ''
     })
   }
 

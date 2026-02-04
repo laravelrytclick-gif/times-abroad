@@ -137,11 +137,51 @@ interface CollegeDetailPageProps {
 const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
   const { openModal } = useFormModal()
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const handleScroll = () => {
+      const sections = [
+        { id: 'overview', color: 'bg-emerald-50' },
+        { id: 'key-highlights', color: 'bg-yellow-50' },
+        { id: 'why-choose', color: 'bg-indigo-50' },
+        { id: 'ranking', color: 'bg-blue-50' },
+        { id: 'course-highlights', color: 'bg-purple-50' },
+        { id: 'admission-process', color: 'bg-slate-50' },
+        { id: 'entrance-exams', color: 'bg-orange-50' },
+        { id: 'documents-required', color: 'bg-red-50' },
+        { id: 'fees-structure', color: 'bg-green-50' },
+        { id: 'fees-compare', color: 'bg-teal-50' },
+        { id: 'campus-highlights', color: 'bg-cyan-50' },
+        { id: 'students-life', color: 'bg-pink-50' }
+      ];
+
+      const scrollPosition = window.scrollY + 100;
+      
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const element = document.getElementById(sections[i].id);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveTab(sections[i].id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mounted]);
 
   const { phones, emails } = useContactInfo();
 
@@ -341,21 +381,24 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
       {/* Navigation Tab Bar */}
       <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-lg">
         <div className="max-w-none px-0 sm:px-0 md:px-0 lg:px-0">
-          <div className="flex items-center gap-1 py-2 sm:py-3 overflow-x-auto scrollbar-hide scroll-smooth">
-            {[
-              { name: 'Overview', id: 'overview' },
-              { name: 'Key Highlights', id: 'key-highlights' },
-              { name: 'Why Choose ?', id: 'why-choose' },
-              { name: 'Ranking', id: 'ranking' },
-              { name: 'Course Highlights', id: 'course-highlights' },
-              { name: 'Admission Process', id: 'admission-process' },
-              { name: 'Eligibility', id: 'entrance-exams' },
-              { name: 'Documents', id: 'documents-required' },
-              { name: 'Fees', id: 'fees-structure' },
-              { name: 'Compare Fees', id: 'fees-compare' },
-              { name: 'Campus', id: 'campus-highlights' },
-              { name: 'Students Life', id: 'students-life' }
-            ].map((tab) => (
+          <div className="relative">
+            {/* Active Tab Indicator Line */}
+            <div className="absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out" />
+            <div className="flex items-center gap-1 py-2 sm:py-3 overflow-x-auto scrollbar-hide scroll-smooth">
+              {[
+                { name: 'Overview', id: 'overview' },
+                { name: 'Key Highlights', id: 'key-highlights' },
+                { name: 'Why Choose ?', id: 'why-choose' },
+                { name: 'Ranking', id: 'ranking' },
+                { name: 'Course Highlights', id: 'course-highlights' },
+                { name: 'Admission Process', id: 'admission-process' },
+                { name: 'Eligibility', id: 'entrance-exams' },
+                { name: 'Documents', id: 'documents-required' },
+                { name: 'Fees', id: 'fees-structure' },
+                { name: 'Compare Fees', id: 'fees-compare' },
+                { name: 'Campus', id: 'campus-highlights' },
+                { name: 'Students Life', id: 'students-life' }
+              ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => {
@@ -364,7 +407,11 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
                 }}
-                className="flex items-center gap-2 px-4 sm:px-4 md:px-4 lg:px-6 py-2.5 text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg sm:rounded-xl transition-all duration-300 whitespace-nowrap group relative overflow-hidden flex-shrink-0 min-w-max"
+                className={`flex items-center gap-2 px-4 sm:px-4 md:px-4 lg:px-6 py-2.5 text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 whitespace-nowrap group relative overflow-hidden flex-shrink-0 min-w-max ${
+                  activeTab === tab.id
+                    ? 'text-white bg-blue-600 shadow-md'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
+                }`}
               >
                 <span className="relative z-10 text-sm">
                   {tab.name}
@@ -375,12 +422,27 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:w-3/4 transition-all duration-300 rounded-full" />
               </button>
             ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12">
+      <div className={`max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 transition-colors duration-500 ${
+        activeTab === 'overview' ? 'bg-emerald-50' :
+        activeTab === 'key-highlights' ? 'bg-yellow-50' :
+        activeTab === 'why-choose' ? 'bg-indigo-50' :
+        activeTab === 'ranking' ? 'bg-blue-50' :
+        activeTab === 'course-highlights' ? 'bg-purple-50' :
+        activeTab === 'admission-process' ? 'bg-slate-50' :
+        activeTab === 'entrance-exams' ? 'bg-orange-50' :
+        activeTab === 'documents-required' ? 'bg-red-50' :
+        activeTab === 'fees-structure' ? 'bg-green-50' :
+        activeTab === 'fees-compare' ? 'bg-teal-50' :
+        activeTab === 'campus-highlights' ? 'bg-cyan-50' :
+        activeTab === 'students-life' ? 'bg-pink-50' :
+        'bg-white'
+      }`}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6 sm:space-y-8">
@@ -712,8 +774,8 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
                         <div
                           key={index}
                           className={`group relative overflow-hidden p-8 rounded-[2.5rem] transition-all duration-500 hover:-translate-y-3 ${index % 3 === 0
-                              ? 'bg-slate-900 text-white lg:col-span-2'
-                              : 'bg-slate-50 border border-slate-100'
+                            ? 'bg-slate-900 text-white lg:col-span-2'
+                            : 'bg-slate-50 border border-slate-100'
                             }`}
                         >
                           {/* Animated Background Glow (for dark cards) */}
@@ -781,7 +843,6 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
               )}
             </div>
 
-            {/* Why Choose Us */}
             {/* Why Choose Us */}
             <div id="why-choose">
               {college.why_choose_us?.features && (
@@ -1193,133 +1254,6 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Fees Structure */}
-            <div id="fees-structure" className="scroll-mt-24">
-              {college.fees_structure?.courses && college.fees_structure.courses.length > 0 && (
-                <Card className="border-none shadow-[0_40px_80px_-15px_rgba(16,185,129,0.12)] rounded-[3.5rem] overflow-hidden bg-white relative">
-
-                  {/* Background Decorative Accent */}
-                  <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-emerald-50/50 to-transparent pointer-events-none" />
-
-                  <CardHeader className="relative z-10 px-8 sm:px-14 pt-14 pb-4">
-                    <div className="flex flex-col gap-4">
-                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 w-fit">
-                        <Coins className="w-4 h-4 text-emerald-600" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700">Tuition Overview</span>
-                      </div>
-                      <CardTitle className="text-5xl sm:text-6xl font-black text-slate-900 tracking-tighter leading-tight">
-                        Program <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-                          Investment.
-                        </span>
-                      </CardTitle>
-                      {college.fees_structure.description && (
-                        <p className="text-slate-500 text-lg font-medium max-w-2xl leading-relaxed italic border-l-4 border-emerald-500/20 pl-6">
-                          {college.fees_structure.description}
-                        </p>
-                      )}
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="relative z-10 p-6 sm:p-14">
-                    <div className="grid gap-6">
-                      {college.fees_structure.courses.map((course, index) => (
-                        <div
-                          key={index}
-                          className="group relative overflow-hidden bg-slate-50/50 hover:bg-white rounded-[2.5rem] border border-transparent hover:border-emerald-100 transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(16,185,129,0.15)]"
-                        >
-                          <div className="flex flex-col lg:flex-row lg:items-center justify-between p-8 gap-8">
-
-                            {/* Course Details */}
-                            <div className="flex items-center gap-6 flex-1">
-                              <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
-                                <BookOpenCheck className="w-10 h-10 text-emerald-600 group-hover:text-white" />
-                              </div>
-                              <div className="space-y-1">
-                                <h4 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-emerald-700 transition-colors">
-                                  {course.course_name}
-                                </h4>
-                                <div className="flex items-center gap-4">
-                                  <div className="flex items-center gap-1.5">
-                                    <History className="w-4 h-4 text-slate-400" />
-                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{course.duration} Full-time</span>
-                                  </div>
-                                  <span className="h-1 w-1 rounded-full bg-slate-300" />
-                                  <div className="px-3 py-1 bg-white rounded-lg border border-slate-100 text-[10px] font-black text-emerald-600 uppercase tracking-widest shadow-sm">
-                                    Verified 2026
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Pricing Box */}
-                            <div className="flex items-center lg:items-end flex-col gap-1 px-8 py-6 bg-white lg:bg-transparent rounded-3xl border lg:border-none border-slate-100 shadow-sm lg:shadow-none">
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-emerald-500 transition-colors">
-                                Annual Tuition
-                              </span>
-                              <div className="flex items-baseline gap-1">
-                                <span className="text-4xl font-black text-slate-900 tracking-tighter">
-                                  {course.annual_tuition_fee}
-                                </span>
-                              </div>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                                per academic year
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Decorative Corner Action */}
-                          <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 duration-500">
-                            <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-200">
-                              <ArrowUpRight size={20} />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Global Scholarship Alert Footer */}
-                    <div className="mt-12 overflow-hidden rounded-[3rem] bg-slate-900 p-1 relative group">
-                      <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-transparent to-blue-500/20 animate-pulse" />
-                      <div className="bg-slate-900 rounded-[2.9rem] p-8 sm:p-12 relative z-10">
-                        <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-                          <div className="flex items-center gap-8 text-center lg:text-left">
-                            <div className="relative">
-                              <div className="w-20 h-20 bg-emerald-500/20 rounded-[2rem] flex items-center justify-center border border-emerald-500/30">
-                                <Zap className="w-10 h-10 text-emerald-400 fill-emerald-400/20" />
-                              </div>
-                              <div className="absolute -bottom-2 -right-2 bg-white text-slate-900 text-[10px] font-black px-2 py-1 rounded-md rotate-12 shadow-xl">
-                                UP TO 50%
-                              </div>
-                            </div>
-                            <div>
-                              <h5 className="text-white text-3xl font-black tracking-tight leading-none mb-2">Financial Aid & Scholarships</h5>
-                              <p className="text-slate-400 text-lg font-medium">Merit-based grants are currently open for the 2026 intake session.</p>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                            <button
-                              onClick={openModal}
-                              className="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-emerald-900/40 flex items-center justify-center gap-3"
-                            >
-                              Check Eligibility <ChevronRight size={18} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Bottom Trust Line */}
-                    <div className="mt-8 flex items-center justify-center gap-4 text-slate-400">
-                      <ShieldCheck size={16} className="text-emerald-500" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em]">Official University Fee Statement • No Hidden Costs</span>
                     </div>
                   </CardContent>
                 </Card>
