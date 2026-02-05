@@ -49,7 +49,7 @@ export interface College {
   is_active: boolean
   createdAt: string
   updatedAt: string
-  
+
   // Comprehensive structure fields
   overview?: {
     title: string
@@ -101,13 +101,13 @@ export default function CollegesPage() {
   const [collegeToDelete, setCollegeToDelete] = useState<College | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCountry, setSelectedCountry] = useState<string>('all')
-  
+
   // TanStack Query hooks
   const { data: colleges = [], isLoading: dataLoading, error: collegesError } = useAdminColleges()
   const { data: countries = dummyCountries } = useAdminCountries()
   const saveCollegeMutation = useSaveCollege()
   const deleteCollegeMutation = useDeleteCollege()
-  
+
   const [formData, setFormData] = useState<{
     // Basic Info
     name: string
@@ -219,15 +219,15 @@ export default function CollegesPage() {
     if (selectedCountry !== 'all') {
       filtered = filtered.filter(college => {
         if (!college.country_ref) return false
-        const countrySlug = typeof college.country_ref === 'string' 
-          ? college.country_ref 
+        const countrySlug = typeof college.country_ref === 'string'
+          ? college.country_ref
           : college.country_ref.slug
         return countrySlug === selectedCountry
       })
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(college => 
+      filtered = filtered.filter(college =>
         college.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
@@ -240,12 +240,12 @@ export default function CollegesPage() {
       key: 'name',
       title: 'College Name',
       render: (value: string, record: College) => {
-        const countryName = !record.country_ref 
+        const countryName = !record.country_ref
           ? 'No country'
-          : typeof record.country_ref === 'string' 
-            ? record.country_ref 
+          : typeof record.country_ref === 'string'
+            ? record.country_ref
             : record.country_ref.name || 'Unknown country'
-        
+
         return (
           <div>
             <div className="font-medium">{value}</div>
@@ -298,9 +298,9 @@ export default function CollegesPage() {
       render: (value: string) => {
         if (!value) return 'N/A'
         return (
-          <a 
-            href={value} 
-            target="_blank" 
+          <a
+            href={value}
+            target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 text-sm underline"
           >
@@ -319,15 +319,15 @@ export default function CollegesPage() {
       title: 'Ranking',
       render: (value: string) => {
         if (!value || value === 'N/A' || value === 'n/a') return value || '-'
-        
+
         // Check if it's a simple string that's not JSON
         if (typeof value === 'string' && !value.startsWith('{') && !value.startsWith('[')) {
           return value
         }
-        
+
         try {
           const rankingData = typeof value === 'string' ? JSON.parse(value.trim()) : value
-          
+
           return (
             <div className="space-y-1">
               {rankingData.country_ranking && (
@@ -377,20 +377,20 @@ export default function CollegesPage() {
       console.log('🔍 DEBUG: Loading college for edit:', college)
       console.log('🔍 DEBUG: college.ranking type:', typeof college.ranking)
       console.log('🔍 DEBUG: college.ranking value:', college.ranking)
-      
+
       setEditingCollege(college)
-      
+
       // Properly extract all existing data when editing
-      const extractedRanking = typeof college.ranking === 'object' && college.ranking !== null 
-        ? college.ranking 
+      const extractedRanking = typeof college.ranking === 'object' && college.ranking !== null
+        ? college.ranking
         : {
-            title: 'Ranking & Recognition',
-            description: '',
-            country_ranking: college.ranking || '',
-            world_ranking: '',
-            accreditation: []
-          }
-      
+          title: 'Ranking & Recognition',
+          description: '',
+          country_ranking: college.ranking || '',
+          world_ranking: '',
+          accreditation: []
+        }
+
       const extractedFeesStructure = college.fees_structure || {
         title: "Fees Structure",
         description: "",
@@ -400,7 +400,7 @@ export default function CollegesPage() {
           annual_tuition_fee: `$${college.fees.toLocaleString()}`
         }] : []
       }
-      
+
       // Initialize form with ALL existing college data
       setFormData({
         // Basic Info
@@ -523,10 +523,10 @@ export default function CollegesPage() {
     try {
       console.log('🚀 Starting college save process...')
       console.log('📝 Form data:', formData)
-      
+
       // Comprehensive validation - ALL fields are required
       const validationErrors: string[] = []
-      
+
       // Basic Info Validation - ALL REQUIRED
       if (!formData.name?.trim()) validationErrors.push('College name is required')
       if (!formData.slug?.trim()) validationErrors.push('College slug is required')
@@ -535,48 +535,48 @@ export default function CollegesPage() {
       if (!formData.establishment_year?.trim()) validationErrors.push('Establishment year is required')
       if (!formData.banner_url?.trim()) validationErrors.push('Banner URL is required')
       if (!formData.exams?.length) validationErrors.push('At least one required exam is needed')
-      
+
       // Overview Validation - ALL REQUIRED
       if (!formData.overview_title?.trim()) validationErrors.push('Overview title is required')
       if (!formData.overview_description?.trim()) validationErrors.push('Overview description is required')
-      
+
       // Key Highlights Validation - ALL REQUIRED
       if (!formData.key_highlights_title?.trim()) validationErrors.push('Key highlights title is required')
       if (!formData.key_highlights_description?.trim()) validationErrors.push('Key highlights description is required')
       if (!formData.key_highlights_features?.length) validationErrors.push('At least one key highlight feature is required')
-      
+
       // Why Choose Us Validation - ALL REQUIRED
       if (!formData.why_choose_us_title?.trim()) validationErrors.push('Why choose us title is required')
       if (!formData.why_choose_us_description?.trim()) validationErrors.push('Why choose us description is required')
       if (!formData.why_choose_us_features?.length) validationErrors.push('At least one why choose us feature is required')
-      
+
       // Ranking Validation - ALL REQUIRED
       if (!formData.ranking_title?.trim()) validationErrors.push('Ranking title is required')
       if (!formData.ranking_description?.trim()) validationErrors.push('Ranking description is required')
       if (!formData.country_ranking?.trim()) validationErrors.push('Country ranking is required')
       if (!formData.world_ranking?.trim()) validationErrors.push('World ranking is required')
       if (!formData.accreditation?.length) validationErrors.push('At least one accreditation is required')
-      
+
       // Admission Process Validation - ALL REQUIRED
       if (!formData.admission_process_title?.trim()) validationErrors.push('Admission process title is required')
       if (!formData.admission_process_description?.trim()) validationErrors.push('Admission process description is required')
       if (!formData.admission_process_steps?.length) validationErrors.push('At least one admission step is required')
-      
+
       // Documents Required Validation - ALL REQUIRED
       if (!formData.documents_required_title?.trim()) validationErrors.push('Documents required title is required')
       if (!formData.documents_required_description?.trim()) validationErrors.push('Documents required description is required')
       if (!formData.documents_required_documents?.length) validationErrors.push('At least one required document is needed')
-      
+
       // Fees Structure Validation - ALL REQUIRED
       if (!formData.fees_structure_title?.trim()) validationErrors.push('Fees structure title is required')
       if (!formData.fees_structure_description?.trim()) validationErrors.push('Fees structure description is required')
       if (!formData.fees_structure_courses?.length) validationErrors.push('At least one course with fees is required')
-      
+
       // Campus Highlights Validation - ALL REQUIRED
       if (!formData.campus_highlights_title?.trim()) validationErrors.push('Campus highlights title is required')
       if (!formData.campus_highlights_description?.trim()) validationErrors.push('Campus highlights description is required')
       if (!formData.campus_highlights_highlights?.length) validationErrors.push('At least one campus highlight is required')
-      
+
       // Banner URL Validation (optional but if provided, should be valid)
       if (formData.banner_url?.trim()) {
         try {
@@ -585,7 +585,7 @@ export default function CollegesPage() {
           validationErrors.push('Banner URL must be a valid URL')
         }
       }
-      
+
       if (validationErrors.length > 0) {
         const errorMessage = `⚠️ Validation Error!\n\nPlease complete the following required fields before saving:\n\n${validationErrors.map((error, index) => `• ${error}`).join('\n')}\n\nPlease fill in all the missing information and try again.`
         alert(errorMessage)
@@ -623,7 +623,7 @@ export default function CollegesPage() {
           world_ranking: formData.world_ranking,
           accreditation: formData.accreditation
         },
-        
+
         // Debug ranking data
         ranking_debug: {
           country_ranking_type: typeof formData.country_ranking,
@@ -657,11 +657,11 @@ export default function CollegesPage() {
         // Legacy fields for backward compatibility
         about_content: formData.overview_description,
         establishment_year: formData.establishment_year,
-        
+
         // Include ID for editing
         ...(editingCollege && { _id: editingCollege._id })
       }
-      
+
       console.log('📦 Request payload:', payload)
       console.log('🔍 DEBUG: Ranking object being sent:', payload.ranking)
       console.log('🔍 DEBUG: Ranking field types:', {
@@ -669,13 +669,13 @@ export default function CollegesPage() {
         world_ranking: typeof payload.ranking.world_ranking,
         accreditation: typeof payload.ranking.accreditation
       })
-      
+
       await saveCollegeMutation.mutateAsync(payload)
-      
+
       alert(editingCollege ? 'College updated successfully!' : 'College created successfully!')
       setIsModalOpen(false)
       setEditingCollege(null)
-      
+
     } catch (error) {
       console.error('❌ Error saving college:', error)
       console.error('💥 Error stack:', error instanceof Error ? error.stack : 'No stack available')
@@ -685,7 +685,7 @@ export default function CollegesPage() {
 
   const handleDeleteCollege = async () => {
     if (!collegeToDelete) return
-    
+
     try {
       await deleteCollegeMutation.mutateAsync(collegeToDelete._id)
       toast.success('College deleted successfully!')
@@ -699,9 +699,9 @@ export default function CollegesPage() {
 
   return (
     <div>
-    <div className="space-y-6">
-      {/* Filters and Add button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="space-y-6">
+        {/* Filters and Add button */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">All Colleges</h2>
             <p className="text-sm text-gray-500">
@@ -766,16 +766,16 @@ export default function CollegesPage() {
         >
           <ComprehensiveCollegeForm
             data={formData}
-            countries={countries.map((c, index) => ({ 
-              ...c, 
-              _id: (c as any)._id || (c as any).id || `country-${index}` 
+            countries={countries.map((c, index) => ({
+              ...c,
+              _id: (c as any)._id || (c as any).id || `country-${index}`
             }))}
             onChange={(field: string, value: any) => {
               console.log('🔍 [ADMIN] Form field changed:', field, '=', value);
               console.log('🔍 [ADMIN] Current formData before change:', formData);
               setFormData(prev => {
-                const newData = { 
-                  ...prev, 
+                const newData = {
+                  ...prev,
                   [field]: value,
                   // Auto-generate slug when name changes and slug is empty or being edited for the first time
                   ...(field === 'name' && (!prev.slug || prev.slug === generateSlug(prev.name)) ? {

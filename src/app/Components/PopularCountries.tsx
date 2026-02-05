@@ -141,7 +141,7 @@ const PopularCountries = () => {
             <span>🏥</span> MBBS Destinations
           </div>
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-6">
-            POPULAR <span className="text-blue-600">MBBS</span> DESTINATIONS
+            POPULAR <span className="text-blue-600"> DESTINATIONS</span>
           </h2>
         </div>
 

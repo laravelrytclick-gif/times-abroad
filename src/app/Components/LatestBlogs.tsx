@@ -205,11 +205,11 @@ export default function LatestBlogs() {
 
       {/* Load More Button */}
       {hasMore && (
-        <div className="text-left mt-12">
+        <div className="text-center flex items-center justify-center mt-12">
           <Button 
             onClick={loadMoreBlogs}
             disabled={isLoading}
-            className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex justify-center items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
@@ -218,7 +218,7 @@ export default function LatestBlogs() {
               </>
             ) : (
               <>
-                Load More Blogs
+              <p className='text-center'>Load More Blogs</p>
                 <ArrowRight size={20} />
               </>
             )}
