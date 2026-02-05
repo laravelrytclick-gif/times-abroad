@@ -161,7 +161,7 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
       ];
 
       const scrollPosition = window.scrollY + 100;
-      
+
       for (let i = sections.length - 1; i >= 0; i--) {
         const element = document.getElementById(sections[i].id);
         if (element) {
@@ -381,65 +381,62 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
           <div className="relative">
             {/* Active Tab Indicator Line */}
             <div className="absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out" />
-            <div className="flex items-center gap-1 py-2 sm:py-3 overflow-x-auto scrollbar-hide scroll-smooth">
+            <div className="flex items-center justify-center gap-1 py-2 sm:py-3 overflow-x-auto scrollbar-hide scroll-smooth">
               {[
                 { name: 'Overview', id: 'overview' },
                 { name: 'Key Highlights', id: 'key-highlights' },
                 { name: 'Why Choose ?', id: 'why-choose' },
                 { name: 'Ranking', id: 'ranking' },
-                { name: 'Course Highlights', id: 'course-highlights' },
                 { name: 'Admission Process', id: 'admission-process' },
                 { name: 'Eligibility', id: 'entrance-exams' },
                 { name: 'Documents', id: 'documents-required' },
                 { name: 'Fees', id: 'fees-structure' },
-                { name: 'Compare Fees', id: 'fees-compare' },
                 { name: 'Campus', id: 'campus-highlights' },
-                { name: 'Students Life', id: 'students-life' }
               ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  const element = document.getElementById(tab.id);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
-                className={`flex items-center gap-2 px-4 sm:px-4 md:px-4 lg:px-6 py-2.5 text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 whitespace-nowrap group relative overflow-hidden flex-shrink-0 min-w-max ${
-                  activeTab === tab.id
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    const element = document.getElementById(tab.id);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                  className={`flex items-center gap-2 px-4 sm:px-4 md:px-4 lg:px-6 py-2.5 text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 whitespace-nowrap group relative overflow-hidden flex-shrink-0 min-w-max ${activeTab === tab.id
                     ? 'text-white bg-blue-600 shadow-md'
                     : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
-                }`}
-              >
-                <span className="relative z-10 text-sm">
-                  {tab.name}
-                </span>
-                {/* Animated background on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl" />
-                {/* Animated underline on hover */}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:w-3/4 transition-all duration-300 rounded-full" />
-              </button>
-            ))}
+                    }`}
+                >
+                  <span className="relative z-10 text-sm">
+                    {tab.name}
+                  </span>
+                  {/* Animated background on hover - only for inactive tabs */}
+                  {activeTab !== tab.id && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl" />
+                  )}
+                  {/* Animated underline on hover */}
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:w-3/4 transition-all duration-300 rounded-full" />
+                </button>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className={`max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 transition-colors duration-500 ${
-        activeTab === 'overview' ? 'bg-emerald-50' :
+      <div className={`max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 transition-colors duration-500 ${activeTab === 'overview' ? 'bg-emerald-50' :
         activeTab === 'key-highlights' ? 'bg-yellow-50' :
-        activeTab === 'why-choose' ? 'bg-indigo-50' :
-        activeTab === 'ranking' ? 'bg-blue-50' :
-        activeTab === 'course-highlights' ? 'bg-purple-50' :
-        activeTab === 'admission-process' ? 'bg-slate-50' :
-        activeTab === 'entrance-exams' ? 'bg-orange-50' :
-        activeTab === 'documents-required' ? 'bg-red-50' :
-        activeTab === 'fees-structure' ? 'bg-green-50' :
-        activeTab === 'fees-compare' ? 'bg-teal-50' :
-        activeTab === 'campus-highlights' ? 'bg-cyan-50' :
-        activeTab === 'students-life' ? 'bg-pink-50' :
-        'bg-white'
-      }`}>
+          activeTab === 'why-choose' ? 'bg-indigo-50' :
+            activeTab === 'ranking' ? 'bg-blue-50' :
+              activeTab === 'course-highlights' ? 'bg-purple-50' :
+                activeTab === 'admission-process' ? 'bg-slate-50' :
+                  activeTab === 'entrance-exams' ? 'bg-orange-50' :
+                    activeTab === 'documents-required' ? 'bg-red-50' :
+                      activeTab === 'fees-structure' ? 'bg-green-50' :
+                        activeTab === 'fees-compare' ? 'bg-teal-50' :
+                          activeTab === 'campus-highlights' ? 'bg-cyan-50' :
+                            activeTab === 'students-life' ? 'bg-pink-50' :
+                              'bg-white'
+        }`}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6 sm:space-y-8">

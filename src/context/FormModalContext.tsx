@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react'
 interface FormData {
   name: string
   email: string
-  number: string
+  phone: string
   city: string
   interest: string
 }
@@ -38,7 +38,7 @@ export const FormModalProvider: React.FC<FormModalProviderProps> = ({ children }
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
-    number: '',
+    phone: '',
     city: '',
     interest: ''
   })
@@ -54,7 +54,7 @@ export const FormModalProvider: React.FC<FormModalProviderProps> = ({ children }
     setFormData({
       name: '',
       email: '',
-      number: '',
+      phone: '',
       city: '',
       interest: ''
     })

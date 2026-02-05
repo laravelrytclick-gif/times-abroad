@@ -9,6 +9,7 @@ import {
   GraduationCap, 
   FileText,
   FileCheck,
+  MessageSquare,
   Menu,
   X
 } from 'lucide-react'
@@ -20,6 +21,7 @@ const navigation = [
   { name: 'Colleges', href: '/admin/colleges', icon: GraduationCap },
   { name: 'Exams', href: '/admin/exams', icon: FileCheck },
   { name: 'Blogs', href: '/admin/blogs', icon: FileText },
+  { name: 'Enquiries', href: '/admin/enquiries', icon: MessageSquare },
 ]
 
 export function AdminSidebar() {

@@ -26,6 +26,9 @@ export default function AdminLayout({
     if (pathname === '/admin/exams') {
       return { title: 'Exams Management', subtitle: 'Manage standardized tests and examinations' }
     }
+    if (pathname === '/admin/enquiries') {
+      return { title: 'Enquiries Management', subtitle: 'Manage student enquiries and contact requests' }
+    }
     return { title: 'Admin', subtitle: 'Alpha World Education Admin Panel' }
   }
 
