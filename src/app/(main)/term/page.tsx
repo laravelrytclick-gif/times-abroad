@@ -1,24 +1,25 @@
 'use client'
 
 import { useContactInfo } from '@/hooks/useContactInfo'
+import { SITE_IDENTITY } from '@/site-identity'
 
 export default function TermsAndConditionsPage() {
   const contactInfo = useContactInfo()
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-28 bg-white">
-      
+
       {/* HERO */}
       <div className="max-w-4xl mx-auto text-center mb-20">
-        <span className="text-sm font-semibold tracking-widest text-blue-700 uppercase">
-          Alpha World Education
+        <span className="inline-block text-sm font-semibold tracking-widest text-blue-700 uppercase">
+          {SITE_IDENTITY.name}
         </span>
 
         <h1 className="mt-5 text-3xl sm:text-4xl md:text-5xl font-bold text-blue-700 leading-tight">
           Terms & Conditions
         </h1>
 
-    
+
 
       </div>
 
@@ -32,7 +33,7 @@ export default function TermsAndConditionsPage() {
 
         <TermsBlock
           title="2. Scope of Services"
-          content="Alpha World Education provides education counseling and informational services related to colleges, universities, exams, and study destinations. Final admissions, visas, and academic decisions are made by the respective institutions and authorities."
+          content={`${SITE_IDENTITY.name} provides education counseling and informational services related to colleges, universities, exams, and study destinations. Final admissions, visas, and academic decisions are made by the respective institutions and authorities.`}
         />
 
         <TermsBlock
