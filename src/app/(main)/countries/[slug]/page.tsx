@@ -228,7 +228,7 @@ const CountryPage = () => {
                       Book Free Slot
                       <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
-                    <Button variant="outline" className="w-full h-16 rounded-2xl border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold">
+                    <Button onClick={openModal} variant="outline" className="w-full h-16 rounded-2xl border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold">
                       <FileText className="mr-2 w-5 h-5" />
                       Download Brochure
                     </Button>

@@ -97,6 +97,22 @@ export default function Navbar() {
     return baseColleges;
   }, [colleges, selectedCollegeType, searchTerm]);
 
+  // Filter country colleges based on search term
+  const filteredCountryColleges = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return countryColleges;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    const filtered = countryColleges.filter((college: any) =>
+      college.name.toLowerCase().includes(searchLower) ||
+      (college as any).overview?.description?.toLowerCase().includes(searchLower) ||
+      college.slug?.toLowerCase().includes(searchLower)
+    );
+    console.log('🔍 [Navbar] Country search term:', searchTerm, 'Filtered results:', filtered.length);
+    return filtered;
+  }, [countryColleges, searchTerm]);
+
   const navItems = [
     { name: "Scopes & Avenues", href: "/", hasDropdown: true },
     { name: "Colleges", href: "/colleges", hasDropdown: true },
@@ -235,13 +251,13 @@ export default function Navbar() {
                                 </div>
                               ) : (
                                 <div className="grid grid-cols-1 gap-2">
-                                  {(item.name === 'Colleges' ? filteredColleges : countryColleges).map((college: any) => (
+                                  {(item.name === 'Colleges' ? filteredColleges : filteredCountryColleges).map((college: any) => (
                                     <Link key={college._id} href={`/colleges/${college.slug}`} className="group flex items-start gap-3 p-3.5 rounded-xl bg-white border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all">
                                       <div className="mt-1 w-2 h-2 rounded-full bg-blue-100 group-hover:bg-blue-500 transition-colors" />
                                       <span className="text-[13px] font-bold text-slate-700 group-hover:text-blue-600 uppercase leading-snug">{college.name}</span>
                                     </Link>
                                   ))}
-                                  {item.name === 'Countries' && countryColleges.length === 0 && !loadingColleges && (
+                                  {item.name === 'Countries' && filteredCountryColleges.length === 0 && !loadingColleges && (
                                     <div className="py-12 text-center text-slate-400 text-xs font-bold uppercase">No Universities Found</div>
                                   )}
                                 </div>
