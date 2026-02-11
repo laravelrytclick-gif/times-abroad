@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Menu, X, Phone, Mail, MapPin, ChevronDown, ChevronRight,
-  AlertCircle, RefreshCw, Sparkles, ArrowUpRight, GraduationCap, Building2
+  AlertCircle, RefreshCw, Sparkles, ArrowUpRight, GraduationCap, Building2, Search
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { SITE_IDENTITY } from "@/site-identity";
@@ -17,6 +17,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Click based states for fetching
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
@@ -44,6 +45,8 @@ export default function Navbar() {
     console.log('🔍 [Navbar] Total colleges available:', colleges.length);
     console.log('🔍 [Navbar] Colleges with college_type:', colleges.filter(c => c.college_type).length);
 
+    let baseColleges = [];
+    
     if (selectedCollegeType === 'mbbs-abroad') {
       // First try to filter by college_type, then fallback to name/slug matching
       let mbbsColleges = colleges.filter(c => c.college_type === 'mbbs_abroad');
@@ -59,26 +62,40 @@ export default function Navbar() {
       }
 
       console.log('🔍 [Navbar] MBBS colleges found:', mbbsColleges.length);
-      return mbbsColleges; // Return ALL MBBS colleges, no limit
+      baseColleges = mbbsColleges;
+    } else {
+      // For study-abroad, get all non-MBBS colleges
+      let studyAbroadColleges = colleges.filter(c => c.college_type === 'study_abroad');
+
+      // If no colleges with college_type, use all colleges except MBBS ones
+      if (studyAbroadColleges.length === 0) {
+        console.log('🔍 [Navbar] No colleges with college_type, using fallback logic');
+        const mbbsNames = colleges.filter(c =>
+          c.slug.toLowerCase().includes('mbbs') ||
+          c.name.toLowerCase().includes('medical') ||
+          c.name.toLowerCase().includes('mbbs')
+        );
+        studyAbroadColleges = colleges.filter(c => !mbbsNames.includes(c));
+      }
+
+      console.log('🔍 [Navbar] Study abroad colleges found:', studyAbroadColleges.length);
+      baseColleges = studyAbroadColleges;
     }
 
-    // For study-abroad, get all non-MBBS colleges
-    let studyAbroadColleges = colleges.filter(c => c.college_type === 'study_abroad');
-
-    // If no colleges with college_type, use all colleges except MBBS ones
-    if (studyAbroadColleges.length === 0) {
-      console.log('🔍 [Navbar] No colleges with college_type, using fallback logic');
-      const mbbsNames = colleges.filter(c =>
-        c.slug.toLowerCase().includes('mbbs') ||
-        c.name.toLowerCase().includes('medical') ||
-        c.name.toLowerCase().includes('mbbs')
+    // Apply search filter if search term exists
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      const filtered = baseColleges.filter(college =>
+        college.name.toLowerCase().includes(searchLower) ||
+        (college as any).overview?.description?.toLowerCase().includes(searchLower) ||
+        college.slug?.toLowerCase().includes(searchLower)
       );
-      studyAbroadColleges = colleges.filter(c => !mbbsNames.includes(c));
+      console.log('🔍 [Navbar] Search term:', searchTerm, 'Filtered results:', filtered.length);
+      return filtered;
     }
 
-    console.log('🔍 [Navbar] Study abroad colleges found:', studyAbroadColleges.length);
-    return studyAbroadColleges; // Return ALL study abroad colleges, no limit
-  }, [colleges, selectedCollegeType]);
+    return baseColleges;
+  }, [colleges, selectedCollegeType, searchTerm]);
 
   const navItems = [
     { name: "Scopes & Avenues", href: "/", hasDropdown: true },
@@ -188,6 +205,18 @@ export default function Navbar() {
                               {(selectedCountry || item.name === 'Colleges') && (
                                 <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-bold">LIVE DATA</span>
                               )}
+                            </div>
+
+                            {/* Search Input - MOVED TO RIGHT */}
+                            <div className="relative mb-4">
+                              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                              <input
+                                type="text"
+                                placeholder="Search colleges..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-10 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
+                              />
                             </div>
 
                             <div className="flex-grow overflow-y-auto custom-scrollbar p-4 bg-slate-50/20">
@@ -303,12 +332,21 @@ export default function Navbar() {
             <Link
               key={college._id}
               href={`/colleges/${college.slug}`}
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                setSearchTerm(''); // Clear search after clicking a college
+              }}
               className="block px-4 py-3 text-sm font-bold bg-white rounded-lg hover:text-blue-600"
             >
               {college.name}
             </Link>
           ))}
+          {item.name === 'Colleges' && filteredColleges.length === 0 && searchTerm && (
+            <div className="py-8 text-center text-slate-400 text-xs font-bold uppercase">No colleges found for "{searchTerm}"</div>
+          )}
+          {item.name === 'Colleges' && filteredColleges.length === 0 && !searchTerm && (
+            <div className="py-8 text-center text-slate-400 text-xs font-bold uppercase">No Colleges Found</div>
+          )}
         </div>
       </>
     ) : item.name === "Countries" ? (
@@ -348,7 +386,10 @@ export default function Navbar() {
                   <Link
                     key={college._id}
                     href={`/colleges/${college.slug}`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => {
+                      setIsOpen(false);
+                      setSearchTerm(''); // Clear search after clicking a college
+                    }}
                     className="block px-4 py-3 text-sm font-bold bg-white rounded-lg hover:text-blue-600"
                   >
                     {college.name}

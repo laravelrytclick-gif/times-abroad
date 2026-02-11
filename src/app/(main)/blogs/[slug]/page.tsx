@@ -71,14 +71,14 @@ const BlogDetailPage = () => {
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-black uppercase tracking-widest">Back to Insights</span>
           </Link>
-          <div className="flex gap-4">
+          {/* <div className="flex gap-4">
             <button className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-blue-600">
               <Share2 size={18} />
             </button>
             <button className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-blue-600">
               <Bookmark size={18} />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -111,7 +111,7 @@ const BlogDetailPage = () => {
                   </div>
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Written By</p>
-                    <h4 className="font-bold text-slate-900">{blog.author || 'Alpha World Editorial'}</h4>
+                    <h4 className="font-bold text-slate-900">{blog.author || 'Alpha World Education'}</h4>
                   </div>
                 </div>
                 
@@ -124,10 +124,7 @@ const BlogDetailPage = () => {
                     <div className="flex items-center gap-2 text-xs font-bold uppercase"><Clock size={14}/> Reading</div>
                     <span className="text-xs font-medium">{blog.read_time || 5} min read</span>
                   </div>
-                  <div className="flex items-center justify-between text-slate-500">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase"><Eye size={14}/> Engagement</div>
-                    <span className="text-xs font-medium">{blog.views || 120} views</span>
-                  </div>
+          
                 </div>
               </div>
 

@@ -44,8 +44,8 @@ export default function StudyAbroadPage() {
       setLoading(true)
       console.log('🔍 [Study Abroad Page] Fetching colleges...')
       
-      // First try to fetch with college_type filter
-      let response = await fetch('/api/colleges?college_type=study_abroad&limit=100')
+      // Fetch all colleges without limit
+      let response = await fetch('/api/colleges?college_type=study_abroad')
       let result = await response.json()
       
       console.log('🔍 [Study Abroad Page] API response with college_type filter:', result)
@@ -58,7 +58,7 @@ export default function StudyAbroadPage() {
       } else {
         // Fallback: fetch all colleges and filter manually
         console.log('🔍 [Study Abroad Page] No colleges with college_type, fetching all colleges...')
-        response = await fetch('/api/colleges?limit=100')
+        response = await fetch('/api/colleges')
         result = await response.json()
         
         if (result.success) {
@@ -93,7 +93,7 @@ export default function StudyAbroadPage() {
       college.overview?.description?.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesCountry = selectedCountry === 'all' ||
-      college.country_ref?.slug === selectedCountry
+      college.country_ref?.name === selectedCountry
 
     return matchesSearch && matchesCountry
   })
@@ -189,9 +189,9 @@ export default function StudyAbroadPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredColleges.map((college) => (
-              <div key={college._id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow">
+              <div key={college._id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow flex flex-col h-full">
                 {/* College Image */}
-                <div className="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-t-xl overflow-hidden">
+                <div className="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-t-xl overflow-hidden shrink-0">
                   {college.banner_url ? (
                     <img
                       src={college.banner_url}
@@ -206,7 +206,7 @@ export default function StudyAbroadPage() {
                 </div>
 
                 {/* College Info */}
-                <div className="p-6">
+                <div className="p-6 flex flex-col grow">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-1">{college.name}</h3>
@@ -250,13 +250,15 @@ export default function StudyAbroadPage() {
                     </div>
                   </div>
 
-                  {/* CTA Button */}
-                  <Link href={`/colleges/${college.slug}`}>
-                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2">
-                      View Details
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </Link>
+                  {/* CTA Button - Always at bottom */}
+                  <div className="mt-auto">
+                    <Link href={`/colleges/${college.slug}`}>
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2">
+                        View Details
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
