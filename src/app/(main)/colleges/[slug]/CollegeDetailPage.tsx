@@ -577,39 +577,39 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
                 <CardContent className="p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-          {
-            show: !!college.fees || (college.fees_structure?.courses && college.fees_structure.courses.length > 0),
-            label: "Annual Fees",
-            value: college.fees ? `$${college.fees.toLocaleString()}` : college.fees_structure?.courses?.[0]?.annual_tuition_fee,
-            sub: "Academic investment",
-            icon: DollarSign,
-            color: "emerald"
-          },
-          {
-            show: !!(college.duration || college.fees_structure?.courses?.[0]?.duration),
-            label: "Program Duration",
-            value: `${college.duration || college.fees_structure?.courses?.[0]?.duration} Years`,
-            sub: "Full-time study",
-            icon: Clock,
-            color: "blue"
-          },
-          {
-            show: !!college.establishment_year,
-            label: "Established",
-            value: college.establishment_year,
-            sub: "Legacy of excellence",
-            icon: Calendar,
-            color: "purple"
-          },
-          {
-            show: true,
-            label: "Location",
-            value: college.country_ref?.name || 'International',
-            sub: "Campus residence",
-            icon: MapPin,
-            color: "orange"
-          }
-        ].map((item, i) => item.show && (
+                      {
+                        show: !!college.fees || (college.fees_structure?.courses && college.fees_structure.courses.length > 0),
+                        label: "Annual Fees",
+                        value: college.fees ? `$${college.fees.toLocaleString()}` : college.fees_structure?.courses?.[0]?.annual_tuition_fee,
+                        sub: "Academic investment",
+                        icon: DollarSign,
+                        color: "emerald"
+                      },
+                      {
+                        show: !!(college.duration || college.fees_structure?.courses?.[0]?.duration),
+                        label: "Program Duration",
+                        value: `${college.duration || college.fees_structure?.courses?.[0]?.duration} Years`,
+                        sub: "Full-time study",
+                        icon: Clock,
+                        color: "blue"
+                      },
+                      {
+                        show: !!college.establishment_year,
+                        label: "Established",
+                        value: college.establishment_year,
+                        sub: "Legacy of excellence",
+                        icon: Calendar,
+                        color: "purple"
+                      },
+                      {
+                        show: true,
+                        label: "Location",
+                        value: college.country_ref?.name || 'International',
+                        sub: "Campus residence",
+                        icon: MapPin,
+                        color: "orange"
+                      }
+                    ].map((item, i) => item.show && (
                       <div
                         key={i}
                         className="group relative flex items-center justify-between p-6 rounded-3xl bg-slate-50 border border-transparent hover:border-slate-200 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-500"

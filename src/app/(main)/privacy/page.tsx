@@ -1,6 +1,7 @@
 'use client'
 
 import { useContactInfo } from '@/hooks/useContactInfo'
+import { SITE_IDENTITY } from '@/site-identity'
 
 export default function PrivacyPolicyPage() {
   const contactInfo = useContactInfo()
@@ -11,7 +12,7 @@ export default function PrivacyPolicyPage() {
       {/* HERO / INTRO */}
       <div className="max-w-4xl mx-auto text-center mb-20">
         <span className="inline-block text-sm font-semibold tracking-widest text-blue-700 uppercase">
-          Alpha World Education
+          {SITE_IDENTITY.name}
         </span>
 
         <h1 className="mt-5 text-3xl sm:text-4xl md:text-5xl font-bold text-blue-700 leading-tight">
@@ -29,7 +30,7 @@ export default function PrivacyPolicyPage() {
 
         <PolicyBlock
           title="1. Introduction"
-          content="Alpha World Education respects your privacy and is committed to protecting the personal information you share with us. This Privacy Policy explains how we collect, use, and safeguard your data when you interact with our website or services."
+          content={`${SITE_IDENTITY.name} respects your privacy and is committed to protecting the personal information you share with us. This Privacy Policy explains how we collect, use, and safeguard your data when you interact with our website or services.`}
         />
 
         <PolicyBlock
