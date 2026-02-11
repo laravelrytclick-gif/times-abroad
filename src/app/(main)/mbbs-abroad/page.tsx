@@ -42,11 +42,34 @@ export default function MBBSAbroadPage() {
   const fetchMBBSAbroadColleges = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/colleges?college_type=mbbs_abroad&limit=20')
+      // Fetch all MBBS colleges without limit
+      const response = await fetch('/api/colleges?college_type=mbbs_abroad')
       const result = await response.json()
-      
-      if (result.success) {
+
+      if (result.success && result.data.colleges.length > 0) {
         setColleges(result.data.colleges)
+        console.log('🔍 [MBBS Abroad Page] Found MBBS colleges:', result.data.colleges.length)
+      } else {
+        // Fallback: fetch all colleges and filter for MBBS
+        console.log('🔍 [MBBS Abroad Page] No colleges with college_type, fetching all colleges...')
+        const allResponse = await fetch('/api/colleges')
+        const allResult = await allResponse.json()
+
+        if (allResult.success) {
+          const allColleges = allResult.data.colleges
+          console.log('🔍 [MBBS Abroad Page] Total colleges fetched:', allColleges.length)
+
+          // Filter for MBBS colleges
+          const mbbsColleges = allColleges.filter((college: any) =>
+            college.slug?.toLowerCase().includes('mbbs') ||
+            college.name?.toLowerCase().includes('medical') ||
+            college.name?.toLowerCase().includes('mbbs') ||
+            college.college_type === 'mbbs_abroad'
+          )
+
+          console.log('🔍 [MBBS Abroad Page] MBBS colleges found:', mbbsColleges.length)
+          setColleges(mbbsColleges)
+        }
       }
     } catch (error) {
       console.error('Error fetching MBBS abroad colleges:', error)
@@ -56,12 +79,12 @@ export default function MBBSAbroadPage() {
   }
 
   const filteredColleges = colleges.filter(college => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       college.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       college.overview?.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesCountry = selectedCountry === 'all' || 
-      college.country_ref?.slug === selectedCountry
+
+    const matchesCountry = selectedCountry === 'all' ||
+      college.country_ref?.name === selectedCountry
 
     return matchesSearch && matchesCountry
   })
@@ -83,12 +106,12 @@ export default function MBBSAbroadPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section with Banner */}
       <div className="relative h-screen max-h-[600px] overflow-hidden">
-        <img 
-          src="/mbbsAbroad/image.jpg" 
-          alt="MBBS Abroad" 
+        <img
+          src="/mbbsAbroad/image.jpg"
+          alt="MBBS Abroad"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        
+
         <div className="relative z-10 max-w-6xl mx-auto px-4 h-full flex items-center">
           {/* <div className="text-white max-w-2xl">
             <h1 className="text-6xl font-bold mb-6">
@@ -157,13 +180,13 @@ export default function MBBSAbroadPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredColleges.map((college) => (
-              <div key={college._id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow">
+              <div key={college._id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow flex flex-col h-full">
                 {/* College Image */}
-                <div className="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-t-xl overflow-hidden">
+                <div className="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-t-xl overflow-hidden shrink-0">
                   {college.banner_url ? (
-                    <img 
-                      src={college.banner_url} 
-                      alt={college.name} 
+                    <img
+                      src={college.banner_url}
+                      alt={college.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -174,7 +197,7 @@ export default function MBBSAbroadPage() {
                 </div>
 
                 {/* College Info */}
-                <div className="p-6">
+                <div className="p-6 flex flex-col grow">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-1">{college.name}</h3>
@@ -218,13 +241,15 @@ export default function MBBSAbroadPage() {
                     </div>
                   </div>
 
-                  {/* CTA Button */}
-                  <Link href={`/colleges/${college.slug}`}>
-                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2">
-                      View Details
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </Link>
+                  {/* CTA Button - Always at bottom */}
+                  <div className="mt-auto">
+                    <Link href={`/colleges/${college.slug}`}>
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2">
+                        View Details
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

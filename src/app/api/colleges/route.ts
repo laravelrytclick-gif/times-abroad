@@ -9,13 +9,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '12');
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit') || '12') : null;
     const search = searchParams.get('search');
     const countrySlug = searchParams.get('country');
     const exam = searchParams.get('exam');
     const collegeType = searchParams.get('college_type');
     
-    const skip = (page - 1) * limit;
+    const skip = limit ? (page - 1) * limit : 0;
     
     // Build query
     const query: Record<string, unknown> = { is_active: true };
@@ -56,12 +56,17 @@ export async function GET(request: Request) {
     const total = await College.countDocuments(query);
     
     // Fetch paginated results
-    const colleges = await College.find(query)
+    const collegesQuery = College.find(query)
       .populate('country_ref', 'name slug flag')
       .sort({ ranking: 1, name: 1 })
-      .skip(skip)
-      .limit(limit)
-      .lean(); // Use lean() for better performance
+      .skip(skip);
+    
+    // Only apply limit if it exists
+    if (limit) {
+      collegesQuery.limit(limit);
+    }
+    
+    const colleges = await collegesQuery.lean(); // Use lean() for better performance
     
     const response = NextResponse.json({
       success: true,
@@ -70,9 +75,9 @@ export async function GET(request: Request) {
         colleges,
         total,
         page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-        hasNext: skip + limit < total
+        limit: limit || total,
+        totalPages: limit ? Math.ceil(total / limit) : 1,
+        hasNext: limit ? skip + limit < total : false
       },
     });
     
