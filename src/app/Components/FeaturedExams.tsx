@@ -178,7 +178,7 @@ export default function FeaturedSection() {
         )}
 
         {uCount < universities.length && (
-          <div className="mt-16 text-center">
+          <div className="mt-16 flex flex-col md:flex-row items-center justify-center gap-4 text-center">
             <button onClick={() => setUCount(prev => prev + 3)} className="bg-slate-900 text-white px-10 py-4 rounded-full font-bold hover:bg-blue-600 transition-all shadow-xl shadow-slate-200">
               Show More Colleges
             </button>
