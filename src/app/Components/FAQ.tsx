@@ -33,12 +33,12 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "What services does Alpha World Education provide?",
-      answer: "Alpha World Education provides comprehensive study abroad services including university admissions, visa assistance, scholarship guidance, pre-departure orientation, and ongoing support throughout your educational journey.",
+      question: "What services does Education Times Abroad provide?",
+      answer: "Education Times Abroad provides comprehensive study abroad services including university admissions, visa assistance, scholarship guidance, pre-departure orientation, and ongoing support throughout your educational journey.",
       category: "support"
     },
     {
-      question: "How do I apply to universities through Alpha World Education?",
+      question: "How do I apply to universities through Education Times Abroad?",
       answer: "Our streamlined application process: 1) Schedule free consultation → 2) Select course & country → 3) Submit documents → 4) We handle applications → 5) Receive offers → 6) Visa & departure support.",
       category: "process"
     },
