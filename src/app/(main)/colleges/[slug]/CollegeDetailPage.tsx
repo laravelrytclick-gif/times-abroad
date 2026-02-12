@@ -222,7 +222,7 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-green-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading College...</p>
         </div>
       </div>
@@ -358,7 +358,7 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
                 <button onClick={openModal} className="px-10 py-5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all hover:scale-105 active:scale-95 shadow-2xl">
                   Start My Application
                 </button>
-                <button className="px-10 py-5 bg-white text-slate-900 border-2 border-slate-100 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
+                <button onClick={openModal} className="px-10 py-5 bg-white text-slate-900 border-2 border-slate-100 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
                   Download Prospectus
                 </button>
               </div>
@@ -742,7 +742,7 @@ const CollegeDetailPage: React.FC<CollegeDetailPageProps> = ({ slug }) => {
                             Get Cutoff List
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                           </button>
-                          <button className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">
+                          <button onClick={openModal} className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">
                             Download Brochure
                           </button>
                         </div>
