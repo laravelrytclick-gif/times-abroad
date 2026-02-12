@@ -65,7 +65,7 @@ const Hero: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
               <Link
-                href="/countries"
+                href="/colleges"
                 className="group w-full sm:w-auto px-10 py-5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-400/30 flex items-center justify-center gap-3 text-lg hover:-translate-y-1"
               >
                 Find My College
@@ -73,7 +73,7 @@ const Hero: React.FC = () => {
               </Link>
 
               <Link
-                href="/whatsapp-consult"
+                href="/countries"
                 className="group w-full sm:w-auto px-8 py-5 rounded-2xl border-2 border-slate-200 bg-white hover:border-blue-600 transition-all flex items-center justify-center gap-3"
               >
                 <Globe size={20} className="text-blue-600" />
