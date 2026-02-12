@@ -46,7 +46,7 @@ export default function Navbar() {
     console.log('🔍 [Navbar] Colleges with college_type:', colleges.filter(c => c.college_type).length);
 
     let baseColleges = [];
-    
+
     if (selectedCollegeType === 'mbbs-abroad') {
       // First try to filter by college_type, then fallback to name/slug matching
       let mbbsColleges = colleges.filter(c => c.college_type === 'mbbs_abroad');
@@ -112,6 +112,22 @@ export default function Navbar() {
     console.log('🔍 [Navbar] Country search term:', searchTerm, 'Filtered results:', filtered.length);
     return filtered;
   }, [countryColleges, searchTerm]);
+
+  // Filter exams based on search term for mobile
+  const filteredExams = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return exams;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    const filtered = exams.filter((exam: any) =>
+      exam.name.toLowerCase().includes(searchLower) ||
+      exam.short_name.toLowerCase().includes(searchLower) ||
+      exam.slug?.toLowerCase().includes(searchLower)
+    );
+    console.log('🔍 [Navbar] Exams search term:', searchTerm, 'Filtered results:', filtered.length);
+    return filtered;
+  }, [exams, searchTerm]);
 
   const navItems = [
     { name: "Scopes & Avenues", href: "/", hasDropdown: true },
@@ -312,129 +328,167 @@ export default function Navbar() {
                 {item.hasDropdown && <ChevronDown size={18} className={expandedMobileItem === item.name ? 'rotate-180' : ''} />}
               </button>
               {expandedMobileItem === item.name && item.hasDropdown && (
-  <div className="bg-slate-50 rounded-xl p-3 mb-4 space-y-2">
+                <div className="bg-slate-50 rounded-xl p-3 mb-4 space-y-2">
 
-    {/* 🔥 COLLEGES */}
-    {item.name === "Colleges" ? (
-      <>
-        {/* Toggle */}
-        <div className="flex gap-2 mb-3">
-          <button
-            onClick={() => setSelectedCollegeType("study-abroad")}
-            className={`flex-1 py-2 rounded-lg text-sm font-bold ${
-              selectedCollegeType === "study-abroad"
-                ? "bg-blue-600 text-white"
-                : "bg-white text-slate-700"
-            }`}
-          >
-            Study Abroad
-          </button>
+                  {/* 🔥 COLLEGES */}
+                  {item.name === "Colleges" ? (
+                    <>
+                      {/* Mobile Search Input */}
+                      <div className="relative mb-3">
+                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search colleges..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full pl-10 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
+                        />
+                      </div>
 
-          <button
-            onClick={() => setSelectedCollegeType("mbbs-abroad")}
-            className={`flex-1 py-2 rounded-lg text-sm font-bold ${
-              selectedCollegeType === "mbbs-abroad"
-                ? "bg-blue-600 text-white"
-                : "bg-white text-slate-700"
-            }`}
-          >
-            MBBS Abroad
-          </button>
-        </div>
+                      {/* Toggle */}
+                      <div className="flex gap-2 mb-3">
+                        <button
+                          onClick={() => setSelectedCollegeType("study-abroad")}
+                          className={`flex-1 py-2 rounded-lg text-sm font-bold ${selectedCollegeType === "study-abroad"
+                              ? "bg-blue-600 text-white"
+                              : "bg-white text-slate-700"
+                            }`}
+                        >
+                          Study Abroad
+                        </button>
 
-        {/* Colleges List */}
-        <div className="max-h-64 overflow-y-auto space-y-1">
-          {filteredColleges.map((college: any) => (
-            <Link
-              key={college._id}
-              href={`/colleges/${college.slug}`}
-              onClick={() => {
-                setIsOpen(false);
-                setSearchTerm(''); // Clear search after clicking a college
-              }}
-              className="block px-4 py-3 text-sm font-bold bg-white rounded-lg hover:text-blue-600"
-            >
-              {college.name}
-            </Link>
-          ))}
-          {item.name === 'Colleges' && filteredColleges.length === 0 && searchTerm && (
-            <div className="py-8 text-center text-slate-400 text-xs font-bold uppercase">No colleges found for "{searchTerm}"</div>
-          )}
-          {item.name === 'Colleges' && filteredColleges.length === 0 && !searchTerm && (
-            <div className="py-8 text-center text-slate-400 text-xs font-bold uppercase">No Colleges Found</div>
-          )}
-        </div>
-      </>
-    ) : item.name === "Countries" ? (
-      <>
-        {/* 🌍 COUNTRIES LIST */}
-        {!selectedCountry && (
-          <div className="space-y-1">
-            {countries.map((country: any) => (
-              <button
-                key={country.slug}
-                onClick={() => setSelectedCountry(country.slug)}
-                className="w-full text-left px-4 py-3 bg-white rounded-lg text-sm font-bold hover:text-blue-600"
-              >
-                {country.flag} Study in {country.name}
-              </button>
-            ))}
-          </div>
-        )}
+                        <button
+                          onClick={() => setSelectedCollegeType("mbbs-abroad")}
+                          className={`flex-1 py-2 rounded-lg text-sm font-bold ${selectedCollegeType === "mbbs-abroad"
+                              ? "bg-blue-600 text-white"
+                              : "bg-white text-slate-700"
+                            }`}
+                        >
+                          MBBS Abroad
+                        </button>
+                      </div>
 
-        {/* 🏫 COUNTRY COLLEGES */}
-        {selectedCountry && (
-          <>
-            <button
-              onClick={() => setSelectedCountry(null)}
-              className="text-xs font-black uppercase text-blue-600 mb-2"
-            >
-              ← Back to Countries
-            </button>
+                      {/* Colleges List */}
+                      <div className="max-h-64 overflow-y-auto space-y-1">
+                        {filteredColleges.map((college: any) => (
+                          <Link
+                            key={college._id}
+                            href={`/colleges/${college.slug}`}
+                            onClick={() => {
+                              setIsOpen(false);
+                              setSearchTerm(''); // Clear search after clicking a college
+                            }}
+                            className="block px-4 py-3 text-sm font-bold bg-white rounded-lg hover:text-blue-600"
+                          >
+                            {college.name}
+                          </Link>
+                        ))}
+                        {item.name === 'Colleges' && filteredColleges.length === 0 && searchTerm && (
+                          <div className="py-8 text-center text-slate-400 text-xs font-bold uppercase">No colleges found for "{searchTerm}"</div>
+                        )}
+                        {item.name === 'Colleges' && filteredColleges.length === 0 && !searchTerm && (
+                          <div className="py-8 text-center text-slate-400 text-xs font-bold uppercase">No Colleges Found</div>
+                        )}
+                      </div>
+                    </>
+                  ) : item.name === "Exams" ? (
+                    <>
+                      {/* Mobile Search Input for Exams */}
+                      <div className="relative mb-3">
+                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search exams..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full pl-10 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
+                        />
+                      </div>
 
-            <div className="max-h-64 overflow-y-auto space-y-1">
-              {loadingColleges ? (
-                <p className="text-center text-xs text-slate-400 py-6">
-                  Loading Colleges...
-                </p>
-              ) : countryColleges.length > 0 ? (
-                countryColleges.map((college: any) => (
-                  <Link
-                    key={college._id}
-                    href={`/colleges/${college.slug}`}
-                    onClick={() => {
-                      setIsOpen(false);
-                      setSearchTerm(''); // Clear search after clicking a college
-                    }}
-                    className="block px-4 py-3 text-sm font-bold bg-white rounded-lg hover:text-blue-600"
-                  >
-                    {college.name}
-                  </Link>
-                ))
-              ) : (
-                <p className="text-center text-xs text-slate-400 py-6">
-                  No Colleges Found
-                </p>
+                      {/* 📝 EXAMS LIST */}
+                      <div className="space-y-1">
+                        {filteredExams.map((exam: any) => (
+                          <Link
+                            key={exam._id}
+                            href={exam.href || `/exams/${exam.slug}`}
+                            onClick={() => setIsOpen(false)}
+                            className="block px-4 py-3 text-sm font-bold text-slate-600 hover:text-blue-600"
+                          >
+                            {exam.short_name || exam.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  ) : item.name === "Countries" ? (
+                    <>
+                      {/* 🌍 COUNTRIES LIST */}
+                      {!selectedCountry && (
+                        <div className="space-y-1">
+                          {countries.map((country: any) => (
+                            <button
+                              key={country.slug}
+                              onClick={() => setSelectedCountry(country.slug)}
+                              className="w-full text-left px-4 py-3 bg-white rounded-lg text-sm font-bold hover:text-blue-600"
+                            >
+                              {country.flag} Study in {country.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 🏫 COUNTRY COLLEGES */}
+                      {selectedCountry && (
+                        <>
+                          <button
+                            onClick={() => setSelectedCountry(null)}
+                            className="text-xs font-black uppercase text-blue-600 mb-2"
+                          >
+                            ← Back to Countries
+                          </button>
+
+                          <div className="max-h-64 overflow-y-auto space-y-1">
+                            {loadingColleges ? (
+                              <p className="text-center text-xs text-slate-400 py-6">
+                                Loading Colleges...
+                              </p>
+                            ) : countryColleges.length > 0 ? (
+                              countryColleges.map((college: any) => (
+                                <Link
+                                  key={college._id}
+                                  href={`/colleges/${college.slug}`}
+                                  onClick={() => {
+                                    setIsOpen(false);
+                                    setSearchTerm(''); // Clear search after clicking a college
+                                  }}
+                                  className="block px-4 py-3 text-sm font-bold bg-white rounded-lg hover:text-blue-600"
+                                >
+                                  {college.name}
+                                </Link>
+                              ))
+                            ) : (
+                              <p className="text-center text-xs text-slate-400 py-6">
+                                No Colleges Found
+                              </p>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    /* 🌐 OTHER DROPDOWNS */
+                    dropdownContent[item.name as keyof typeof dropdownContent].map((sub: any) => (
+                      <Link
+                        key={sub.title}
+                        href={sub.href || "#"}
+                        onClick={() => setIsOpen(false)}
+                        className="block px-4 py-3 text-sm font-bold text-slate-600 hover:text-blue-600"
+                      >
+                        {sub.title}
+                      </Link>
+                    ))
+                  )}
+                </div>
               )}
-            </div>
-          </>
-        )}
-      </>
-    ) : (
-      /* 🌐 OTHER DROPDOWNS */
-      dropdownContent[item.name as keyof typeof dropdownContent].map((sub: any) => (
-        <Link
-          key={sub.title}
-          href={sub.href || "#"}
-          onClick={() => setIsOpen(false)}
-          className="block px-4 py-3 text-sm font-bold text-slate-600 hover:text-blue-600"
-        >
-          {sub.title}
-        </Link>
-      ))
-    )}
-  </div>
-)}
 
 
             </div>
