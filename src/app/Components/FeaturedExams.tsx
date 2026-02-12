@@ -75,7 +75,9 @@ const UniversityCard = ({ name, image, location, college_type ,  ranking, fees, 
             <p className="text-[9px] text-slate-400 uppercase font-black mb-1 flex items-center gap-1">
               <DollarSign size={10} /> Tuition Fee
             </p>
-            <p className="text-slate-900 font-bold text-sm">${fees?.toLocaleString()}</p>
+            <p className="text-slate-900 font-bold text-sm">
+              {typeof fees === 'string' ? fees : (fees ? `$${fees.toLocaleString()}` : 'N/A')}
+            </p>
           </div>
           <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm group-hover:border-blue-100 transition-colors">
             <p className="text-[9px] text-slate-400 uppercase font-black mb-1 flex items-center gap-1">
@@ -246,8 +248,9 @@ const useFeaturedData = () => {
       image: college.banner_url,
       location: college.country_ref?.city,
       ranking: college.ranking?.country_ranking || college.ranking,
-      fees: college.fees,
-      duration: college.duration,
+      fees: college.fees_structure?.courses?.[0]?.annual_tuition_fee ? 
+        college.fees_structure.courses[0].annual_tuition_fee : college.fees,
+      duration: college.fees_structure?.courses?.[0]?.duration || college.duration,
       establishment_year: college.establishment_year,
       slug: college.slug,
       country: college.country_ref?.name,
