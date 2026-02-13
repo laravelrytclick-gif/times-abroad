@@ -75,9 +75,9 @@ export const SITE_IDENTITY: SiteIdentity = {
   },
   contact: {
     phone: {
-      display: "+91-6239311536",
-      raw: "+916239311536",
-      additional: ["+91-9810718430", "+91-9310134887"]
+      display: "+91-9958565973",
+      raw: "+919958565973",
+      additional: ["+91-9958565973", "+91-9958565973"]
     },
     email: {
       support: "support@educationtimesabroad.com",
@@ -85,7 +85,7 @@ admissions: "admissions@educationtimesabroad.com",
 general: "info@educationtimesabroad.com",
     },
     address: {
-      office: "Third Floor, US Complex Jasola Opp Apollo Hospital , New Delhi, Delhi, India - 110076",
+      office: "4th floor, iThum-Noida, iThum Tower, C-405, Sector 62, Noida, Uttar Pradesh 2013",
       city: "Noida",
       country: "Uttar Pradesh 201301",
       mapLink: "https://goo.gl/maps/example",
