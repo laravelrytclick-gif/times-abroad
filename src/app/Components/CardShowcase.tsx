@@ -164,6 +164,7 @@ const UniversityCard = ({ name, image, location, ranking, fees, duration, establ
     </div>
   </Link>
 );
+}
 
 // --- Exam Card Component ---
 
