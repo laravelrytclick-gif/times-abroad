@@ -7,6 +7,7 @@ import {
   Users,
   ChevronRight,
   ShieldCheck,
+  Clock,
 } from "lucide-react";
 import { useFormModal } from "@/context/FormModalContext";
 
@@ -23,6 +24,9 @@ type CollegeCardProps = {
     rating?: string;
     employability?: string;
     tags?: string[];
+    fees?: number;
+    duration?: string;
+    country_ref?: any;
   };
 };
 
@@ -87,17 +91,17 @@ export default function CollegeCard({ data }: CollegeCardProps) {
           <StatItem 
             icon={<CircleDollarSign size={16} />} 
             label="Tuition" 
-            value={data.tuition} 
+            value={data.fees ? `$${data.fees.toLocaleString()}/year` : data.tuition || 'N/A'} 
+          />
+          <StatItem 
+            icon={<Clock size={16} />} 
+            label="Duration" 
+            value={data.duration ? `${data.duration} years` : 'N/A'} 
           />
           <StatItem 
             icon={<Award size={16} />} 
             label="Acceptance" 
             value={data.acceptance} 
-          />
-          <StatItem 
-            icon={<Users size={16} />} 
-            label="Employability" 
-            value={data.employability} 
           />
           <StatItem 
             icon={<Star size={16} className="fill-amber-400 text-amber-400" />} 

@@ -246,11 +246,21 @@ export default function CollegesPage() {
                     <div className="flex flex-wrap gap-4 text-sm text-gray-700 mb-4">
                       <div className="flex items-center gap-1 text-blue-700 font-medium">
                         <DollarSign size={14} />
-                        <span>{college.fees?.toLocaleString() || 'N/A'}/year</span>
+                        <span>
+                          {college.fees_structure?.courses?.[0]?.annual_tuition_fee ? 
+                            college.fees_structure.courses[0].annual_tuition_fee : 
+                            'Fees not available'
+                          }
+                        </span>
                       </div>
                       <div className="flex items-center gap-1 text-green-700 font-medium">
                         <Clock size={14} />
-                        <span>{college.duration} years</span>
+                        <span>
+                          {college.fees_structure?.courses?.[0]?.duration ? 
+                            `${college.fees_structure.courses[0].duration} years` : 
+                            'Duration not available'
+                          }
+                        </span>
                       </div>
                       {college.establishment_year && (
                         <div className="flex items-center gap-1 text-purple-700 font-medium">

@@ -174,7 +174,10 @@ const fetchColleges = async (countrySlug?: string): Promise<College[]> => {
                 banner_url: college.banner_url,
                 location: college.country_ref?.name || 'Unknown Location',
                 rank: college.ranking ? `Rank ${college.ranking}` : undefined,
-                tuition: college.fees ? `$${college.fees.toLocaleString()}/year` : undefined,
+                tuition: college.fees_structure?.courses?.[0]?.annual_tuition_fee || undefined,
+                fees: college.fees_structure?.courses?.[0]?.annual_tuition_fee ? 
+                  parseInt(college.fees_structure.courses[0].annual_tuition_fee.replace(/[^0-9]/g, '')) : undefined,
+                duration: college.fees_structure?.courses?.[0]?.duration || undefined,
                 acceptance: undefined,
                 rating: undefined,
                 employability: undefined,

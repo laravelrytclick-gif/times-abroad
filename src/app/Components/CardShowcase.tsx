@@ -24,6 +24,12 @@ interface UniversityCardProps {
   about?: string;
   exams?: string[];
   college_type?: string;
+  fees_structure?: {
+    courses?: Array<{
+      annual_tuition_fee?: string;
+      duration?: string;
+    }>;
+  };
 }
 
 interface ExamCardProps {
@@ -61,7 +67,13 @@ interface CountryCardProps {
 
 // --- University Card Component ---
 
-const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about, college_type }: UniversityCardProps) => (
+const UniversityCard = ({ name, image, location, ranking, fees, duration, establishment_year, slug, country, about, college_type, fees_structure }: UniversityCardProps) => {
+  // Extract fees and duration from either direct fields or nested fees_structure
+  const displayFees = fees || (fees_structure?.courses?.[0]?.annual_tuition_fee ? 
+    parseInt(fees_structure.courses[0].annual_tuition_fee.replace(/[^0-9]/g, '')) : undefined);
+  const displayDuration = duration || fees_structure?.courses?.[0]?.duration;
+
+  return (
   <Link href={`/colleges/${slug}`} className="group block h-full">
     <div className="relative h-full bg-white rounded-xl border-2 border-slate-200 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(59,130,246,0.12)] hover:border-blue-400 transition-all duration-500 flex flex-col overflow-hidden hover:-translate-y-1">
       
@@ -115,12 +127,12 @@ const UniversityCard = ({ name, image, location, ranking, fees, duration, establ
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-blue-50 p-3 rounded-lg text-center">
             <DollarSign size={16} className="text-blue-600 mx-auto mb-1" />
-            <p className="text-xs font-bold text-slate-700">${fees?.toLocaleString()}/yr</p>
+            <p className="text-xs font-bold text-slate-700">{displayFees ? `$${displayFees.toLocaleString()}/yr` : 'N/A'}</p>
             <p className="text-[9px] text-slate-500">Tuition</p>
           </div>
           <div className="bg-green-50 p-3 rounded-lg text-center">
             <Clock size={16} className="text-green-600 mx-auto mb-1" />
-            <p className="text-xs font-bold text-slate-700">{duration} Years</p>
+            <p className="text-xs font-bold text-slate-700">{displayDuration ? `${displayDuration} Years` : 'N/A'}</p>
             <p className="text-[9px] text-slate-500">Duration</p>
           </div>
         </div>
@@ -152,6 +164,7 @@ const UniversityCard = ({ name, image, location, ranking, fees, duration, establ
     </div>
   </Link>
 );
+}
 
 // --- Exam Card Component ---
 
