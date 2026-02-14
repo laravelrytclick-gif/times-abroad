@@ -101,6 +101,8 @@ export default function CollegesPage() {
   const [collegeToDelete, setCollegeToDelete] = useState<College | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCountry, setSelectedCountry] = useState<string>('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
 
   // TanStack Query hooks
   const { data: colleges = [], isLoading: dataLoading, error: collegesError } = useAdminColleges()
@@ -234,6 +236,18 @@ export default function CollegesPage() {
 
     return filtered
   }, [colleges, searchTerm, selectedCountry])
+
+  // Pagination calculations
+  const totalItems = filteredColleges.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedColleges = filteredColleges.slice(startIndex, endIndex)
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, selectedCountry])
 
   const columns = [
     {
@@ -705,7 +719,8 @@ export default function CollegesPage() {
           <div>
             <h2 className="text-lg font-semibold text-gray-900">All Colleges</h2>
             <p className="text-sm text-gray-500">
-              {filteredColleges.length} of {colleges.length} colleges
+              Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} colleges
+              {totalItems > itemsPerPage && ` (Page ${currentPage} of ${totalPages})`}
             </p>
           </div>
           <Button onClick={handleAddCollege} className="flex items-center space-x-2">
@@ -747,12 +762,82 @@ export default function CollegesPage() {
 
         {/* Colleges Table */}
         <AdminTable
-          data={filteredColleges}
+          data={paginatedColleges}
           columns={columns}
           actions={actions}
           loading={dataLoading}
           emptyMessage="No colleges found. Add your first college to get started."
         />
+
+        {/* Pagination Controls */}
+        {totalItems > itemsPerPage && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg border">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Items per page:</span>
+              <Select value={itemsPerPage.toString()} onValueChange={(value) => {
+                setItemsPerPage(parseInt(value))
+                setCurrentPage(1)
+              }}>
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum
+                  if (totalPages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      className="w-8 h-8 p-0"
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Add/Edit Modal */}
         <AdminModal
