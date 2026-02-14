@@ -8,7 +8,7 @@ export async function GET() {
   try {
     console.log('🚀 [API] GET /api/admin/colleges - Request received');
     
-    console.log('🔗 [API] Connecting to database...');
+    console.log(' [API] Connecting to database...');
     await connectDB();
     console.log('✅ [API] Database connected successfully');
     
