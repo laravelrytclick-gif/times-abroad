@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, MapPin, DollarSign, Clock, GraduationCap, Building, X, Loader2, AlertCircle, RefreshCw } from 'lucide-react'
-import { useInfiniteColleges } from '@/hooks/useColleges'
+import { Search, MapPin, DollarSign, Clock, GraduationCap, Building, X, Loader2, AlertCircle, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useColleges } from '@/hooks/useColleges'
 import { getCountryName } from "@/lib/normalize"
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface College {
   _id: string
@@ -29,23 +31,21 @@ export default function CollegesPage() {
   const [selectedCountry, setSelectedCountry] = useState<string>('all')
   const [selectedExam, setSelectedExam] = useState<string>('all')
   const [selectedCollegeType, setSelectedCollegeType] = useState<string>('all')
+  const [currentPage, setCurrentPage] = useState(1)
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   
-  // Use TanStack Query for infinite scroll
+  // Use TanStack Query for pagination
   const {
     data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
     isLoading,
     isError,
     error,
     refetch
-  } = useInfiniteColleges(debouncedSearchTerm, selectedCountry, selectedExam, selectedCollegeType)
+  } = useColleges(currentPage, debouncedSearchTerm, selectedCountry, selectedExam, selectedCollegeType)
   
-  // Flatten all pages for rendering
-  const colleges = data?.pages.flatMap(page => page.colleges) || []
-  const totalCount = data?.pages[0]?.total || 0
+  const colleges = data?.colleges || []
+  const totalCount = data?.total || 0
+  const totalPages = data?.totalPages || 1
 
   // Debounce search term
   useEffect(() => {
@@ -54,6 +54,11 @@ export default function CollegesPage() {
     }, 500)
     return () => clearTimeout(timer)
   }, [searchTerm])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm, selectedCountry, selectedExam, selectedCollegeType])
 
   // Extract unique countries and exams from colleges for filters
   const { countries, exams } = React.useMemo(() => {
@@ -300,32 +305,63 @@ export default function CollegesPage() {
           </div>
         )}
 
-        {/* Load More */}
-        {hasNextPage && (
-          <div className="text-center py-8">
-            <button
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-              className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-3 rounded-xl text-sm font-medium transition-all duration-300 disabled:opacity-50 flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl"
-            >
-              {isFetchingNextPage ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                'Load More Colleges'
-              )}
-            </button>
-          </div>
-        )}
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg border">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">
+                Showing {((currentPage - 1) * 12) + 1}-{Math.min(currentPage * 12, totalCount)} of {totalCount} colleges
+              </span>
+            </div>
 
-        {/* End of results */}
-        {!hasNextPage && colleges.length > 0 && (
-          <div className="text-center py-8 border-t border-blue-100 mt-8">
-            <p className="text-gray-700 text-sm font-medium">
-              Showing all {colleges.length} colleges
-            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </Button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum
+                  if (totalPages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      className="w-8 h-8 p-0"
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         )}
       </div>

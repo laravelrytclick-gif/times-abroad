@@ -19,13 +19,28 @@ interface Blog {
   updatedAt: string
 }
 
-// Fetch all blogs
-const fetchBlogs = async (): Promise<Blog[]> => {
-  const response = await fetch('/api/blogs', {
-    headers: {
-      'Content-Type': 'application/json',
-    },
+interface BlogsResponse {
+  blogs: Blog[]
+  total: number
+  page: number
+  totalPages: number
+  hasMore: boolean
+}
+
+// Fetch blogs with pagination
+const fetchBlogs = async ({ 
+  pageParam = 1, 
+  search = '', 
+  category = ''
+}): Promise<BlogsResponse> => {
+  const params = new URLSearchParams({
+    page: pageParam.toString(),
+    limit: '9',
+    ...(search && { search }),
+    ...(category && category !== 'all' && { category })
   })
+
+  const response = await fetch(`/api/blogs?${params}`)
   
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
@@ -36,7 +51,13 @@ const fetchBlogs = async (): Promise<Blog[]> => {
     throw new Error(result.message || 'Failed to fetch blogs')
   }
   
-  return result.data
+  return {
+    blogs: result.data.blogs || [],
+    total: result.data.total || 0,
+    page: pageParam,
+    totalPages: Math.ceil((result.data.total || 0) / 9),
+    hasMore: (result.data.blogs || []).length === 9
+  }
 }
 
 // Fetch single blog by slug
@@ -62,11 +83,15 @@ const fetchBlogBySlug = async (slug: string): Promise<Blog> => {
   return result.data
 }
 
-// Hook for all blogs
-export function useBlogs() {
+// Hook for paginated blogs
+export function useBlogs(page: number, search: string, category: string) {
   return useQuery({
-    queryKey: ['blogs'],
-    queryFn: fetchBlogs,
+    queryKey: ['blogs', 'paginated', page, search, category],
+    queryFn: () => fetchBlogs({ 
+      pageParam: page, 
+      search, 
+      category 
+    }),
     staleTime: 3 * 60 * 1000, // 3 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,

@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Calendar, Tag, FileText, Clock, User, Eye, MessageCircle, ArrowRight, X, AlertCircle, RefreshCw } from 'lucide-react'
+import { Search, Calendar, Tag, FileText, Clock, User, Eye, MessageCircle, ArrowRight, X, AlertCircle, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useBlogs } from '@/hooks/useBlogs'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface Blog {
   _id: string
@@ -28,40 +30,39 @@ interface Blog {
 export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
 
-  // Use TanStack Query for blogs data
+  // Use TanStack Query for paginated blogs data
   const { 
-    data: blogs = [], 
+    data, 
     isLoading, 
     error, 
     refetch 
-  } = useBlogs()
+  } = useBlogs(currentPage, debouncedSearchTerm, selectedCategory)
 
-  // Filter blogs based on search and category
-  const filteredBlogs = useMemo(() => {
-    let filtered = blogs
+  const blogs = data?.blogs || []
+  const totalCount = data?.total || 0
+  const totalPages = data?.totalPages || 1
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(blog => blog.category === selectedCategory)
-    }
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
 
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase()
-      filtered = filtered.filter(blog => 
-        blog.title.toLowerCase().includes(searchLower) ||
-        blog.content.toLowerCase().includes(searchLower) ||
-        blog.tags.some(tag => tag.toLowerCase().includes(searchLower))
-      )
-    }
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm, selectedCategory])
 
-    return filtered
-  }, [blogs, searchTerm, selectedCategory])
-
-  // Extract unique categories
-  const categories = useMemo(() => 
-    [...new Set(blogs.map(blog => blog.category))], 
-    [blogs]
-  )
+  // Get categories from blogs
+  const categories = useMemo(() => {
+    const uniqueCategories = [...new Set(blogs.map((blog: any) => blog.category))]
+    return uniqueCategories.filter(Boolean)
+  }, [blogs])
 
   if (isLoading) {
     return (
@@ -108,7 +109,7 @@ export default function BlogsPage() {
                 Latest <span className="font-semibold text-blue-700">Articles</span>
               </h1>
               <p className="text-gray-700 text-sm font-medium">
-                Explore {filteredBlogs.length} educational insights and success stories
+                Explore {blogs.length} educational insights and success stories
               </p>
             </div>
             <div className="flex items-center gap-3 bg-blue-700 p-3 rounded-xl text-white">
@@ -116,7 +117,7 @@ export default function BlogsPage() {
                 <FileText size={20} className="text-white" />
               </div>
               <div>
-                <p className="text-xl font-light text-white">{filteredBlogs.length}</p>
+                <p className="text-xl font-light text-white">{blogs.length}</p>
                 <p className="text-xs text-white/80">Articles</p>
               </div>
             </div>
@@ -158,7 +159,7 @@ export default function BlogsPage() {
             </button>
 
             <div className="flex items-center justify-center gap-2 text-gray-600 text-sm font-medium">
-              <span>{filteredBlogs.length} results</span>
+              <span>{blogs.length} results</span>
             </div>
           </div>
         </div>
@@ -166,7 +167,7 @@ export default function BlogsPage() {
 
       {/* Articles List */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {filteredBlogs.length === 0 ? (
+        {blogs.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <FileText size={24} className="text-blue-600" />
@@ -176,7 +177,7 @@ export default function BlogsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredBlogs.map((blog) => (
+            {blogs.map((blog) => (
               <div
                 key={blog._id}
                 className="bg-white border border-blue-100 rounded-xl p-6 hover:shadow-md hover:border-blue-200 transition-all duration-300"
@@ -267,11 +268,73 @@ export default function BlogsPage() {
           </div>
         )}
 
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg border mt-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">
+                Showing {((currentPage - 1) * 9) + 1}-{Math.min(currentPage * 9, totalCount)} of {totalCount} articles
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </Button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum
+                  if (totalPages <= 5) {
+                    pageNum = i + 1
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i
+                  } else {
+                    pageNum = currentPage - 2 + i
+                  }
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      className="w-8 h-8 p-0"
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* End of results */}
-        {filteredBlogs.length > 0 && (
+        {blogs.length > 0 && (
           <div className="text-center py-8 border-t border-blue-100 mt-8">
             <p className="text-gray-700 text-sm font-medium">
-              Showing all {filteredBlogs.length} articles
+              Showing all {totalCount} articles
+              {searchTerm && ` for "${searchTerm}"`}
+              {selectedCategory !== 'all' && ` in ${selectedCategory}`}
             </p>
           </div>
         )}
