@@ -156,6 +156,24 @@ export function useCollege(slug: string) {
   })
 }
 
+// Hook for paginated colleges list
+export function useColleges(page: number, search: string, country: string, exam: string, collegeType: string) {
+  return useQuery({
+    queryKey: ['colleges', 'paginated', page, search, country, exam, collegeType],
+    queryFn: () => fetchColleges({ 
+      pageParam: page, 
+      search, 
+      country, 
+      exam,
+      collegeType 
+    }),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    refetchOnWindowFocus: false,
+  })
+}
+
 // Hook for colleges filter options (countries and exams)
 export function useCollegeFilters() {
   return useQuery({
