@@ -178,14 +178,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: mappedEnquiries,
-      pagination: {
-        page,
-        limit,
+      data: {
+        enquiries: mappedEnquiries,
         total,
-        pages: Math.ceil(total / limit),
-        hasNext: page * limit < total,
-        hasPrev: page > 1
+        page,
+        totalPages: Math.ceil(total / limit),
+        hasMore: enquiries.length === limit
       }
     })
 
