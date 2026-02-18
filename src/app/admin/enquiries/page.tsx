@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, Search, Filter, Mail, Phone, Calendar, User, MessageSquare, AlertCircle } from 'lucide-react'
+import { Plus, Search, Filter, Mail, Phone, Calendar, User, MessageSquare, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Enquiry {
@@ -30,45 +30,7 @@ interface Enquiry {
   updatedAt: string
 }
 
-// Mock data - replace with actual API call
-const mockEnquiries: Enquiry[] = [
-  {
-    _id: '1',
-    name: 'Rahul Sharma',
-    email: 'rahul.sharma@email.com',
-    phone: '+91 9876543210',
-    city: 'Delhi',
-    interest: 'study-abroad',
-    message: 'I want to study engineering in USA',
-    status: 'pending',
-    createdAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-15T10:30:00Z'
-  },
-  {
-    _id: '2',
-    name: 'Priya Patel',
-    email: 'priya.patel@email.com',
-    phone: '+91 9876543211',
-    city: 'Mumbai',
-    interest: 'mbbs-abroad',
-    message: 'Interested in MBBS in Russia',
-    status: 'contacted',
-    createdAt: '2024-01-14T15:45:00Z',
-    updatedAt: '2024-01-15T09:20:00Z'
-  },
-  {
-    _id: '3',
-    name: 'Amit Kumar',
-    email: 'amit.kumar@email.com',
-    phone: '+91 9876543212',
-    city: 'Bangalore',
-    interest: 'study-abroad',
-    message: 'Looking for MBA programs in Canada',
-    status: 'resolved',
-    createdAt: '2024-01-13T12:15:00Z',
-    updatedAt: '2024-01-16T14:30:00Z'
-  }
-]
+
 
 export default function EnquiriesPage() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([])
@@ -80,16 +42,43 @@ export default function EnquiriesPage() {
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<Enquiry | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm, statusFilter, interestFilter])
 
   // Fetch enquiries from API
   useEffect(() => {
     const fetchEnquiries = async () => {
       try {
-        const response = await fetch('/api/enquiries')
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: '10',
+          ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+          ...(statusFilter && statusFilter !== 'all' && { status: statusFilter }),
+          ...(interestFilter && interestFilter !== 'all' && { interest: interestFilter })
+        })
+
+        const response = await fetch(`/api/enquiries?${params}`)
         const data = await response.json()
         
         if (data.success) {
-          setEnquiries(data.data)
+          setEnquiries(data.data.enquiries || [])
+          setTotalCount(data.data.total || 0)
+          setTotalPages(data.data.totalPages || 1)
         } else {
           setError(data.error || 'Failed to fetch enquiries')
         }
@@ -102,34 +91,9 @@ export default function EnquiriesPage() {
     }
 
     fetchEnquiries()
-  }, [])
+  }, [currentPage, debouncedSearchTerm, statusFilter, interestFilter])
 
-  // Filter enquiries
-  const filteredEnquiries = useMemo(() => {
-    let filtered = enquiries
-
-    // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(enquiry => enquiry.status === statusFilter)
-    }
-
-    // Filter by interest
-    if (interestFilter !== 'all') {
-      filtered = filtered.filter(enquiry => enquiry.interest === interestFilter)
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(enquiry =>
-        enquiry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        enquiry.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        enquiry.phone.includes(searchTerm) ||
-        enquiry.city.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    return filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  }, [enquiries, searchTerm, statusFilter, interestFilter])
+  // Remove client-side filtering since we're doing server-side filtering
 
   const handleViewEnquiry = (enquiry: Enquiry) => {
     setSelectedEnquiry(enquiry)
@@ -427,10 +391,70 @@ export default function EnquiriesPage() {
 
       {/* Table */}
       <AdminTable
-        data={filteredEnquiries}
+        data={enquiries}
         columns={columns}
         loading={loading}
       />
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg border">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">
+              Showing {((currentPage - 1) * 10) + 1}-{Math.min(currentPage * 10, totalCount)} of {totalCount} enquiries
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </Button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum
+                if (totalPages <= 5) {
+                  pageNum = i + 1
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i
+                } else {
+                  pageNum = currentPage - 2 + i
+                }
+
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    className="w-8 h-8 p-0"
+                    onClick={() => setCurrentPage(pageNum)}
+                  >
+                    {pageNum}
+                  </Button>
+                )
+              })}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* View Modal */}
       <AdminModal
