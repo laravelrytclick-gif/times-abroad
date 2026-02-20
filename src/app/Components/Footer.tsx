@@ -85,10 +85,12 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-white mb-6 tracking-wide">SERVICES</h4>
             <ul className="flex flex-col gap-4 text-gray-300 text-[15px]">
-              <li><Link href="#" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">University Admissions</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">Visa Counseling</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">Scholarship Guidance</Link></li>
-              <li><Link href="#" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">Test Preparation</Link></li>
+              <li><Link href="/colleges" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">Study Abroad Programs</Link></li>
+              <li><Link href="/mbbs-abroad" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">MBBS Abroad</Link></li>
+              <li><Link href="/exams" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">Entrance Exam Prep</Link></li>
+              <li><Link href="/blogs" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">Career Guidance</Link></li>
+              <li><Link href="/contact" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">Admission Counseling</Link></li>
+              <li><Link href="/study-abroad" className="hover:text-blue-400 hover:translate-x-1 transition-all duration-200 inline-block">University Selection</Link></li>
             </ul>
           </div>
 
@@ -156,7 +158,7 @@ const Footer = () => {
             </div>
             <div className="mt-8 text-center max-w-4xl mx-auto">
               <p className="text-gray-400 text-xs leading-relaxed">
-                Disclaimer: Alpha World Education provides guidance and counseling services
+                Disclaimer: Education Times Abroad provides guidance and counseling services
                 based on experience and available information. We do not guarantee admission,
                 visa approval, or outcomes, as final decisions are made by respective
                 institutions and authorities.
