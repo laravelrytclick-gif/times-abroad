@@ -17,7 +17,7 @@ const testimonials: Testimonial[] = [
   {
     name: "Aravind Iyer",
     course: "MS IN COMPUTER SCIENCE, STANFORD",
-    quote: "AlphaWorld Education turned my Ivy League dream into reality. From shortlisting universities to my SOP review, their attention to detail was incredible. I even secured a $20k scholarship!",
+    quote: "Education Times Abroad turned my Ivy League dream into reality. From shortlisting universities to my SOP review, their attention to detail was incredible. I even secured a $20k scholarship!",
     image: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
     location: "Mumbai, India"
   },
