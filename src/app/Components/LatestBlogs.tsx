@@ -105,7 +105,7 @@ const BlogCard = ({ title, slug, category, content, tags, createdAt, image }: Bl
 };
 
 const fetchBlogs = async (): Promise<BlogCardProps[]> => {
-  const response = await fetch('/api/blogs', {
+  const response = await fetch('/api/blogs?page=1&limit=12', {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -121,7 +121,7 @@ const fetchBlogs = async (): Promise<BlogCardProps[]> => {
   }
   
   // Transform API data to match BlogCard interface
-  return result.data.map((blog: any) => ({
+  return result.data.blogs.map((blog: any) => ({
     title: blog.title,
     slug: blog.slug,
     category: blog.category || "Blog",
