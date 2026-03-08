@@ -1,12 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AdminTable } from '@/components/admin/AdminTable'
 import { AdminModal } from '@/components/admin/AdminModal'
 import { AdminForm } from '@/components/admin/AdminForm'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   DropdownMenu,
@@ -15,7 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react'
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
 import { generateSlug } from '@/lib/slug'
 import { useAdminExams, useSaveExam, useDeleteExam } from '@/hooks/useAdminExams'
 import { toast } from 'sonner'
@@ -93,6 +100,24 @@ export default function SimpleExamsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingExam, setEditingExam] = useState<Exam | null>(null)
   const [activeTab, setActiveTab] = useState('basic')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedType, setSelectedType] = useState<string>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm, selectedType, selectedStatus])
 
   const [formData, setFormData] = useState<Exam>({
     name: '',
@@ -138,11 +163,22 @@ export default function SimpleExamsPage() {
       passing_criteria: '',
       total_marks: 100,
       passing_marks: 40
-    }
+    },
+    actions: undefined
   })
   
   // TanStack Query hooks
-  const { data: exams = [], isLoading: dataLoading } = useAdminExams()
+  const { 
+    data, 
+    isLoading: dataLoading, 
+    error, 
+    refetch 
+  } = useAdminExams(currentPage, debouncedSearchTerm, selectedType, selectedStatus)
+  
+  const exams = data?.exams || []
+  const totalCount = data?.total || 0
+  const totalPages = data?.totalPages || 1
+
   const saveExamMutation = useSaveExam()
   const deleteExamMutation = useDeleteExam()
 
@@ -341,8 +377,8 @@ export default function SimpleExamsPage() {
       key: 'is_active' as keyof Exam,
       title: 'Status',
       render: (value: boolean) => (
-        <div className={`flex ${value ? 'bg-green-600' : 'bg-gray-600'} text-white rounded-2xl px-2 py-1 items-center gap-1`}>
-          <p>{value ? 'Active' : 'Inactive'}</p>
+        <div className={`flex items-center justify-center ${value ? 'bg-green-600' : 'bg-gray-600'} text-white rounded-2xl px-2 py-1 gap-1`}>
+          <p className="text-center">{value ? 'Active' : 'Inactive'}</p>
         </div>
       )
     },
@@ -422,18 +458,119 @@ export default function SimpleExamsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">Simple Exams Management</h2>
+        <div>
+          <h2 className="text-lg font-semibold">Simple Exams Management</h2>
+          <p className="text-sm text-gray-500">
+            {totalCount} exams total
+          </p>
+        </div>
         <Button onClick={handleAddExam}>
           <Plus className="h-4 w-4 mr-2" />
           Add Exam
         </Button>
       </div>
 
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search exams by name, conducting body, or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+        <Select value={selectedType} onValueChange={setSelectedType}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Filter by type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="International">International</SelectItem>
+            <SelectItem value="National">National</SelectItem>
+            <SelectItem value="State">State</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <AdminTable
         data={exams}
         columns={columns}
-        loading={false}
+        loading={dataLoading}
       />
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg border">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">
+              Showing {((currentPage - 1) * 10) + 1}-{Math.min(currentPage * 10, totalCount)} of {totalCount} exams
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </Button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum
+                if (totalPages <= 5) {
+                  pageNum = i + 1
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i
+                } else {
+                  pageNum = currentPage - 2 + i
+                }
+
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    className="w-8 h-8 p-0"
+                    onClick={() => setCurrentPage(pageNum)}
+                  >
+                    {pageNum}
+                  </Button>
+                )
+              })}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <AdminModal 
         open={isModalOpen} 

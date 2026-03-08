@@ -26,7 +26,7 @@ const FeatureCard = ({ icon, title, description, className = "", iconBg = "bg-wh
   </div>
 );
 
-export default function AlphaWorldAdvantage() {
+export default function EducationTimesAdvantage() {
   return (
     <section id="about" className="relative w-full max-w-7xl mx-auto px-6 py-20 lg:py-32 overflow-hidden bg-white">
       {/* Decorative Gradient Glows */}

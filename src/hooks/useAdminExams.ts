@@ -57,9 +57,28 @@ export interface AdminExam {
   }
 }
 
-// Fetch all exams for admin
-const fetchAdminExams = async (): Promise<AdminExam[]> => {
-  const response = await fetch('/api/admin/exams')
+// Fetch paginated exams for admin
+const fetchAdminExams = async ({ 
+  pageParam = 1, 
+  search = '', 
+  type = '',
+  status = '' 
+}): Promise<{
+  exams: AdminExam[],
+  total: number,
+  page: number,
+  totalPages: number,
+  hasMore: boolean
+}> => {
+  const params = new URLSearchParams({
+    page: pageParam.toString(),
+    limit: '10',
+    ...(search && { search }),
+    ...(type && type !== 'all' && { type }),
+    ...(status && status !== 'all' && { status })
+  })
+
+  const response = await fetch(`/api/admin/exams?${params}`)
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
@@ -117,10 +136,15 @@ const deleteExam = async (id: string): Promise<void> => {
 }
 
 // Hooks
-export function useAdminExams() {
+export function useAdminExams(page: number, search: string, type: string, status: string) {
   return useQuery({
-    queryKey: ['admin', 'exams'],
-    queryFn: fetchAdminExams,
+    queryKey: ['admin', 'exams', 'paginated', page, search, type, status],
+    queryFn: () => fetchAdminExams({ 
+      pageParam: page, 
+      search, 
+      type, 
+      status 
+    }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,

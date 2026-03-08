@@ -4,22 +4,65 @@ import College from "@/models/College";
 import Country from "@/models/Country";
 import { handleApiError, validateRequiredFields, createSuccessResponse, ValidationError } from "@/lib/validation";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     console.log('🚀 [API] GET /api/admin/colleges - Request received');
     
+    // Get query parameters
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
+    const country = searchParams.get('country') || '';
+    const status = searchParams.get('status') || '';
+
     console.log(' [API] Connecting to database...');
     await connectDB();
     console.log('✅ [API] Database connected successfully');
     
-    console.log('📋 [API] Fetching all colleges...');
-    const colleges = await College.find({}).populate('country_ref').sort({ createdAt: -1 });
+    // Build query
+    let query: any = {};
+    
+    if (status && status !== 'all') {
+      query.is_active = status === 'active';
+    }
+    
+    if (country && country !== 'all') {
+      // Assuming country_ref is the reference field
+      query.country_ref = country;
+    }
+    
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Get total count for pagination
+    const total = await College.countDocuments(query);
+    
+    console.log('📋 [API] Fetching colleges with pagination...');
+    const colleges = await College.find(query)
+      .populate('country_ref')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+    
     console.log('✅ [API] Colleges fetched:', colleges.length, 'colleges found');
 
     return NextResponse.json({
       success: true,
       message: "Colleges fetched successfully",
-      data: colleges,
+      data: {
+        colleges,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+        hasMore: colleges.length === limit
+      },
     });
   } catch (error) {
     console.error("💥 [API] Error fetching colleges:", error);

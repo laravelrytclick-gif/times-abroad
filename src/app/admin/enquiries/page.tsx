@@ -100,15 +100,36 @@ export default function EnquiriesPage() {
     setIsModalOpen(true)
   }
 
-  const handleStatusChange = (enquiryId: string, newStatus: Enquiry['status']) => {
+  const handleStatusChange = async (enquiryId: string, newStatus: Enquiry['status']) => {
     if (!enquiryId) return
     
-    setEnquiries(prev => prev.map(enquiry => 
-      (enquiry._id || enquiry.id) === enquiryId 
-        ? { ...enquiry, status: newStatus, updatedAt: new Date().toISOString() }
-        : enquiry
-    ))
-    toast.success('Enquiry status updated successfully!')
+    try {
+      // Call API to update status
+      const response = await fetch(`/api/enquiries/${enquiryId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update status')
+      }
+
+      // Update local state after successful API call
+      setEnquiries(prev => prev.map(enquiry => 
+        (enquiry._id || enquiry.id) === enquiryId 
+          ? { ...enquiry, status: newStatus, updatedAt: new Date().toISOString() }
+          : enquiry
+      ))
+      toast.success('Enquiry status updated successfully!')
+    } catch (error) {
+      console.error('Error updating enquiry status:', error)
+      toast.error('Failed to update enquiry status')
+      // Revert the status change by refetching
+      window.location.reload()
+    }
   }
 
   const handleDeleteEnquiry = (enquiry: Enquiry) => {
@@ -268,7 +289,7 @@ export default function EnquiriesPage() {
             variant="outline"
             size="sm"
             onClick={() => handleViewEnquiry(record)}
-            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+            className="text-blue-600 border-blue-200 !hover:bg-blue-50"
           >
             <MessageSquare className="w-4 h-4 mr-1" />
             View
@@ -277,7 +298,7 @@ export default function EnquiriesPage() {
             variant="outline"
             size="sm"
             onClick={() => handleDeleteEnquiry(record)}
-            className="text-red-600 border-red-200 hover:bg-red-50"
+            className="text-red-600 border-red-200 !hover:bg-red-50"
           >
             Delete
           </Button>

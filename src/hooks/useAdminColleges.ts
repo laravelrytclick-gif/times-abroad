@@ -76,9 +76,28 @@ export interface AdminCountry {
   flag: string
 }
 
-// Fetch all colleges for admin
-const fetchAdminColleges = async (): Promise<AdminCollege[]> => {
-  const response = await fetch('/api/admin/colleges')
+// Fetch paginated colleges for admin
+const fetchAdminColleges = async ({ 
+  pageParam = 1, 
+  search = '', 
+  country = '',
+  status = '' 
+}): Promise<{
+  colleges: AdminCollege[],
+  total: number,
+  page: number,
+  totalPages: number,
+  hasMore: boolean
+}> => {
+  const params = new URLSearchParams({
+    page: pageParam.toString(),
+    limit: '10',
+    ...(search && { search }),
+    ...(country && country !== 'all' && { country }),
+    ...(status && status !== 'all' && { status })
+  })
+
+  const response = await fetch(`/api/admin/colleges?${params}`)
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
@@ -91,18 +110,51 @@ const fetchAdminColleges = async (): Promise<AdminCollege[]> => {
   return result.data
 }
 
+// Fetch paginated countries for admin
+const fetchAdminCountriesPaginated = async ({
+  pageParam = 1,
+  search = '',
+  status = '',
+  limit = 10
+}): Promise<{
+  countries: AdminCountry[],
+  total: number,
+  page: number,
+  totalPages: number,
+  hasMore: boolean
+}> => {
+  const params = new URLSearchParams({
+    page: pageParam.toString(),
+    limit: limit.toString(),
+    ...(search && { search }),
+    ...(status && status !== 'all' && { status })
+  })
+
+  const response = await fetch(`/api/admin/countries?${params}`)
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  const result = await response.json()
+  if (!result.success) {
+    throw new Error(result.message || 'Failed to fetch countries')
+  }
+
+  return result.data
+}
+
 // Fetch all countries for admin
 const fetchAdminCountries = async (): Promise<AdminCountry[]> => {
   const response = await fetch('/api/admin/countries')
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
-  
+
   const result = await response.json()
   if (!result.success) {
     throw new Error(result.message || 'Failed to fetch countries')
   }
-  
+
   return result.data
 }
 
@@ -151,10 +203,15 @@ const deleteCollege = async (id: string): Promise<void> => {
 }
 
 // Hooks
-export function useAdminColleges() {
+export function useAdminColleges(page: number, search: string, country: string, status: string) {
   return useQuery({
-    queryKey: ['admin', 'colleges'],
-    queryFn: fetchAdminColleges,
+    queryKey: ['admin', 'colleges', 'paginated', page, search, country, status],
+    queryFn: () => fetchAdminColleges({ 
+      pageParam: page, 
+      search, 
+      country, 
+      status 
+    }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,
@@ -162,12 +219,17 @@ export function useAdminColleges() {
   })
 }
 
-export function useAdminCountries() {
+export function useAdminCountries(page: number = 1, search: string = '', status: string = 'all', limit: number = 10) {
   return useQuery({
-    queryKey: ['admin', 'countries'],
-    queryFn: fetchAdminCountries,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes
+    queryKey: ['admin', 'countries', 'paginated', page, search, status, limit],
+    queryFn: () => fetchAdminCountriesPaginated({
+      pageParam: page,
+      search,
+      status,
+      limit
+    }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,
     refetchOnWindowFocus: false,
   })

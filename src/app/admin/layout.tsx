@@ -12,7 +12,7 @@ export default function AdminLayout({
   
   const getPageInfo = () => {
     if (pathname === '/admin/dashboard' ) {
-      return { title: 'Dashboard', subtitle: 'Welcome to Alpha World Education Admin Panel' }
+      return { title: 'Dashboard', subtitle: 'Welcome to Education Times Abroad Admin Panel' }
     }
     if (pathname === '/admin/countries') {
       return { title: 'Countries Management', subtitle: 'Manage countries for education destinations' }
@@ -29,7 +29,7 @@ export default function AdminLayout({
     if (pathname === '/admin/enquiries') {
       return { title: 'Enquiries Management', subtitle: 'Manage student enquiries and contact requests' }
     }
-    return { title: 'Admin', subtitle: 'Alpha World Education Admin Panel' }
+    return { title: 'Admin', subtitle: 'Education Times Abroad Admin Panel' }
   }
 
   const { title, subtitle } = getPageInfo()

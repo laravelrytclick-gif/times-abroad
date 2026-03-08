@@ -67,7 +67,7 @@ export const SITE_IDENTITY: SiteIdentity = {
   shortName: "Times Abroad",
   description: "Comprehensive education services and college guidance for international students",
   tagline: "Your Gateway to Global Education",
-  domain: "alphaworldeducation.com",
+  domain: "educationtimesabroad.com",
   brand: {
     primaryColor: "#ea580c", // Orange color from manifest
     secondaryColor: "#ffffff",
@@ -92,8 +92,8 @@ general: "info@educationtimesabroad.com",
     },
     socials: {
       whatsapp: "https://wa.me/916239311536",
-      instagram: "https://instagram.com/alphaworldeducation",
-      linkedin: "https://linkedin.com/company/alphaworldeducation",
+      instagram: "https://instagram.com/educationtimesabroad",
+      linkedin: "https://linkedin.com/company/educationtimesabroad",
     },
   },
   assets: SITE_ASSETS,
@@ -109,7 +109,7 @@ general: "info@educationtimesabroad.com",
       "study abroad",
       "education services"
     ],
-    author: "AlphaWorld Education",
+    author: "Education Times",
     ogImage: "/logo.png",
   },
   business: {
