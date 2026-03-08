@@ -66,7 +66,7 @@ export default function PrivacyPolicyPage() {
 
         <PolicyBlock
           title="5. Sharing of Information"
-          content="Alpha World Education does not sell or rent your personal data. Information may be shared only with trusted academic partners or service providers when required to deliver our services or comply with legal requirements."
+          content="Education Times Abroad does not sell or rent your personal data. Information may be shared only with trusted academic partners or service providers when required to deliver our services or comply with legal requirements."
         />
 
         <PolicyBlock

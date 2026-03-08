@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: CollegePageProps): Promise<Me
   const { slug } = await params
   
   return {
-    title: `${slug} - AlphaWorld Education`,
+    title: `${slug} - Education Times Abroad`,
     description: 'Learn more about this college',
   }
 }

@@ -4,6 +4,7 @@ import Country from "@/models/Country";
 import College from "@/models/College";
 import Blog from "@/models/Blog";
 import Exam from "@/models/Exam";
+import Enquiry from "@/models/Enquiry";
 
 export async function GET() {
   try {
@@ -16,18 +17,24 @@ export async function GET() {
     console.log('📊 [API] Counting documents in all collections...');
     
     // Get counts from all collections in parallel for better performance
-    const [countriesCount, collegesCount, blogsCount, examsCount] = await Promise.all([
+    const [countriesCount, collegesCount, blogsCount, examsCount, studyAbroadCount, mbbsAbroadCount, pendingEnquiriesCount] = await Promise.all([
       Country.countDocuments({}),
       College.countDocuments({}),
       Blog.countDocuments({}),
-      Exam.countDocuments({})
+      Exam.countDocuments({}),
+      College.countDocuments({ college_type: 'study_abroad' }),
+      College.countDocuments({ college_type: 'mbbs_abroad' }),
+      Enquiry.countDocuments({ status: 'pending' })
     ]);
     
     const statsData = {
       countries: countriesCount,
       colleges: collegesCount,
       blogs: blogsCount,
-      exams: examsCount
+      exams: examsCount,
+      study_abroad: studyAbroadCount,
+      mbbs_abroad: mbbsAbroadCount,
+      pending_enquiries: pendingEnquiriesCount
     };
     
     console.log('✅ [API] Stats calculated:', statsData);

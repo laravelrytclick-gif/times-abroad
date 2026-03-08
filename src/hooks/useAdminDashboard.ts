@@ -7,6 +7,9 @@ export interface DashboardStats {
   colleges: number
   blogs: number
   exams: number
+  study_abroad: number
+  mbbs_abroad: number
+  pending_enquiries: number
 }
 
 // Fetch dashboard statistics

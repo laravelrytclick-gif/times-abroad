@@ -6,18 +6,23 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Globe, GraduationCap, FileText, MoreHorizontal, ChevronRight, Activity, FileCheck, Loader2, Building2, Stethoscope } from 'lucide-react'
+import { Globe, GraduationCap, FileText, MoreHorizontal, ChevronRight, Activity, FileCheck, Loader2, Building2, Stethoscope, Mail, Users } from 'lucide-react'
 import { useAdminDashboardStats } from '@/hooks/useAdminDashboard'
 import { useAdminCountries, useAdminColleges } from '@/hooks/useAdminColleges'
 import { useAdminBlogs } from '@/hooks/useAdminBlogs'
 import { dummyCountries, dummyColleges, dummyBlogs } from '@/data/dummyData'
 
 export default function DashboardPage() {
-  // TanStack Query hooks
-  const { data: dbStats = { countries: 0, colleges: 0, blogs: 0, exams: 0 }, isLoading: statsLoading, error: statsError } = useAdminDashboardStats()
-  const { data: countries = [], isLoading: countriesLoading } = useAdminCountries()
-  const { data: colleges = [], isLoading: collegesLoading } = useAdminColleges()
-  const { data: blogs = [], isLoading: blogsLoading } = useAdminBlogs()
+  // TanStack Query hooks - use correct parameters for paginated hooks
+  const { data: dbStats = { countries: 0, colleges: 0, blogs: 0, exams: 0, study_abroad: 0, mbbs_abroad: 0, pending_enquiries: 0 }, isLoading: statsLoading, error: statsError } = useAdminDashboardStats()
+  const { data: countriesData = { countries: [], total: 0, page: 1, totalPages: 1, hasMore: false }, isLoading: countriesLoading } = useAdminCountries(1, '', 'all', 1000)
+  const { data: collegesData = { colleges: [], total: 0, page: 1, totalPages: 1, hasMore: false }, isLoading: collegesLoading } = useAdminColleges(1, '', '', '')
+  const { data: blogsData = { blogs: [], total: 0, page: 1, totalPages: 1, hasMore: false }, isLoading: blogsLoading } = useAdminBlogs(1, '', '', '')
+  
+  // Extract arrays from paginated data
+  const countries = countriesData.countries || []
+  const colleges = collegesData.colleges || []
+  const blogs = blogsData.blogs || []
   
   // Overall loading state
   const loading = statsLoading || countriesLoading || collegesLoading || blogsLoading
@@ -27,15 +32,14 @@ export default function DashboardPage() {
   const displayColleges = colleges.length > 0 ? colleges : dummyColleges
   const displayBlogs = blogs.length > 0 ? blogs : dummyBlogs
   
-  // Calculate college type counts from real data
-  const studyAbroadCount = displayColleges.filter(college => (college as any).college_type === 'study_abroad').length
-  const mbbsAbroadCount = displayColleges.filter(college => (college as any).college_type === 'mbbs_abroad').length
+  // Use API stats for study abroad and MBBS abroad counts, fallback to client calculation
+  const studyAbroadCount = dbStats.study_abroad > 0 ? dbStats.study_abroad : displayColleges.filter((college: any) => (college as any).college_type === 'study_abroad').length
+  const mbbsAbroadCount = dbStats.mbbs_abroad > 0 ? dbStats.mbbs_abroad : displayColleges.filter((college: any) => (college as any).college_type === 'mbbs_abroad').length
   
   // Debug logging
-  console.log('🔍 [Dashboard] Total colleges:', displayColleges.length)
+  console.log('🔍 [Dashboard] API stats:', dbStats)
   console.log('🔍 [Dashboard] Study abroad count:', studyAbroadCount)
   console.log('🔍 [Dashboard] MBBS abroad count:', mbbsAbroadCount)
-  console.log('🔍 [Dashboard] Colleges with types:', displayColleges.filter(c => (c as any).college_type).map(c => ({ name: c.name, type: (c as any).college_type })))
   
   const displayStats = dbStats.countries > 0 || dbStats.colleges > 0 || dbStats.blogs > 0 || dbStats.exams > 0 
     ? dbStats 
@@ -44,6 +48,9 @@ export default function DashboardPage() {
         colleges: dummyColleges.length,
         blogs: dummyBlogs.length,
         exams: 12,
+        study_abroad: dummyColleges.filter((c: any) => c.college_type === 'study_abroad').length,
+        mbbs_abroad: dummyColleges.filter((c: any) => c.college_type === 'mbbs_abroad').length,
+        pending_enquiries: 8, // Dummy pending enquiries count
       }
 
   const stats = [
@@ -62,6 +69,22 @@ export default function DashboardPage() {
       icon: Stethoscope,
       color: 'text-red-600',
       bgColor: 'bg-red-100'
+    },
+    {
+      title: 'Pending Enquiries',
+      value: dbStats.pending_enquiries,
+      description: 'Need attention',
+      icon: Mail,
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-100'
+    },
+    {
+      title: 'Total Colleges',
+      value: dbStats.colleges,
+      description: 'All institutions',
+      icon: GraduationCap,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100'
     },
     {
       title: 'Total Countries',

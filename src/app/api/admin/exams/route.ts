@@ -2,15 +2,58 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Exam from "@/models/Exam";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await connectDB();
-    const exams = await Exam.find({}).sort({ display_order: 1, name: 1 });
+    
+    // Get query parameters
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
+    const type = searchParams.get('type') || '';
+    const status = searchParams.get('status') || '';
+
+    // Build query
+    let query: any = {};
+    
+    if (status && status !== 'all') {
+      query.is_active = status === 'active';
+    }
+    
+    if (type && type !== 'all') {
+      query.exam_type = type;
+    }
+    
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { short_name: { $regex: search, $options: 'i' } },
+        { conducting_body: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Get total count for pagination
+    const total = await Exam.countDocuments(query);
+    
+    // Get paginated exams
+    const exams = await Exam.find(query)
+      .sort({ display_order: 1, name: 1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
     
     return NextResponse.json({
       success: true,
       message: "Exams fetched successfully",
-      data: exams,
+      data: {
+        exams,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+        hasMore: exams.length === limit
+      },
     });
   } catch (error) {
     console.error("Error fetching exams:", error);

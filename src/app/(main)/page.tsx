@@ -1,6 +1,6 @@
 "use client";
 
-import AlphaWorldAdvantage from "@/app/Components/AdvantageCard";
+import EducationTimesAdvantage from "@/app/Components/AdvantageCard";
 import CtaSection from "@/app/Components/CtaSection";
 import DestinationHighlights from "@/app/Components/DestinationHighlights";
 import EducationStats from "@/app/Components/EducationStats";
@@ -27,7 +27,7 @@ const page = () => {
       <EducationStats />
       <LatestBlogs />
       <Services />
-      <AlphaWorldAdvantage />
+      <EducationTimesAdvantage />
       <ProcessJourney />
       <StudentTestimonials />
       <FAQ />

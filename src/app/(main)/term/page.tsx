@@ -28,7 +28,7 @@ export default function TermsAndConditionsPage() {
 
         <TermsBlock
           title="1. Acceptance of Terms"
-          content="By accessing or using Alpha World Education’s website or services, you agree to comply with these Terms & Conditions. If you do not agree, you should discontinue use of our services."
+          content="By accessing or using Education Times Abroad's website or services, you agree to comply with these Terms & Conditions. If you do not agree, you should discontinue use of our services."
         />
 
         <TermsBlock
@@ -49,7 +49,7 @@ export default function TermsAndConditionsPage() {
 
         <TermsBlock
           title="4. Accuracy of Information"
-          content="While we strive to maintain accurate and updated information, Alpha World Education does not guarantee completeness or real-time accuracy of details related to institutions, fees, policies, or immigration requirements."
+          content="While we strive to maintain accurate and updated information, Education Times Abroad does not guarantee completeness or real-time accuracy of details related to institutions, fees, policies, or immigration requirements."
         />
 
         <TermsBlock
@@ -59,12 +59,12 @@ export default function TermsAndConditionsPage() {
 
         <TermsBlock
           title="6. Intellectual Property"
-          content="All website content, branding, text, and design elements are the intellectual property of Alpha World Education and may not be copied or distributed without permission."
+          content="All website content, branding, text, and design elements are the intellectual property of Education Times Abroad and may not be copied or distributed without permission."
         />
 
         <TermsBlock
           title="7. Limitation of Liability"
-          content="Alpha World Education shall not be liable for any direct or indirect losses arising from the use of this website or reliance on the information provided."
+          content="Education Times Abroad shall not be liable for any direct or indirect losses arising from the use of this website or reliance on the information provided."
         />
 
         <TermsBlock

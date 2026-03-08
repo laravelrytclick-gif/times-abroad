@@ -111,7 +111,7 @@ const BlogDetailPage = () => {
                   </div>
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Written By</p>
-                    <h4 className="font-bold text-slate-900">{blog.author || 'Alpha World Education'}</h4>
+                    <h4 className="font-bold text-slate-900">{blog.author || 'Education times Abroad'}</h4>
                   </div>
                 </div>
                 

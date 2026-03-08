@@ -16,9 +16,28 @@ export interface AdminBlog {
   updatedAt: string
 }
 
-// Fetch all blogs for admin
-const fetchAdminBlogs = async (): Promise<AdminBlog[]> => {
-  const response = await fetch('/api/admin/blogs')
+// Fetch paginated blogs for admin
+const fetchAdminBlogs = async ({ 
+  pageParam = 1, 
+  search = '', 
+  category = '',
+  status = '' 
+}): Promise<{
+  blogs: AdminBlog[],
+  total: number,
+  page: number,
+  totalPages: number,
+  hasMore: boolean
+}> => {
+  const params = new URLSearchParams({
+    page: pageParam.toString(),
+    limit: '10',
+    ...(search && { search }),
+    ...(category && category !== 'all' && { category }),
+    ...(status && status !== 'all' && { status })
+  })
+
+  const response = await fetch(`/api/admin/blogs?${params}`)
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
@@ -76,10 +95,15 @@ const deleteBlog = async (id: string): Promise<void> => {
 }
 
 // Hooks
-export function useAdminBlogs() {
+export function useAdminBlogs(page: number, search: string, category: string, status: string) {
   return useQuery({
-    queryKey: ['admin', 'blogs'],
-    queryFn: fetchAdminBlogs,
+    queryKey: ['admin', 'blogs', 'paginated', page, search, category, status],
+    queryFn: () => fetchAdminBlogs({ 
+      pageParam: page, 
+      search, 
+      category, 
+      status 
+    }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,

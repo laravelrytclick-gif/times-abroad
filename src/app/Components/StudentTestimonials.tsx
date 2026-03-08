@@ -31,7 +31,7 @@ const testimonials: Testimonial[] = [
   {
     name: "Rohan Deshmukh",
     course: "MENG, UNIVERSITY OF TORONTO",
-    quote: "I was worried about my education loan and financial docs. AlphaWorld's tie-ups with banks made the process seamless. I'm now studying in Canada without any financial stress.",
+    quote: "I was worried about my education loan and financial docs. Education Times Abroad's tie-ups with banks made the process seamless. I'm now studying in Canada without any financial stress.",
     image: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400",
     location: "Pune, India"
   },

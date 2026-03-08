@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AdminTable, createEditAction, createDeleteAction } from '@/components/admin/AdminTable'
 import { AdminModal } from '@/components/admin/AdminModal'
 import { ComprehensiveCollegeForm } from '@/components/admin/ComprehensiveCollegeForm'
@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, GraduationCap, Search, Filter } from 'lucide-react'
+import { Plus, GraduationCap, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 import { dummyCountries } from '@/data/dummyData'
 import { generateSlug } from '@/lib/slug'
 import { useAdminColleges, useAdminCountries, useSaveCollege, useDeleteCollege } from '@/hooks/useAdminColleges'
@@ -101,12 +101,39 @@ export default function CollegesPage() {
   const [collegeToDelete, setCollegeToDelete] = useState<College | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCountry, setSelectedCountry] = useState<string>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [currentPage, setCurrentPage] = useState(1)
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [itemsPerPage, setItemsPerPage] = useState(10)
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm, selectedCountry, selectedStatus])
+
   // TanStack Query hooks
-  const { data: colleges = [], isLoading: dataLoading, error: collegesError } = useAdminColleges()
-  const { data: countries = dummyCountries } = useAdminCountries()
+  const { 
+    data, 
+    isLoading: dataLoading, 
+    error, 
+    refetch 
+  } = useAdminColleges(currentPage, debouncedSearchTerm, selectedCountry, selectedStatus)
+  
+  const colleges = data?.colleges || []
+  const totalCount = data?.total || 0
+  const totalPages = data?.totalPages || 1
+
+  const { data: countriesData } = useAdminCountries(1, '', 'all', 1000) // Get all countries for form dropdown
+  const countries = countriesData?.countries || dummyCountries
+  
   const saveCollegeMutation = useSaveCollege()
   const deleteCollegeMutation = useDeleteCollege()
 
@@ -214,40 +241,7 @@ export default function CollegesPage() {
     campus_highlights_highlights: [] as string[],
   })
 
-  // Filter colleges based on search and country using useMemo
-  const filteredColleges = useMemo(() => {
-    let filtered = colleges
-
-    if (selectedCountry !== 'all') {
-      filtered = filtered.filter(college => {
-        if (!college.country_ref) return false
-        const countrySlug = typeof college.country_ref === 'string'
-          ? college.country_ref
-          : college.country_ref.slug
-        return countrySlug === selectedCountry
-      })
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(college =>
-        college.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    return filtered
-  }, [colleges, searchTerm, selectedCountry])
-
-  // Pagination calculations
-  const totalItems = filteredColleges.length
-  const totalPages = Math.ceil(totalItems / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedColleges = filteredColleges.slice(startIndex, endIndex)
-
-  // Reset to page 1 when filters change
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [searchTerm, selectedCountry])
+  // Remove client-side filtering since we're doing server-side filtering
 
   const columns = [
     {
@@ -719,8 +713,7 @@ export default function CollegesPage() {
           <div>
             <h2 className="text-lg font-semibold text-gray-900">All Colleges</h2>
             <p className="text-sm text-gray-500">
-              Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} colleges
-              {totalItems > itemsPerPage && ` (Page ${currentPage} of ${totalPages})`}
+              {totalCount} colleges total
             </p>
           </div>
           <Button onClick={handleAddCollege} className="flex items-center space-x-2">
@@ -762,7 +755,7 @@ export default function CollegesPage() {
 
         {/* Colleges Table */}
         <AdminTable
-          data={paginatedColleges}
+          data={colleges}
           columns={columns}
           actions={actions}
           loading={dataLoading}
@@ -770,24 +763,12 @@ export default function CollegesPage() {
         />
 
         {/* Pagination Controls */}
-        {totalItems > itemsPerPage && (
+        {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg border">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Items per page:</span>
-              <Select value={itemsPerPage.toString()} onValueChange={(value) => {
-                setItemsPerPage(parseInt(value))
-                setCurrentPage(1)
-              }}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectContent>
-              </Select>
+              <span className="text-sm text-gray-600">
+                Showing {((currentPage - 1) * 10) + 1}-{Math.min(currentPage * 10, totalCount)} of {totalCount} colleges
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -797,6 +778,7 @@ export default function CollegesPage() {
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
               >
+                <ChevronLeft className="w-4 h-4" />
                 Previous
               </Button>
 
@@ -834,6 +816,7 @@ export default function CollegesPage() {
                 disabled={currentPage === totalPages}
               >
                 Next
+                <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -851,7 +834,7 @@ export default function CollegesPage() {
         >
           <ComprehensiveCollegeForm
             data={formData}
-            countries={countries.map((c, index) => ({
+            countries={countries.map((c: any, index: number) => ({
               ...c,
               _id: (c as any)._id || (c as any).id || `country-${index}`
             }))}

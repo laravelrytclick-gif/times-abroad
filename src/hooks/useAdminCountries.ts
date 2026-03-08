@@ -15,9 +15,26 @@ export interface AdminCountry {
   updatedAt: string
 }
 
-// Fetch all countries for admin
-const fetchAdminCountries = async (): Promise<AdminCountry[]> => {
-  const response = await fetch('/api/admin/countries')
+// Fetch paginated countries for admin
+const fetchAdminCountries = async ({ 
+  pageParam = 1, 
+  search = '', 
+  status = '' 
+}): Promise<{
+  countries: AdminCountry[],
+  total: number,
+  page: number,
+  totalPages: number,
+  hasMore: boolean
+}> => {
+  const params = new URLSearchParams({
+    page: pageParam.toString(),
+    limit: '10',
+    ...(search && { search }),
+    ...(status && status !== 'all' && { status })
+  })
+
+  const response = await fetch(`/api/admin/countries?${params}`)
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
@@ -75,10 +92,14 @@ const deleteCountry = async (id: string): Promise<void> => {
 }
 
 // Hooks
-export function useAdminCountries() {
+export function useAdminCountries(page: number, search: string, status: string) {
   return useQuery({
-    queryKey: ['admin', 'countries'],
-    queryFn: fetchAdminCountries,
+    queryKey: ['admin', 'countries', 'paginated', page, search, status],
+    queryFn: () => fetchAdminCountries({ 
+      pageParam: page, 
+      search, 
+      status 
+    }),
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
     retry: 2,

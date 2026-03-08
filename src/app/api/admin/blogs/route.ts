@@ -2,15 +2,57 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Blog from "@/models/Blog";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await connectDB();
-    const blogs = await Blog.find({}).sort({ createdAt: -1 });
+    
+    // Get query parameters
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
+    const category = searchParams.get('category') || '';
+    const status = searchParams.get('status') || '';
+
+    // Build query
+    let query: any = {};
+    
+    if (status && status !== 'all') {
+      query.is_active = status === 'active';
+    }
+    
+    if (category && category !== 'all') {
+      query.category = category;
+    }
+    
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+        { tags: { $in: [new RegExp(search, 'i')] } }
+      ];
+    }
+
+    // Get total count for pagination
+    const total = await Blog.countDocuments(query);
+    
+    // Get paginated blogs
+    const blogs = await Blog.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
     
     return NextResponse.json({
       success: true,
       message: "Blogs fetched successfully",
-      data: blogs,
+      data: {
+        blogs,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+        hasMore: blogs.length === limit
+      },
     });
   } catch (error) {
     console.error("Error fetching blogs:", error);
