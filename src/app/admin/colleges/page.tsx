@@ -17,93 +17,38 @@ import {
 import { Plus, GraduationCap, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 import { dummyCountries } from '@/data/dummyData'
 import { generateSlug } from '@/lib/slug'
-import { useAdminColleges, useAdminCountries, useSaveCollege, useDeleteCollege } from '@/hooks/useAdminColleges'
+import { useAdmin } from '@/contexts/AdminContext'
 import { toast } from 'sonner'
-
-interface AdminCountry {
-  _id: string
-  name: string
-  slug: string
-  flag: string
-}
-
-export interface College {
-  _id: string
-  name: string
-  slug: string
-  college_type?: 'study_abroad' | 'mbbs_abroad'
-  country_ref: AdminCountry | string
-  exams: string[]
-  fees?: number
-  duration?: string
-  establishment_year?: string
-  ranking?: string | {
-    title: string
-    description: string
-    country_ranking: string
-    world_ranking: string
-    accreditation: string[]
-  }
-  banner_url?: string
-  about_content?: string
-  is_active: boolean
-  createdAt: string
-  updatedAt: string
-
-  // Comprehensive structure fields
-  overview?: {
-    title: string
-    description: string
-  }
-  key_highlights?: {
-    title: string
-    description: string
-    features: string[]
-  }
-  why_choose_us?: {
-    title: string
-    description: string
-    features: { title: string; description: string }[]
-  }
-  ranking_section?: {
-    title: string
-    description: string
-    country_ranking: string
-    world_ranking: string
-    accreditation: string[]
-  }
-  admission_process?: {
-    title: string
-    description: string
-    steps: string[]
-  }
-  documents_required?: {
-    title: string
-    description: string
-    documents: string[]
-  }
-  fees_structure?: {
-    title: string
-    description: string
-    courses: { course_name: string; duration: string; annual_tuition_fee: string }[]
-  }
-  campus_highlights?: {
-    title: string
-    description: string
-    highlights: string[]
-  }
-}
+import { useAdminColleges, useAdminCountries, useSaveCollege, useDeleteCollege } from '@/hooks/useAdminColleges'
+import { College } from '@/contexts/AdminContext'
 
 export default function CollegesPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingCollege, setEditingCollege] = useState<College | null>(null)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [collegeToDelete, setCollegeToDelete] = useState<College | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCountry, setSelectedCountry] = useState<string>('all')
-  const [selectedStatus, setSelectedStatus] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const {
+    colleges: {
+      isModalOpen,
+      setIsModalOpen,
+      editingCollege,
+      setEditingCollege,
+      formData: contextFormData,
+      setFormData: setContextFormData,
+      collegeToDelete,
+      setCollegeToDelete,
+      deleteModalOpen,
+      setDeleteModalOpen,
+      searchTerm,
+      setSearchTerm,
+      selectedCountry,
+      setSelectedCountry,
+      selectedStatus,
+      setSelectedStatus,
+      currentPage,
+      setCurrentPage,
+      debouncedSearchTerm,
+      setDebouncedSearchTerm
+    },
+    resetForm
+  } = useAdmin()
+
   const [itemsPerPage, setItemsPerPage] = useState(10)
 
   // Debounce search term
@@ -114,7 +59,6 @@ export default function CollegesPage() {
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1)
   }, [debouncedSearchTerm, selectedCountry, selectedStatus])
@@ -252,7 +196,7 @@ export default function CollegesPage() {
           ? 'No country'
           : typeof record.country_ref === 'string'
             ? record.country_ref
-            : record.country_ref.name || 'Unknown country'
+            : (record.country_ref as { name: string }).name || 'Unknown country'
 
         return (
           <div>
@@ -695,7 +639,7 @@ export default function CollegesPage() {
     if (!collegeToDelete) return
 
     try {
-      await deleteCollegeMutation.mutateAsync(collegeToDelete._id)
+      await deleteCollegeMutation.mutateAsync(collegeToDelete._id as string)
       toast.success('College deleted successfully!')
       setDeleteModalOpen(false)
       setCollegeToDelete(null)

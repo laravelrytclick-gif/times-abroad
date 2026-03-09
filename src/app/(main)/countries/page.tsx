@@ -4,15 +4,7 @@ import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Search, Globe, MapPin, GraduationCap, ArrowRight, X, AlertCircle, RefreshCw } from 'lucide-react'
 import { useCountries } from '@/hooks/useCountries'
-
-interface Country {
-  _id: string
-  name: string
-  slug: string
-  flag: string
-  description: string
-  is_active: boolean
-}
+import { Country } from '@/lib/types'
 
 export default function CountriesPage() {
   const [searchTerm, setSearchTerm] = useState('')
