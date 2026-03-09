@@ -1,73 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-
-export interface AdminCollege {
-  _id: string
-  name: string
-  slug: string
-  college_type?: 'study_abroad' | 'mbbs_abroad'
-  country_ref: any
-  exams: string[]
-  fees?: number
-  duration?: string
-  establishment_year?: string
-  ranking?: string | {
-    title: string
-    description: string
-    country_ranking: string
-    world_ranking: string
-    accreditation: string[]
-  }
-  banner_url?: string
-  about_content?: string
-  is_active: boolean
-  createdAt: string
-  updatedAt: string
-  
-  // Comprehensive structure fields
-  overview?: {
-    title: string
-    description: string
-  }
-  key_highlights?: {
-    title: string
-    description: string
-    features: string[]
-  }
-  why_choose_us?: {
-    title: string
-    description: string
-    features: { title: string; description: string }[]
-  }
-  ranking_section?: {
-    title: string
-    description: string
-    country_ranking: string
-    world_ranking: string
-    accreditation: string[]
-  }
-  admission_process?: {
-    title: string
-    description: string
-    steps: string[]
-  }
-  documents_required?: {
-    title: string
-    description: string
-    documents: string[]
-  }
-  fees_structure?: {
-    title: string
-    description: string
-    courses: { course_name: string; duration: string; annual_tuition_fee: string }[]
-  }
-  campus_highlights?: {
-    title: string
-    description: string
-    highlights: string[]
-  }
-}
+import { College } from '@/contexts/AdminContext'
 
 export interface AdminCountry {
   _id: string
@@ -83,7 +17,7 @@ const fetchAdminColleges = async ({
   country = '',
   status = '' 
 }): Promise<{
-  colleges: AdminCollege[],
+  colleges: College[],
   total: number,
   page: number,
   totalPages: number,
@@ -159,7 +93,7 @@ const fetchAdminCountries = async (): Promise<AdminCountry[]> => {
 }
 
 // Create or update college
-const saveCollege = async (data: Partial<AdminCollege> & { _id?: string }): Promise<AdminCollege> => {
+const saveCollege = async (data: Partial<College> & { _id?: string }): Promise<College> => {
   const isEditing = !!data._id
   const url = isEditing ? `/api/admin/colleges/${data._id}` : '/api/admin/colleges'
   const method = isEditing ? 'PUT' : 'POST'

@@ -14,38 +14,41 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Plus, Search, Filter, Mail, Phone, Calendar, User, MessageSquare, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useAdmin, Enquiry } from '@/contexts/AdminContext'
 import { toast } from 'sonner'
-
-interface Enquiry {
-  _id?: string
-  id?: string
-  name: string
-  email: string
-  phone: string
-  city: string
-  interest: string
-  message?: string
-  status: 'pending' | 'contacted' | 'resolved' | 'closed'
-  createdAt: string
-  updatedAt: string
-}
-
-
 
 export default function EnquiriesPage() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [interestFilter, setInterestFilter] = useState<string>('all')
-  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<Enquiry | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [interestFilter, setInterestFilter] = useState('all')
   const [totalCount, setTotalCount] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<Enquiry | null>(null)
+  
+  const {
+    enquiries: {
+      isModalOpen,
+      setIsModalOpen,
+      selectedEnquiry,
+      setSelectedEnquiry,
+      enquiryToDelete,
+      setEnquiryToDelete,
+      deleteModalOpen,
+      setDeleteModalOpen,
+      searchTerm,
+      setSearchTerm,
+      selectedStatus,
+      setSelectedStatus,
+      selectedInterest,
+      setSelectedInterest,
+      currentPage,
+      setCurrentPage,
+      debouncedSearchTerm,
+      setDebouncedSearchTerm
+    }
+  } = useAdmin()
 
   // Debounce search term
   useEffect(() => {
@@ -430,7 +433,7 @@ export default function EnquiriesPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -467,7 +470,7 @@ export default function EnquiriesPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
             >
               Next
@@ -534,7 +537,7 @@ export default function EnquiriesPage() {
               <div>
                 <label className="text-sm font-medium text-gray-700">Created</label>
                 <p className="mt-1">
-                  {new Date(selectedEnquiry.createdAt).toLocaleString('en-US', {
+                  {new Date(selectedEnquiry.createdAt!).toLocaleString('en-US', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
@@ -546,7 +549,7 @@ export default function EnquiriesPage() {
               <div>
                 <label className="text-sm font-medium text-gray-700">Last Updated</label>
                 <p className="mt-1">
-                  {new Date(selectedEnquiry.updatedAt).toLocaleString('en-US', {
+                  {new Date(selectedEnquiry.updatedAt!).toLocaleString('en-US', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',

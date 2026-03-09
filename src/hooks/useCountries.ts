@@ -1,15 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-
-interface Country {
-  _id: string
-  name: string
-  slug: string
-  flag: string
-  description?: string
-  is_active: boolean
-  createdAt: string
-  updatedAt: string
-}
+import { Country } from '@/lib/types'
 
 const fetchCountries = async (): Promise<Country[]> => {
   const response = await fetch('/api/countries', {

@@ -15,42 +15,37 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Plus, Globe, Search, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Country } from '@/lib/types'
 import { generateSlug } from '@/lib/slug'
 import { useAdminCountries, useSaveCountry, useDeleteCountry } from '@/hooks/useAdminCountries'
+import { useAdmin } from '@/contexts/AdminContext'
 import { toast } from 'sonner'
 
-export interface Country {
-  _id: string
-  name: string
-  slug: string
-  flag: string
-  description: string
-  meta_title: string
-  meta_description: string
-  is_active: boolean
-  createdAt: string
-  updatedAt: string
-}
-
 export default function CountriesPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingCountry, setEditingCountry] = useState<Country | null>(null)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [countryToDelete, setCountryToDelete] = useState<Country | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-  const [formData, setFormData] = useState({
-    name: '',
-    slug: '',
-    flag: '',
-    description: '',
-    meta_title: '',
-    meta_description: '',
-    is_active: true
-  })
-  
+  const {
+    countries: {
+      isModalOpen,
+      setIsModalOpen,
+      editingCountry,
+      setEditingCountry,
+      formData,
+      setFormData,
+      countryToDelete,
+      setCountryToDelete,
+      deleteModalOpen,
+      setDeleteModalOpen,
+      searchTerm,
+      setSearchTerm,
+      selectedStatus,
+      setSelectedStatus,
+      currentPage,
+      setCurrentPage,
+      debouncedSearchTerm,
+      setDebouncedSearchTerm
+    },
+    resetForm
+  } = useAdmin()
+
   // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -62,7 +57,7 @@ export default function CountriesPage() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [debouncedSearchTerm, statusFilter])
+  }, [debouncedSearchTerm, selectedStatus])
 
   // TanStack Query hooks
   const { 
@@ -70,7 +65,7 @@ export default function CountriesPage() {
     isLoading: dataLoading, 
     error, 
     refetch 
-  } = useAdminCountries(currentPage, debouncedSearchTerm, statusFilter)
+  } = useAdminCountries(currentPage, debouncedSearchTerm, selectedStatus)
   
   const countries = data?.countries || []
   const totalCount = data?.total || 0
@@ -231,7 +226,7 @@ export default function CountriesPage() {
       await saveCountryMutation.mutateAsync(payload)
       toast.success(editingCountry ? 'Country updated successfully!' : 'Country created successfully!')
       setIsModalOpen(false)
-      setEditingCountry(null)
+      resetForm('countries')
     } catch (error) {
       console.error('Error saving country:', error)
       toast.error('Error saving country: ' + (error instanceof Error ? error.message : 'Unknown error'))
@@ -242,7 +237,7 @@ export default function CountriesPage() {
     if (!countryToDelete) return
     
     try {
-      await deleteCountryMutation.mutateAsync(countryToDelete._id)
+      await deleteCountryMutation.mutateAsync(countryToDelete._id!)
       toast.success('Country deleted successfully!')
       setDeleteModalOpen(false)
       setCountryToDelete(null)
@@ -282,7 +277,7 @@ export default function CountriesPage() {
             />
           </div>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={selectedStatus} onValueChange={setSelectedStatus}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
@@ -316,7 +311,7 @@ export default function CountriesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -353,7 +348,7 @@ export default function CountriesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -375,11 +370,11 @@ export default function CountriesPage() {
         >
           <AdminForm
             fields={formFields}
-            data={formData}
+            data={formData as unknown as Record<string, unknown>}
             onChange={(field, value) => {
-              setFormData(prev => ({ 
+              setFormData((prev: Country) => ({ 
                 ...prev, 
-                [field]: value,
+                [field]: field === 'is_active' ? value === 'true' : value,
                 // Auto-generate slug when name changes and slug is empty or being edited for the first time
                 ...(field === 'name' && (!prev.slug || prev.slug === generateSlug(prev.name)) ? {
                   slug: generateSlug(value as string)

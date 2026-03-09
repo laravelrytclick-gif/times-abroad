@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-export interface AdminBlog {
+export interface AdminBlog extends Record<string, unknown> {
   _id: string
   title: string
   slug: string

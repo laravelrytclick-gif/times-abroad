@@ -91,8 +91,16 @@ export type BlogSortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-des
 export type CourseSortOption = 'title-asc' | 'title-desc' | 'duration-asc' | 'duration-desc' | 'category-asc' | 'category-desc';
 
 export interface Country {
+  _id?: string;
   name: string;
+  slug: string;
   flag: string;
+  description: string;
+  meta_title: string;
+  meta_description: string;
+  is_active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface University {

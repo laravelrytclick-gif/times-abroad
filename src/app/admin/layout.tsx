@@ -1,6 +1,7 @@
 'use client'
 
 import { AdminLayout as AdminLayoutComponent } from '@/components/admin/AdminLayout'
+import { AdminProvider } from '@/contexts/AdminContext'
 import { usePathname } from 'next/navigation'
 
 export default function AdminLayout({
@@ -9,7 +10,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname()
-  
+
   const getPageInfo = () => {
     if (pathname === '/admin/dashboard' ) {
       return { title: 'Dashboard', subtitle: 'Welcome to Education Times Abroad Admin Panel' }
@@ -35,8 +36,10 @@ export default function AdminLayout({
   const { title, subtitle } = getPageInfo()
 
   return (
-    <AdminLayoutComponent title={title} subtitle={subtitle}>
-      {children}
-    </AdminLayoutComponent>
+    <AdminProvider>
+      <AdminLayoutComponent title={title} subtitle={subtitle}>
+        {children}
+      </AdminLayoutComponent>
+    </AdminProvider>
   );
 }

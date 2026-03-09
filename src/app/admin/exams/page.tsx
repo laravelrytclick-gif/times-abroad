@@ -24,7 +24,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
 import { generateSlug } from '@/lib/slug'
-import { useAdminExams, useSaveExam, useDeleteExam } from '@/hooks/useAdminExams'
+import { useAdminExams, useSaveExam, useDeleteExam, AdminExam } from '@/hooks/useAdminExams'
+import { useAdmin, Exam } from '@/contexts/AdminContext'
 import { toast } from 'sonner'
 
 // Function to generate small format slug
@@ -40,71 +41,34 @@ const generateSmallSlug = (text: string): string => {
     .replace(/-+$/, '')           // Trim - from end of text
 }
 
-interface Exam {
-  _id?: string
-  name: string
-  slug: string
-  short_name: string
-  image_url: string
-  exam_type: string
-  conducting_body: string
-  exam_mode: string
-  frequency: string
-  description: string
-  is_active: boolean
-  display_order: number
-  hero_section: {
-    title: string
-    subtitle: string
-    image: string
-  }
-  overview: {
-    title: string
-    content: string
-    key_highlights: string[]
-  }
-  registration: {
-    title: string
-    description: string
-    bullet_points: string[]
-  }
-  exam_pattern: {
-    title: string
-    description: string
-    total_duration_mins: number
-    score_range: string
-    table_data: {
-      section: string
-      questions: number
-      duration_mins: number
-    }[]
-  }
-  exam_dates: {
-    title: string
-    important_dates: {
-      event: string
-      date: Date
-    }[]
-  },
-  result_statistics: {
-    title: string
-    description: string
-    passing_criteria: string
-    total_marks: number
-    passing_marks: number
-  },
-  actions?: any // Add actions key for the dropdown column
-}
-
 export default function SimpleExamsPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingExam, setEditingExam] = useState<Exam | null>(null)
-  const [activeTab, setActiveTab] = useState('basic')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedType, setSelectedType] = useState<string>('all')
-  const [selectedStatus, setSelectedStatus] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const {
+    exams: {
+      isModalOpen,
+      setIsModalOpen,
+      editingExam,
+      setEditingExam,
+      formData,
+      setFormData,
+      examToDelete,
+      setExamToDelete,
+      deleteModalOpen,
+      setDeleteModalOpen,
+      activeTab,
+      setActiveTab,
+      searchTerm,
+      setSearchTerm,
+      selectedType,
+      setSelectedType,
+      selectedStatus,
+      setSelectedStatus,
+      currentPage,
+      setCurrentPage,
+      debouncedSearchTerm,
+      setDebouncedSearchTerm
+    },
+    resetForm
+  } = useAdmin()
 
   // Debounce search term
   useEffect(() => {
@@ -119,54 +83,6 @@ export default function SimpleExamsPage() {
     setCurrentPage(1)
   }, [debouncedSearchTerm, selectedType, selectedStatus])
 
-  const [formData, setFormData] = useState<Exam>({
-    name: '',
-    slug: '',
-    short_name: '',
-    image_url: '',
-    exam_type: 'International',
-    conducting_body: '',
-    exam_mode: 'Online',
-    frequency: 'Monthly',
-    description: '',
-    is_active: true,
-    display_order: 0,
-    hero_section: {
-      title: '',
-      subtitle: '',
-      image: ''
-    },
-    overview: {
-      title: 'Overview',
-      content: '',
-      key_highlights: [] as string[]
-    },
-    registration: {
-      title: 'Registration',
-      description: '',
-      bullet_points: [] as string[]
-    },
-    exam_pattern: {
-      title: 'Exam Pattern',
-      description: '',
-      total_duration_mins: 120,
-      score_range: '0-100',
-      table_data: [] as Array<{section: string, questions: number, duration_mins: number}>
-    },
-    exam_dates: {
-      title: 'Important Dates',
-      important_dates: [] as Array<{event: string, date: Date}>
-    },
-    result_statistics: {
-      title: 'Result Statistics',
-      description: '',
-      passing_criteria: '',
-      total_marks: 100,
-      passing_marks: 40
-    },
-    actions: undefined
-  })
-  
   // TanStack Query hooks
   const { 
     data, 
@@ -355,9 +271,9 @@ export default function SimpleExamsPage() {
 
   const columns = [
     {
-      key: 'name' as keyof Exam,
+      key: 'name' as keyof AdminExam,
       title: 'Exam Name',
-      render: (value: string, record: Exam) => (
+      render: (value: string, record: AdminExam) => (
         <div>
           <div className="font-medium">{value}</div>
           <div className="text-sm text-gray-500">{record.short_name}</div>
@@ -365,16 +281,16 @@ export default function SimpleExamsPage() {
       )
     },
     {
-      key: 'exam_type' as keyof Exam,
+      key: 'exam_type' as keyof AdminExam,
       title: 'Type',
       render: (value: string) => <div className='flex bg-gray-600 text-white rounded-2xl px-2 py-1 items-center gap-1'><p>{value}</p></div>
     },
     {
-      key: 'conducting_body' as keyof Exam,
+      key: 'conducting_body' as keyof AdminExam,
       title: 'Conducting Body'
     },
     {
-      key: 'is_active' as keyof Exam,
+      key: 'is_active' as keyof AdminExam,
       title: 'Status',
       render: (value: boolean) => (
         <div className={`flex items-center justify-center ${value ? 'bg-green-600' : 'bg-gray-600'} text-white rounded-2xl px-2 py-1 gap-1`}>
@@ -383,9 +299,9 @@ export default function SimpleExamsPage() {
       )
     },
     {
-      key: 'actions' as keyof Exam,
+      key: 'actions' as keyof AdminExam,
       title: 'Actions',
-      render: (value: any, record: Exam) => (
+      render: (value: any, record: AdminExam) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -525,7 +441,7 @@ export default function SimpleExamsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -562,7 +478,7 @@ export default function SimpleExamsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
             >
               Next
@@ -612,7 +528,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   hero_section: { ...prev.hero_section, title: e.target.value }
-                }))}
+                }) )}
               />
             </div>
             <div>
@@ -622,7 +538,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   hero_section: { ...prev.hero_section, subtitle: e.target.value }
-                }))}
+                }) )}
               />
             </div>
             <div>
@@ -632,7 +548,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   hero_section: { ...prev.hero_section, image: e.target.value }
-                }))}
+                }) )}
               />
             </div>
             <div>
@@ -642,7 +558,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   overview: { ...prev.overview, title: e.target.value }
-                }))}
+                }) )}
               />
             </div>
             <div>
@@ -654,7 +570,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   overview: { ...prev.overview, content: e.target.value }
-                }))}
+                }) )}
               />
             </div>
             <div>
@@ -669,7 +585,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         overview: { ...prev.overview, key_highlights: newHighlights }
-                      }))
+                      }) as AdminExam)
                     }}
                   />
                   <Button
@@ -679,7 +595,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         overview: { ...prev.overview, key_highlights: newHighlights }
-                      }))
+                      }) as AdminExam)
                     }}
                   >
                     Remove
@@ -691,7 +607,7 @@ export default function SimpleExamsPage() {
                 onClick={() => setFormData(prev => ({
                   ...prev,
                   overview: { ...prev.overview, key_highlights: [...prev.overview.key_highlights, ''] }
-                }))}
+                }) as AdminExam)}
               >
                 Add Highlight
               </Button>
@@ -706,7 +622,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   registration: { ...prev.registration, title: e.target.value }
-                }))}
+                }) as AdminExam)}
               />
             </div>
             <div>
@@ -718,7 +634,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   registration: { ...prev.registration, description: e.target.value }
-                }))}
+                }) as AdminExam)}
               />
             </div>
             <div>
@@ -733,7 +649,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         registration: { ...prev.registration, bullet_points: newPoints }
-                      }))
+                      }) as AdminExam)
                     }}
                   />
                   <Button
@@ -743,7 +659,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         registration: { ...prev.registration, bullet_points: newPoints }
-                      }))
+                      }) as AdminExam)
                     }}
                   >
                     Remove
@@ -755,7 +671,7 @@ export default function SimpleExamsPage() {
                 onClick={() => setFormData(prev => ({
                   ...prev,
                   registration: { ...prev.registration, bullet_points: [...prev.registration.bullet_points, ''] }
-                }))}
+                }) as AdminExam)}
               >
                 Add Bullet Point
               </Button>
@@ -782,7 +698,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   exam_pattern: { ...prev.exam_pattern, description: e.target.value }
-                }))}
+                }) as AdminExam)}
               />
             </div>
             <div>
@@ -793,7 +709,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   exam_pattern: { ...prev.exam_pattern, total_duration_mins: parseInt(e.target.value) || 120 }
-                }))}
+                }) as AdminExam)}
               />
             </div>
             <div>
@@ -803,7 +719,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   exam_pattern: { ...prev.exam_pattern, score_range: e.target.value }
-                }))}
+                }) as AdminExam)}
                 placeholder="e.g., 0-100"
               />
             </div>
@@ -820,7 +736,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         exam_pattern: { ...prev.exam_pattern, table_data: newTableData }
-                      }))
+                      }) as AdminExam)
                     }}
                   />
                   <Input
@@ -833,7 +749,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         exam_pattern: { ...prev.exam_pattern, table_data: newTableData }
-                      }))
+                      }) as AdminExam)
                     }}
                   />
                   <Input
@@ -846,7 +762,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         exam_pattern: { ...prev.exam_pattern, table_data: newTableData }
-                      }))
+                      }) as AdminExam)
                     }}
                   />
                   <Button
@@ -856,7 +772,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         exam_pattern: { ...prev.exam_pattern, table_data: newTableData }
-                      }))
+                      }) as AdminExam)
                     }}
                   >
                     Remove
@@ -868,7 +784,7 @@ export default function SimpleExamsPage() {
                 onClick={() => setFormData(prev => ({
                   ...prev,
                   exam_pattern: { ...prev.exam_pattern, table_data: [...prev.exam_pattern.table_data, { section: '', questions: 0, duration_mins: 0 }] }
-                }))}
+                }) as AdminExam)}
               >
                 Add Row
               </Button>
@@ -883,7 +799,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   exam_dates: { ...prev.exam_dates, title: e.target.value }
-                }))}
+                }) as AdminExam)}
               />
             </div>
             <div>
@@ -899,7 +815,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         exam_dates: { ...prev.exam_dates, important_dates: newDates }
-                      }))
+                      }) as AdminExam)
                     }}
                   />
                   <Input
@@ -911,7 +827,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         exam_dates: { ...prev.exam_dates, important_dates: newDates }
-                      }))
+                      }) as Exam)
                     }}
                   />
                   <Button
@@ -921,7 +837,7 @@ export default function SimpleExamsPage() {
                       setFormData(prev => ({
                         ...prev,
                         exam_dates: { ...prev.exam_dates, important_dates: newDates }
-                      }))
+                      }) as Exam)
                     }}
                   >
                     Remove
@@ -933,7 +849,7 @@ export default function SimpleExamsPage() {
                 onClick={() => setFormData(prev => ({
                   ...prev,
                   exam_dates: { ...prev.exam_dates, important_dates: [...prev.exam_dates.important_dates, { event: '', date: new Date() }] }
-                }))}
+                }) as Exam)}
               >
                 Add Date
               </Button>
@@ -948,7 +864,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   result_statistics: { ...prev.result_statistics, title: e.target.value }
-                }))}
+                }) as Exam)}
               />
             </div>
             <div>
@@ -960,7 +876,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   result_statistics: { ...prev.result_statistics, description: e.target.value }
-                }))}
+                }) as Exam)}
               />
             </div>
             <div>
@@ -970,7 +886,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   result_statistics: { ...prev.result_statistics, passing_criteria: e.target.value }
-                }))}
+                }) as Exam)}
                 placeholder="e.g., 40% or 160/400"
               />
             </div>
@@ -982,7 +898,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   result_statistics: { ...prev.result_statistics, total_marks: parseInt(e.target.value) || 100 }
-                }))}
+                }) as Exam)}
               />
             </div>
             <div>
@@ -993,7 +909,7 @@ export default function SimpleExamsPage() {
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
                   result_statistics: { ...prev.result_statistics, passing_marks: parseInt(e.target.value) || 40 }
-                }))}
+                }) as Exam)}
               />
             </div>
           </TabsContent>

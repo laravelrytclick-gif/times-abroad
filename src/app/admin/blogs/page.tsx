@@ -17,43 +17,36 @@ import {
 import { Plus, FileText, Search, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
 import { generateSlug } from '@/lib/slug'
 import { useAdminBlogs, useSaveBlog, useDeleteBlog } from '@/hooks/useAdminBlogs'
+import { useAdmin } from '@/contexts/AdminContext'
 import { toast } from 'sonner'
-
-export interface Blog {
-  _id: string
-  title: string
-  slug: string
-  category: string
-  tags: string[]
-  content: string
-  image: string
-  related_exams: string[]
-  is_active: boolean
-  createdAt: string
-  updatedAt: string
-}
+import type { Blog } from '@/contexts/AdminContext'
 
 export default function BlogsPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingBlog, setEditingBlog] = useState<Blog | null>(null)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [blogToDelete, setBlogToDelete] = useState<Blog | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [selectedStatus, setSelectedStatus] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-  
-  const [formData, setFormData] = useState({
-    title: '',
-    slug: '',
-    category: '',
-    tags: [] as string[],
-    content: '',
-    image: '',
-    related_exams: [] as string[],
-    is_active: true
-  })
+  const {
+    blogs: {
+      isModalOpen,
+      setIsModalOpen,
+      editingBlog,
+      setEditingBlog,
+      formData,
+      setFormData,
+      blogToDelete,
+      setBlogToDelete,
+      deleteModalOpen,
+      setDeleteModalOpen,
+      searchTerm,
+      setSearchTerm,
+      selectedCategory,
+      setSelectedCategory,
+      selectedStatus,
+      setSelectedStatus,
+      currentPage,
+      setCurrentPage,
+      debouncedSearchTerm,
+      setDebouncedSearchTerm
+    },
+    resetForm
+  } = useAdmin()
 
   // Debounce search term
   useEffect(() => {
@@ -85,7 +78,7 @@ export default function BlogsPage() {
 
   const columns = [
     {
-      key: 'title' as keyof Blog,
+      key: 'title',
       title: 'Title',
       render: (value: string, record: Blog) => (
         <div className="max-w-md">
@@ -95,7 +88,7 @@ export default function BlogsPage() {
       )
     },
     {
-      key: 'tags' as keyof Blog,
+      key: 'tags',
       title: 'Tags',
       render: (value: string[]) => (
         <div className="flex flex-wrap gap-1">
@@ -113,7 +106,7 @@ export default function BlogsPage() {
       )
     },
     {
-      key: 'is_active' as keyof Blog,
+      key: 'is_active',
       title: 'Status',
       render: (value: boolean) => (
         <div className={`flex items-center justify-center ${value ? 'bg-green-600' : 'bg-gray-600'} text-white rounded-2xl px-2 py-1 gap-1`}>
@@ -122,7 +115,7 @@ export default function BlogsPage() {
       )
     },
     {
-      key: 'createdAt' as keyof Blog,
+      key: 'createdAt',
       title: 'Created',
       render: (value: string) => {
         const date = new Date(value)
@@ -277,8 +270,8 @@ export default function BlogsPage() {
   }
 
   const handleDeleteBlog = async () => {
-    if (!blogToDelete) return
-    
+    if (!blogToDelete || !blogToDelete._id) return
+
     try {
       await deleteBlogMutation.mutateAsync(blogToDelete._id)
       toast.success('Blog post deleted successfully!')
@@ -370,7 +363,7 @@ export default function BlogsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -407,7 +400,7 @@ export default function BlogsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
             >
               Next
