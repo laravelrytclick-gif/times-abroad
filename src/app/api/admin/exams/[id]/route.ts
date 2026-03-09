@@ -54,6 +54,7 @@ export async function PUT(
       name, 
       slug, 
       short_name, 
+      image_url,
       exam_type, 
       conducting_body, 
       exam_mode, 
@@ -177,6 +178,7 @@ export async function PUT(
     if (name !== undefined) updateData.name = name;
     if (slug !== undefined) updateData.slug = slug;
     if (short_name !== undefined) updateData.short_name = short_name;
+    if (image_url !== undefined) updateData.image_url = image_url;
     if (exam_type !== undefined) updateData.exam_type = exam_type;
     if (conducting_body !== undefined) updateData.conducting_body = conducting_body;
     if (exam_mode !== undefined) updateData.exam_mode = exam_mode;
