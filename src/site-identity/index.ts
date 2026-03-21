@@ -85,9 +85,9 @@ admissions: "admissions@educationtimesabroad.com",
 general: "info@educationtimesabroad.com",
     },
     address: {
-      office: "4th floor, iThum-Noida, iThum Tower, C-405, Sector 62, Noida, Uttar Pradesh 2013",
+      office: "4th floor, iThum-Noida, iThum Tower, C-405, Sector 62, Noida, Uttar Pradesh 201309",
       city: "Noida",
-      country: "Uttar Pradesh 201301",
+      country: "Uttar Pradesh 201309",
       mapLink: "https://goo.gl/maps/example",
     },
     socials: {
