@@ -38,7 +38,7 @@ const Footer = () => {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Image
-                  src={SITE_IDENTITY.assets.logo.main}
+                  src={`/favicon.png`}
                   alt={SITE_IDENTITY.name}
                   width={50}
                   height={50}
