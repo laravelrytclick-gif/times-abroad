@@ -4,6 +4,7 @@ import { SITE_IDENTITY } from "@/site-identity";
 import { FormModalProvider } from "@/context/FormModalContext";
 import { FormModal } from "@/components/FormModal";
 import { QueryProvider } from "@/providers/QueryProvider";
+import MbbsMarquee from "@/components/MbbsMarquee";
 
 export const metadata: Metadata = {
   title: SITE_IDENTITY.meta.title,
@@ -46,6 +47,7 @@ export default function RootLayout({
             <FormModal />
           </FormModalProvider>
         </QueryProvider>
+        <MbbsMarquee />
       </body>
     </html>
   );

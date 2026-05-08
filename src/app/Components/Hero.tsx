@@ -29,9 +29,9 @@ const Hero: React.FC = () => {
 
             {/* Main Heading */}
             <h1 className="text-5xl md:text-6xl xl:text-[75px] font-black text-slate-900 leading-[1.05] tracking-tight mb-8">
-              Your Global Degree <br />
+              Your MBBS Dream <br />
               <span className="relative inline-block">
-                <span className="relative z-10 text-blue-600">Starts Overseas</span>
+                <span className="relative z-10 text-blue-600">Starts Abroad</span>
                 {/* Abstract underline effect */}
                 <span className="absolute bottom-2 left-0 w-full h-4 bg-blue-100 -z-10 rounded-full opacity-60"></span>
               </span>
@@ -43,20 +43,20 @@ const Hero: React.FC = () => {
                 </span>
                 {/* Sub-text inside heading for clarity */}
                 <span className="text-2xl md:text-3xl font-bold text-slate-400">
-                  MBBS • Engineering • MBA
+                  NMC Approved
                 </span>
               </span>
             </h1>
 
             <p className="text-lg md:text-xl text-slate-600 max-w-xl leading-relaxed mb-10">
-              Low-cost MBBS abroad with world-class clinical exposure. We help you find the best medical colleges in <span className="text-slate-900 font-semibold underline decoration-blue-400">Bangladesh, Russia, Georgia</span> & more.
+              Complete MBBS abroad at NMC & WHO approved universities. World-class medical education in <span className="text-slate-900 font-semibold underline decoration-blue-400">Bangladesh, Russia, Georgia</span> with lowest tuition fees guaranteed.
             </p>
 
-            {/* Feature Checkmarks (Quick Connectivity for Parents) */}
+            {/* Feature Checkmarks (MBBS Focused) */}
             <div className="grid grid-cols-2 gap-y-3 gap-x-6 mb-10">
-              {['100% Admission Mail', 'Lowest Tuition Fees', 'Verified Hostels', 'Indian Food Available'].map((text) => (
+              {['NMC Approved Universities', 'Clinical Rotations', 'Indian Hostels Available', 'FMGE Preparation'].map((text) => (
                 <div key={text} className="flex items-center gap-2">
-                  <CheckCircle2 size={18} className="text-green-500 flex-shrink-0" />
+                  <CheckCircle2 size={18} className="text-green-500 shrink-0" />
                   <span className="text-sm font-medium text-slate-700">{text}</span>
                 </div>
               ))}
